@@ -1,0 +1,41 @@
+{
+  "name": "spiritjs",
+  "description": "The animation toolkit for the web",
+  "title": "Spirit",
+  "version": "1.0.6",
+  "homepage": "http://spiritjs.io/",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/spirit/spirit.git"
+  },
+  "bugs": {
+    "url": "https://github.com/spirit/spirit/issues"
+  },
+  "keywords": [
+    "spirit",
+    "motion",
+    "animation",
+    "timeline",
+    "tween",
+    "motion graphics"
+  ],
+  "author": {
+    "name": "Patrick Brouwer",
+    "email": "patrick@inlet.nl",
+    "twitter": "@patrickbrouwer",
+    "url": "http://inlet.nl"
+  },
+  "licenses": [
+    {
+      "type": "MIT",
+      "url": "http://www.opensource.org/licenses/mit-license.php"
+    }
+  ],
+  "engines": {
+    "node": "6.2.x"
+  },
+  "main": "build/spirit.min.js",
+  "dependencies": {
+    "gsap": "latest"
+  }
+}
