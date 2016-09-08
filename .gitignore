@@ -1,0 +1,7 @@
+dist/spirit.js.map
+dist/spirit.min.js.gz
+node_modules
+.DS_Store
+.idea
+coverage
+perf

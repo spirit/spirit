@@ -1,41 +1,45 @@
 {
   "name": "spiritjs",
-  "description": "The animation toolkit for the web",
-  "title": "Spirit",
   "version": "1.0.6",
-  "homepage": "http://spiritjs.io/",
+  "title": "Spirit",
+  "description": "The animation toolkit for the web",
+  "main": "dist/spirit.min.js",
+  "files": [
+    "dist/spirit.js",
+    "dist/spirit.js.map",
+    "dist/spirit.min.js",
+    "dist/spirit.min.js.map",
+    "src"
+  ],
+  "scripts": {
+    "build": "webpack --progress",
+    "build:min": "NODE_ENV=production webpack --progress -p",
+    "dev": "echo \"Dev not implemented yet.\"",
+    "test": "echo \"Test not implemented yet.\""
+  },
+  "homepage": "https://spiritapp.io",
   "repository": {
     "type": "git",
-    "url": "git://github.com/spirit/spirit.git"
-  },
-  "bugs": {
-    "url": "https://github.com/spirit/spirit/issues"
+    "url": "git+https://github.com/spirit/spirit.git"
   },
   "keywords": [
     "spirit",
-    "motion",
-    "animation",
-    "timeline",
-    "tween",
-    "motion graphics"
+    "spiritjs",
+    "animation"
   ],
-  "author": {
-    "name": "Patrick Brouwer",
-    "email": "patrick@inlet.nl",
-    "twitter": "@patrickbrouwer",
-    "url": "http://inlet.nl"
+  "author": "Patrick Brouwer <patrick@inlet.nl>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/spirit/spirit/issues"
   },
-  "licenses": [
-    {
-      "type": "MIT",
-      "url": "http://www.opensource.org/licenses/mit-license.php"
-    }
-  ],
   "engines": {
-    "node": "6.2.x"
+    "node": "6.x.x"
   },
-  "main": "build/spirit.min.js",
-  "dependencies": {
-    "gsap": "latest"
+  "devDependencies": {
+    "babel-core": "6.14.0",
+    "babel-loader": "6.2.5",
+    "babel-preset-es2015": "6.14.0",
+    "babel-preset-stage-0": "6.5.0",
+    "webpack": "2.1.0-beta.22"
   }
 }
