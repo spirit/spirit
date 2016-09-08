@@ -1,7 +1,7 @@
 # Spirit
 
-![alt tag](https://spiritjs.io/assets/a9bfe79364b82393cea8b0bdca6cd97b.gif)
+![alt tag](https://spiritapp.io/spirit.jpg)
 
-[The animation tool for the web](https://spiritjs.io)
+[The animation tool for the web](https://spiritapp.io)
 
 Soon available!
