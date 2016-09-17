@@ -11,3 +11,5 @@ global.navigator = { userAgent: 'node.js' }
 
 global.expect = chai.expect
 global.sinon = sinon
+
+global.XMLHttpRequest = window.XMLHttpRequest
