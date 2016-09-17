@@ -1,7 +1,10 @@
+import config from '../src/config/config'
+
 import {
   context,
   loadscript,
-  jsonloader
+  jsonloader,
+  gsap
 } from '../src/utils'
 
 import {
@@ -94,7 +97,7 @@ describe('utils', () => {
         .to.eventually.deep.equal({ foo: 'bar' })
     })
 
-    it ('should reject invalid json', () => {
+    it('should reject invalid json', () => {
       sandbox.stub(global, 'XMLHttpRequest').returns(new function() {
         this.readyState = 4
         this.status = 200
@@ -106,6 +109,51 @@ describe('utils', () => {
 
       return expect(jsonloader())
         .to.eventually.rejectedWith(/Invalid json/)
+    })
+
+  })
+
+  describe('gsap', () => {
+
+    let autoInjectUrl
+
+    beforeEach(() => {
+      autoInjectUrl = config.gsap.autoInjectUrl
+    })
+
+    afterEach(() => {
+      config.gsap.autoInjectUrl = autoInjectUrl
+      config.gsap.autoInject = true
+      config.gsap.tween = null
+      config.gsap.timeline = null
+    })
+
+    it ('should not contain any gsap', () => {
+      expect(gsap.has()).to.be.falsy
+    })
+
+    it ('should ensure gsap', (done) => {
+      config.gsap.autoInjectUrl = 'test/fixtures/gsap.js'
+
+      gsap.ensure()
+        .then(() => {
+          expect(window.TweenMax).to.be.a('function')
+          expect(window.TimelineMax).to.be.a('function')
+          expect(gsap.has()).to.be.truthy
+          done()
+        })
+        .catch(done)
+    })
+
+    it ('should resolve if already has gsap', () => {
+      config.gsap.tween = function(){}
+      config.gsap.timeline = function(){}
+      return expect(gsap.ensure()).to.eventually.be.fulfilled
+    })
+
+    it ('should reject ensure() when autoInject is false', () => {
+      config.gsap.autoInject = false
+      return expect(gsap.ensure()).to.eventually.be.rejectedWith(/GSAP not found/)
     })
 
   })
