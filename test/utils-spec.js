@@ -4,7 +4,8 @@ import {
   context,
   loadscript,
   jsonloader,
-  gsap
+  gsap,
+  autobind
 } from '../src/utils'
 
 import {
@@ -169,7 +170,77 @@ describe('utils', () => {
     })
 
   })
+
+  describe('autobind', () => {
+
+    class A {
+      exec() { this.fn.call(this) }
+    }
+
+    it ('should not autobind method', () => {
+      class B {
+        constructor() {
+          let a = new A()
+          a.fn = this.executed
+          a.exec()
+        }
+
+        executed() {
+          expect(this).to.be.instanceOf(A)
+        }
       }
+
+      new B()
+    })
+
+    it('should autobind method', () => {
+      class B {
+        constructor() {
+          let a = new A()
+          a.fn = this.executed
+          a.exec()
+        }
+
+        @autobind
+        executed() {
+          expect(this).to.be.instanceOf(B)
+        }
+      }
+
+      new B()
+    })
+
+    it ('should not autobind class', () => {
+      class B {
+        constructor() {
+          let a = new A()
+          a.fn = this.executed
+          a.exec()
+        }
+
+        executed() {
+          expect(this).to.be.instanceOf(A)
+        }
+      }
+
+      new B()
+    })
+
+    it ('should autobind class', () => {
+      @autobind
+      class B {
+        constructor() {
+          let a = new A()
+          a.fn = this.executed
+          a.exec()
+        }
+
+        executed() {
+          expect(this).to.be.instanceOf(B)
+        }
+      }
+
+      new B()
     })
 
   })
