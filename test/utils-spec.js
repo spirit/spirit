@@ -23,21 +23,15 @@ describe('utils', () => {
     it('should reject when context is not browser', async() => {
       sinon.stub(context, 'isBrowser').returns(false)
 
-      try {
-        await loadscript('anything.js')
-      } catch (err) {
-        expect(err).to.be.an('error').match(/can only be loaded in browser/)
-      }
+      const err = await resolvePromise(loadscript('anything.js'))
+      expect(err).to.be.an('error').match(/can only be loaded in browser/)
 
       context.isBrowser.restore()
     })
 
     it('should reject invalid request', async() => {
-      try {
-        await loadscript('invalid.js')
-      } catch (err) {
-        expect(err).to.be.an('error').match(/Could not load/)
-      }
+      const err = await resolvePromise(loadscript('invalid.js'))
+      expect(err).to.be.an('error').match(/Could not load/)
     })
 
     it('should load script into window', async() => {
@@ -88,11 +82,8 @@ describe('utils', () => {
     it('should reject when context is not browser', async() => {
       sinon.stub(context, 'isBrowser').returns(false)
 
-      try {
-        await jsonloader()
-      } catch (err) {
-        expect(err).to.be.an('error').match(/Invalid context/)
-      }
+      const err = await resolvePromise(jsonloader('file.json'))
+      expect(err).to.be.an('error').match(/Invalid context/)
 
       context.isBrowser.restore()
     })
@@ -114,11 +105,8 @@ describe('utils', () => {
         }
       })
 
-      try {
-        await jsonloader('invalid-file.js')
-      } catch (err) {
-        expect(err).to.be.an('error').match(/Could not open request/)
-      }
+      const err = await resolvePromise(jsonloader('invalid-file.js'))
+      expect(err).to.be.an('error').match(/Could not open request/)
     })
 
     it('should resolve json', async() => {
@@ -129,11 +117,8 @@ describe('utils', () => {
     it('should reject invalid json', async() => {
       stubXhr({ responseText: `{foo": "bar"}` })
 
-      try {
-        await jsonloader('invalid-json.json')
-      } catch (err) {
-        expect(err).to.be.an('error').match(/Invalid json/)
-      }
+      const err = await resolvePromise(jsonloader('invalid-json.json'))
+      expect(err).to.be.an('error').match(/Invalid json/)
     })
 
   })
@@ -179,10 +164,11 @@ describe('utils', () => {
     it('should reject ensure() when autoInject is false', async() => {
       config.gsap.autoInject = false
 
-      try {
-        await gsap.ensure()
-      }catch(err) {
-        expect(err).to.be.an('error').match(/GSAP not found/)
+      const err = await resolvePromise(gsap.ensure())
+      expect(err).to.be.an('error').match(/GSAP not found/)
+    })
+
+  })
       }
     })
 

@@ -11,4 +11,5 @@ global.navigator = { userAgent: 'node.js' }
 global.expect = chai.expect
 global.sinon = sinon
 
+global.resolvePromise = (promise) => new Promise(resolve => promise.then(resolve).catch(resolve))
 global.XMLHttpRequest = window.XMLHttpRequest
