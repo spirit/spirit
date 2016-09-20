@@ -130,36 +130,36 @@ describe('utils', () => {
 
     beforeEach(() => {
       autoInjectUrl = config.gsap.autoInjectUrl
-    })
-
-    afterEach(() => {
-      config.gsap.autoInjectUrl = autoInjectUrl
       config.gsap.autoInject = true
       config.gsap.tween = null
       config.gsap.timeline = null
     })
 
+    afterEach(() => {
+      config.gsap.autoInjectUrl = autoInjectUrl
+    })
+
     it('should not contain any gsap', () => {
-      expect(gsap.has()).to.be.falsy
+      expect(gsap.has()).to.be.false
     })
 
     it('should ensure gsap', async() => {
       config.gsap.autoInjectUrl = 'test/fixtures/gsap.js'
 
-      expect(gsap.has()).to.be.falsy
+      expect(gsap.has()).to.be.false
 
       await gsap.ensure()
 
       expect(window.TweenMax).to.be.a('function')
       expect(window.TimelineMax).to.be.a('function')
-      expect(gsap.has()).to.be.truthy
+      expect(gsap.has()).to.be.true
     })
 
     it('should resolve if already has gsap', async() => {
       config.gsap.tween = function() {}
       config.gsap.timeline = function() {}
       await gsap.ensure()
-      expect(gsap.has()).to.be.truthy
+      expect(gsap.has()).to.be.true
     })
 
     it('should reject ensure() when autoInject is false', async() => {
