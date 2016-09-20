@@ -9,7 +9,7 @@ module.exports = function(wallaby) {
     files: [
       { pattern: 'src/**/*.js', load: false },
       { pattern: 'test/fixtures/*.*', instrument: false },
-      'test/spec-setup.js'
+      'test/bootstrap.js'
     ],
 
     tests: [
@@ -33,7 +33,7 @@ module.exports = function(wallaby) {
     },
 
     setup: function setup() {
-      require('./test/spec-setup')
+      require('./test/bootstrap')
     }
 
   }

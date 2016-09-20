@@ -16,7 +16,7 @@
     "build:min": "NODE_ENV=production webpack --progress -p",
     "build:lib": "echo \"Build lib not yet implemented\"",
     "dev": "echo \"Dev not implemented yet.\"",
-    "test": "NODE_ENV=test mocha --require babel-register --require ./test/spec-setup.js --timeout 5000"
+    "test": "NODE_ENV=test mocha --require babel-register --require ./test/bootstrap.js --timeout 5000"
   },
   "homepage": "https://spiritapp.io",
   "repository": {
