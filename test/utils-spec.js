@@ -26,7 +26,7 @@ describe('utils', () => {
       try {
         await loadscript('anything.js')
       } catch (err) {
-        expect(err).to.be.an.instanceOf(Error).match(/can only be loaded in browser/)
+        expect(err).to.be.an('error').match(/can only be loaded in browser/)
       }
 
       context.isBrowser.restore()
@@ -36,7 +36,7 @@ describe('utils', () => {
       try {
         await loadscript('invalid.js')
       } catch (err) {
-        expect(err).to.be.an.instanceOf(Error).match(/Could not load/)
+        expect(err).to.be.an('error').match(/Could not load/)
       }
     })
 
@@ -91,7 +91,7 @@ describe('utils', () => {
       try {
         await jsonloader()
       } catch (err) {
-        expect(err).to.be.an.instanceOf(Error).match(/Invalid context/)
+        expect(err).to.be.an('error').match(/Invalid context/)
       }
 
       context.isBrowser.restore()
@@ -117,7 +117,7 @@ describe('utils', () => {
       try {
         await jsonloader('invalid-file.js')
       } catch (err) {
-        expect(err).to.be.an.instanceOf(Error).match(/Could not open request/)
+        expect(err).to.be.an('error').match(/Could not open request/)
       }
     })
 
@@ -132,7 +132,7 @@ describe('utils', () => {
       try {
         await jsonloader('invalid-json.json')
       } catch (err) {
-        expect(err).to.be.an.instanceOf(Error).match(/Invalid json/)
+        expect(err).to.be.an('error').match(/Invalid json/)
       }
     })
 
@@ -182,7 +182,7 @@ describe('utils', () => {
       try {
         await gsap.ensure()
       }catch(err) {
-        expect(err).to.be.an.instanceOf(Error).match(/GSAP not found/)
+        expect(err).to.be.an('error').match(/GSAP not found/)
       }
     })
 
