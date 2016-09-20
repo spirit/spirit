@@ -20,26 +20,32 @@ describe('utils', () => {
 
   describe('loadscript', () => {
 
-    it('should reject when context is not browser', (done) => {
+    it('should reject when context is not browser', async() => {
       sinon.stub(context, 'isBrowser').returns(false)
-      expect(loadscript('anything.js')).to.eventually.be.rejectedWith(/can only be loaded in browser/).notify(done)
+
+      try {
+        await loadscript('anything.js')
+      } catch (err) {
+        expect(err).to.be.an.instanceOf(Error).match(/can only be loaded in browser/)
+      }
+
       context.isBrowser.restore()
     })
 
-    it('should reject invalid request', () => {
-      return expect(loadscript('invalid.js')).to.eventually.be.rejectedWith(/Could not load/)
+    it('should reject invalid request', async() => {
+      try {
+        await loadscript('invalid.js')
+      } catch (err) {
+        expect(err).to.be.an.instanceOf(Error).match(/Could not load/)
+      }
     })
 
-    it('should load script into window', (done) => {
+    it('should load script into window', async() => {
       expect(window.someGlobal).to.be.undefined
+      await loadscript('test/fixtures/loadscript.js')
+      expect(window.someGlobal).to.be.a('function')
 
-      loadscript('test/fixtures/loadscript.js')
-        .then(() => {
-          expect(window.someGlobal).to.be.a('function')
-          window.someGlobal = undefined
-          done()
-        })
-        .catch(done)
+      window.someGlobal = undefined // restore
     })
 
   })
@@ -58,57 +64,76 @@ describe('utils', () => {
       sandbox.restore()
     })
 
-    it('should reject when context is not browser', (done) => {
+    let xhrDefaults = {
+      open: function() {},
+      send: function() {
+        this.onreadystatechange.call(this)
+      },
+      readyState: 4,
+      status: 200,
+      responseText: ''
+    }
+
+    function stubXhr(props) {
+      props = Object.assign({}, xhrDefaults, props)
+
+      sandbox.stub(global, 'XMLHttpRequest').returns(new function() {
+        props.open = props.open.bind(this)
+        props.send = props.send.bind(this)
+
+        Object.assign(this, props)
+      })
+    }
+
+    it('should reject when context is not browser', async() => {
       sinon.stub(context, 'isBrowser').returns(false)
-      expect(jsonloader()).to.eventually.be.rejectedWith(/Invalid context/).notify(done)
+
+      try {
+        await jsonloader()
+      } catch (err) {
+        expect(err).to.be.an.instanceOf(Error).match(/Invalid context/)
+      }
+
       context.isBrowser.restore()
     })
 
-    it('should retrieve from cache', () => {
+    it('should retrieve from cache', async() => {
       jsonloaderCache['temp.json'] = { foo: 'bar' }
-      return expect(jsonloader('temp.json')).to.eventually.deep.equal({ foo: 'bar' })
+      expect(await jsonloader('temp.json')).to.deep.equal({ foo: 'bar' })
     })
 
-    it('should serve from queued request', () => {
+    it('should serve from queued request', async() => {
       jsonloaderReq['temp.json'] = new Promise((resolve) => resolve({ foo: 'bar' }))
-      return expect(jsonloader('temp.json')).to.eventually.deep.equal({ foo: 'bar' })
+      expect(await jsonloader('temp.json')).to.deep.equal({ foo: 'bar' })
     })
 
-    it('should reject as invalid request', () => {
-      sandbox.stub(global, 'XMLHttpRequest').returns(new function() {
-        this.open = () => { throw new Error('Invalid') }
+    it('should reject as invalid request', async() => {
+      stubXhr({
+        open: () => {
+          throw new Error('Invalid')
+        }
       })
 
-      return expect(jsonloader())
-        .to.eventually.rejectedWith(/Could not open request/)
+      try {
+        await jsonloader('invalid-file.js')
+      } catch (err) {
+        expect(err).to.be.an.instanceOf(Error).match(/Could not open request/)
+      }
     })
 
-    it('should resolve json', () => {
-      sandbox.stub(global, 'XMLHttpRequest').returns(new function() {
-        this.readyState = 4
-        this.status = 200
-        this.responseText = `{"foo": "bar"}`
-
-        this.open = () => {}
-        this.send = () => this.onreadystatechange.call(this)
-      })
-
-      return expect(jsonloader('test.json'))
-        .to.eventually.deep.equal({ foo: 'bar' })
+    it('should resolve json', async() => {
+      stubXhr({ responseText: `{"foo": "bar"}` })
+      expect(await jsonloader('test.json')).to.deep.equal({ foo: 'bar' })
     })
 
-    it('should reject invalid json', () => {
-      sandbox.stub(global, 'XMLHttpRequest').returns(new function() {
-        this.readyState = 4
-        this.status = 200
-        this.responseText = `{foo": "bar"}`
+    it('should reject invalid json', async() => {
+      stubXhr({ responseText: `{foo": "bar"}` })
 
-        this.open = () => {}
-        this.send = () => this.onreadystatechange.call(this)
-      })
-
-      return expect(jsonloader())
-        .to.eventually.rejectedWith(/Invalid json/)
+      try {
+        await jsonloader('invalid-json.json')
+      } catch (err) {
+        expect(err).to.be.an.instanceOf(Error).match(/Invalid json/)
+      }
     })
 
   })
@@ -128,32 +153,37 @@ describe('utils', () => {
       config.gsap.timeline = null
     })
 
-    it ('should not contain any gsap', () => {
+    it('should not contain any gsap', () => {
       expect(gsap.has()).to.be.falsy
     })
 
-    it ('should ensure gsap', (done) => {
+    it('should ensure gsap', async() => {
       config.gsap.autoInjectUrl = 'test/fixtures/gsap.js'
 
-      gsap.ensure()
-        .then(() => {
-          expect(window.TweenMax).to.be.a('function')
-          expect(window.TimelineMax).to.be.a('function')
-          expect(gsap.has()).to.be.truthy
-          done()
-        })
-        .catch(done)
+      expect(gsap.has()).to.be.falsy
+
+      await gsap.ensure()
+
+      expect(window.TweenMax).to.be.a('function')
+      expect(window.TimelineMax).to.be.a('function')
+      expect(gsap.has()).to.be.truthy
     })
 
-    it ('should resolve if already has gsap', () => {
-      config.gsap.tween = function(){}
-      config.gsap.timeline = function(){}
-      return expect(gsap.ensure()).to.eventually.be.fulfilled
+    it('should resolve if already has gsap', async() => {
+      config.gsap.tween = function() {}
+      config.gsap.timeline = function() {}
+      await gsap.ensure()
+      expect(gsap.has()).to.be.truthy
     })
 
-    it ('should reject ensure() when autoInject is false', () => {
+    it('should reject ensure() when autoInject is false', async() => {
       config.gsap.autoInject = false
-      return expect(gsap.ensure()).to.eventually.be.rejectedWith(/GSAP not found/)
+
+      try {
+        await gsap.ensure()
+      }catch(err) {
+        expect(err).to.be.an.instanceOf(Error).match(/GSAP not found/)
+      }
     })
 
   })
