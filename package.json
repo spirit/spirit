@@ -12,9 +12,10 @@
     "src"
   ],
   "scripts": {
-    "build": "webpack --progress",
-    "build:min": "NODE_ENV=production webpack --progress -p",
+    "build:umd": "webpack --progress",
+    "build:umd:min": "NODE_ENV=production webpack --progress -p",
     "build:lib": "echo \"Build lib not yet implemented\"",
+    "build": "npm run build:umd && npm run build:umd:min && npm run build:lib",
     "dev": "echo \"Dev not implemented yet.\"",
     "test": "NODE_ENV=test mocha --require babel-register --require ./test/bootstrap.js --timeout 5000"
   },
