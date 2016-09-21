@@ -40,7 +40,7 @@ describe('utils', () => {
       await loadscript('test/fixtures/loadscript.js')
       expect(window.someGlobal).to.be.a('function')
 
-      window.someGlobal = undefined // restore
+      delete window.someGlobal // restore
     })
 
   })

@@ -110,9 +110,9 @@ describe('param', () => {
       param.value = `{ sayHello('mr robot') }`
       expect(param.value).equal('Hi there mr robot!')
 
-      global.sayHello = undefined
+      delete global.sayHello
     })
-    
+
   })
 
   describe('dispatch changes', () => {
