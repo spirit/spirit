@@ -1,4 +1,5 @@
 import Param from '../src/group/param'
+import EvalMap from '../src/group/evalmap'
 
 describe('param', () => {
 
@@ -10,6 +11,10 @@ describe('param', () => {
 
   it('should create an object', () => {
     expect(new Param('x', 120).toObject()).deep.equal({ x: 120 })
+  })
+
+  it('should have no mapping', () => {
+    expect(new Param('x', 120).mappings).to.have.lengthOf(0)
   })
 
   describe('from object', () => {
@@ -59,6 +64,57 @@ describe('param', () => {
     })
   })
 
+  describe('eval mapping', () => {
+
+    let param
+
+    beforeEach(() => {
+      param = new Param('x', 120)
+    })
+
+    it('should evaluate mapping for number', () => {
+      expect(param.value).equal(120)
+      param.value = '{ test + 5 }'
+      param.mappings.push(new EvalMap(/test/g, 3))
+      expect(param.value).equal(8)
+    })
+
+    it ('should evaluate mapping for object', () => {
+      param.value = '{ foo.bar + 10 }'
+      param.mappings.push(new EvalMap(/foo/, {bar: 10}))
+      expect(param.value).equal(20)
+    })
+
+    it ('should evaluate mapping for function', () => {
+      param.value = '{ bar() - 3 }'
+      param.mappings.push(new EvalMap(/bar/, function(){ return 5 }))
+      expect(param.value).equal(2)
+    })
+
+    it ('should evaluate multiple mappings', () => {
+      param.value = '{ one() + two() }'
+      param.mappings.push(new EvalMap(/one/, function(){ return 1 }))
+      param.mappings.push(new EvalMap(/two/, function(){ return 2 }))
+      expect(param.value).equal(3)
+    })
+
+    it ('should fail on invalid evaluation', () => {
+      param.value = '{ one() + two() }'
+      param.mappings.push(new EvalMap(/one/, function(){ return 1 }))
+      expect(() => param.value).to.throw(/two is not defined/)
+    })
+
+    it ('should evaluate global function', () => {
+      global.sayHello = (name) => `Hi there ${name}!`
+
+      param.value = `{ sayHello('mr robot') }`
+      expect(param.value).equal('Hi there mr robot!')
+
+      global.sayHello = undefined
+    })
+    
+  })
+
   describe('dispatch changes', () => {
 
     let param, spy
@@ -72,7 +128,7 @@ describe('param', () => {
       param.removeAllListeners()
     })
 
-    it ('should emit prop changes', () => {
+    it('should emit prop changes', () => {
       param.on('change:prop', spy)
 
       param.prop = 'y'
@@ -89,15 +145,15 @@ describe('param', () => {
       expect(spy.callCount).equal(3)
     })
 
-    it ('should emit value changes', () => {
+    it('should emit value changes', () => {
       param.on('change:value', spy)
       param.value = 120
 
       let i = 10
-      while(--i) {
+      while (--i) {
         param.value--
       }
-      
+
       let values = []
       for (let j = 0; j < spy.callCount; j++) {
         values.push(spy.getCall(j).args[0])
@@ -106,8 +162,6 @@ describe('param', () => {
       expect(values).deep.equal([120, 119, 118, 117, 116, 115, 114, 113, 112, 111])
     })
 
-
   })
-
 
 })

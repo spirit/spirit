@@ -9,6 +9,8 @@ class EvalMap {
       throw new Error('Invalid mapping.')
     }
 
+    Object.assign(this, { regex, map })
+
   }
 }
 

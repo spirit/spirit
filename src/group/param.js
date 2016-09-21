@@ -5,6 +5,8 @@ class Param extends EventEmitter {
   _prop = null
   _value = null
 
+  mappings = []
+
   constructor(prop, value) {
     super()
     this.setMaxListeners(Infinity)
@@ -22,9 +24,32 @@ class Param extends EventEmitter {
   }
 
   get value() {
-    return this._value
+    if (this.isEval()) {
 
-    // todo implement evaluable
+      // create available mappings for current value
+      const mappings = this.mappings.reduce((result, mapping) => {
+        if (mapping.regex.global) {
+          mapping.regex.lastIndex = 0
+        }
+
+        if (mapping.regex.test(this._value)) {
+          result[mapping.regex] = mapping
+        }
+
+        return result
+      }, {})
+
+      // apply mappings
+      let val = this._value
+
+      for (let mapping in mappings) {
+        val = val.replace(mappings[mapping].regex, `mappings[${mapping}].map`)
+      }
+
+      return eval(val)
+    }
+
+    return this._value
   }
 
   set value(val) {
@@ -58,7 +83,7 @@ class Param extends EventEmitter {
    * @returns {boolean}
    */
   isEval() {
-    return /\{(.*?)}/.test(this.value)
+    return /\{(.*?)}/.test(this._value)
   }
 }
 

@@ -11,5 +11,9 @@ describe('evalmap', () => {
     expect(() => new EvalMap(/test/, null)).to.throw(/Invalid mapping/)
     expect(() => new EvalMap(/test/, undefined)).to.throw(/Invalid mapping/)
   })
-  
+
+  it ('should have a valid eval map', () => {
+    expect(new EvalMap(/test/, 123).regex).to.be.an.instanceOf(RegExp)
+    expect(new EvalMap(/test/, 123).map).equal(123)
+  })
 })
