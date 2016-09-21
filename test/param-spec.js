@@ -113,6 +113,12 @@ describe('param', () => {
       delete global.sayHello
     })
 
+    it ('should evaluate doubles', () => {
+      param.value = '{ test + test + test }'
+      param.mappings.push(new EvalMap(/test/g, 5))
+      expect(param.value).equal(15)
+    })
+
   })
 
   describe('dispatch changes', () => {
