@@ -1,0 +1,20 @@
+{
+  "extends": "standard",
+  "plugins": [
+    "standard",
+    "promise"
+  ],
+  "parser": "babel-eslint",
+  "env": {
+    "node": true,
+    "mocha": true,
+    "es6": true,
+    "browser": true
+  },
+  "rules": {
+    "quotes": ["error", "single"],
+    "space-before-function-paren": ["error", "never"],
+    "padded-blocks": ["error", "never"]
+  }
+}
+
