@@ -25,7 +25,6 @@ class Param extends EventEmitter {
 
   get value() {
     if (this.isEval()) {
-
       // create available mappings for current value
       const mappings = this.mappings.reduce((result, mapping) => {
         if (mapping.regex.global) {
@@ -45,8 +44,7 @@ class Param extends EventEmitter {
       for (let mapping in mappings) {
         val = val.replace(mappings[mapping].regex, `mappings[${mapping}].map`)
       }
-
-      return eval(val)
+      return eval(val) // eslint-disable-line no-eval
     }
 
     return this._value

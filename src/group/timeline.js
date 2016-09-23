@@ -21,9 +21,6 @@ class Timeline extends EventEmitter {
     })
   }
 
-
-
-
 }
 
 export default Timeline

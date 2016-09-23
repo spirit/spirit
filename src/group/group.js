@@ -34,12 +34,9 @@ class Group extends EventEmitter {
    */
   construct() {
     return new Promise((resolve, reject) => {
-
       const doConstruct = () => {
-
         // implement constructing timelines,
         // waiting for timelines to be implemented
-
         resolve()
       }
 

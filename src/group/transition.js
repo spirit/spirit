@@ -20,7 +20,6 @@ class Transition extends EventEmitter {
       params,
       ease
     })
-
   }
 
   get frame() {

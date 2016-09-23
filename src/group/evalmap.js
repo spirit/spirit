@@ -1,6 +1,6 @@
 class EvalMap {
-  constructor(regex, map) {
 
+  constructor(regex, map) {
     if (!regex || regex && !(regex instanceof RegExp)) {
       throw new Error('Invalid expression.')
     }
@@ -10,8 +10,8 @@ class EvalMap {
     }
 
     Object.assign(this, { regex, map })
-
   }
+
 }
 
 export default EvalMap

@@ -15,7 +15,6 @@ export function has() {
  * @returns {Promise}
  */
 export function ensure() {
-
   if (has()) {
     return Promise.resolve()
   }
