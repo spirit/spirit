@@ -28,7 +28,7 @@ describe('group', () => {
     expect(group.timelines).to.have.lengthOf(0)
   })
 
-  it('should ensure gsap before construct animation', async () => {
+  it.skip('should ensure gsap before construct animation', async () => {
     const group = new Group()
     const spy = sandbox.spy(gsap, 'ensure')
 
