@@ -87,7 +87,7 @@ class Param extends EventEmitter {
 
 /**
  * Parse Param from object
- * @param obj {prop: value}
+ * @param {object} obj "{prop: value}"
  * @example {x: 120}
  * @returns {Param}
  */

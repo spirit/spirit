@@ -7,8 +7,12 @@ class Timeline extends EventEmitter {
   label = null
   timelines = null
 
-  constructor(el, transitions = new Transitions(), label = null) {
+  constructor(el, transitions = new Transitions(), label) {
     super()
+
+    if (label === undefined) {
+      label = null
+    }
 
     if (!el || window && !(el instanceof window.HTMLElement)) {
       throw new Error('HTMLElement is required.')
