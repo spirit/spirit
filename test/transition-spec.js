@@ -14,5 +14,38 @@ describe('transition', () => {
     expect(new Transition(0).frame).equal(0)
   })
 
+  describe('dispatch changes', () => {
+
+    let transition,
+        spy
+
+    beforeEach(() => {
+      transition = new Transition(0)
+      spy = sinon.spy()
+    })
+
+    it ('should change frame', () => {
+      transition.on('change:frame', spy)
+      transition.frame = 10
+      expect(spy.withArgs(10).calledOnce).to.be.true
+    })
+
+    it ('should change ease', () => {
+      transition.on('change:ease', spy)
+      transition.ease = 'Strong.easeOut'
+      expect(spy.withArgs('Strong.easeOut').calledOnce).to.be.true
+    })
+
+    it ('should change params', () => {
+      const newParams = new Params()
+
+      transition.on('change:params', spy)
+      transition.params = newParams
+      expect(spy.withArgs(newParams).calledOnce).to.be.true
+    })
+
+
+  })
+
 
 })

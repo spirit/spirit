@@ -3,9 +3,9 @@ import Params from './params'
 
 class Transition extends EventEmitter {
 
-  frame = null
-  params = null
-  ease = null
+  _frame = null
+  _params = null
+  _ease = null
 
   constructor(frame, params = new Params(), ease = 'Linear.easeNone') {
     super()
@@ -21,6 +21,33 @@ class Transition extends EventEmitter {
       ease
     })
 
+  }
+
+  get frame() {
+    return this._frame
+  }
+
+  set frame(f) {
+    this._frame = f
+    this.emit('change:frame', f)
+  }
+
+  get ease() {
+    return this._ease
+  }
+
+  set ease(e) {
+    this._ease = e
+    this.emit('change:ease', e)
+  }
+
+  get params() {
+    return this._params
+  }
+
+  set params(p) {
+    this._params = p
+    this.emit('change:params', p)
   }
 
 }
