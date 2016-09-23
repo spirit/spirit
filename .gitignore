@@ -1,7 +1,8 @@
 dist/spirit.js.map
 dist/spirit.min.js.gz
-node_modules
+node_modules/
 .DS_Store
-.idea
+.idea/
+lib/
 coverage
 perf
