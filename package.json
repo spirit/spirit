@@ -12,11 +12,10 @@
     "src"
   ],
   "scripts": {
-    "build:umd": "webpack --progress",
-    "build:umd:min": "NODE_ENV=production webpack --progress -p",
-    "build:lib": "echo \"Build lib not yet implemented\"",
+    "build:umd": "BABEL_ENV=umd webpack --progress",
+    "build:umd:min": "NODE_ENV=production BABEL_ENV=umd webpack --progress -p",
+    "build:lib": "babel src --out-dir lib",
     "build": "npm run build:umd && npm run build:umd:min && npm run build:lib",
-    "dev": "echo \"Dev not implemented yet.\"",
     "test": "NODE_ENV=test mocha --require babel-register --require ./test/bootstrap.js --timeout 5000"
   },
   "homepage": "https://spiritapp.io",
@@ -38,6 +37,7 @@
     "node": "6.x.x"
   },
   "devDependencies": {
+    "babel-cli": "6.14.0",
     "babel-core": "6.14.0",
     "babel-loader": "6.2.5",
     "babel-plugin-transform-decorators-legacy": "1.3.4",

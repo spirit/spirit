@@ -1,13 +1,12 @@
 {
-  "presets": [
-    ["es2015", {"modules": false}],
-    "stage-0"
-  ],
+
+  "presets": ["es2015", "stage-0"],
   "plugins": ["transform-decorators-legacy"],
+
   "env": {
-    "test": {
+    "umd": {
       "presets": [
-        ["es2015"],
+        ["es2015", {"modules": false}],
         "stage-0"
       ],
       "plugins": ["transform-decorators-legacy"]
