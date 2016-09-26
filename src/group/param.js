@@ -4,6 +4,7 @@ class Param extends EventEmitter {
 
   _prop = null
   _value = null
+  _list = null
 
   mappings = []
 
@@ -19,8 +20,17 @@ class Param extends EventEmitter {
   }
 
   set prop(val) {
-    this._prop = val
-    this.emit('change:prop', val)
+    const prevModel = this.toObject()
+    const from = this._prop
+    const to = val
+
+    this._prop = to
+    this.emit('change:prop', to)
+
+    if (this._list) {
+      this._list.emit('change', { prevModel, model: this, from, to })
+      this._list.emit('change:prop', { prevModel, model: this, from, to })
+    }
   }
 
   get value() {
@@ -51,8 +61,17 @@ class Param extends EventEmitter {
   }
 
   set value(val) {
-    this._value = val
-    this.emit('change:value', val)
+    const prevModel = this.toObject()
+    const from = this._value
+    const to = val
+
+    this._value = to
+    this.emit('change:value', to)
+
+    if (this._list) {
+      this._list.emit('change', { prevModel, model: this, from, to })
+      this._list.emit('change:value', { prevModel, model: this, from, to })
+    }
   }
 
   /**

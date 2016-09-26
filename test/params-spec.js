@@ -166,6 +166,50 @@ describe('params', () => {
       expect(spy.withArgs(list).calledOnce).to.be.true
     })
 
+    it('should emit param value change', () => {
+      const params = new Params([{ x: 10 }, { y: 100 }], Param)
+      const param = params.at(0)
+
+      const spyParams = sinon.spy()
+      const spyParamsValue = sinon.spy()
+      const spyParam = sinon.spy()
+
+      param.on('change:value', spyParam)
+      params.on('change', spyParams)
+      params.on('change:value', spyParamsValue)
+
+      // update
+      param.value++
+      param.value++
+
+      expect(spyParam.withArgs(11).calledOnce).to.be.true
+      expect(spyParam.withArgs(12).calledOnce).to.be.true
+      expect(spyParams.calledTwice).to.be.true
+      expect(spyParamsValue.calledTwice).to.be.true
+    })
+
+    it('should emit param prop change', () => {
+      const params = new Params([{ x: 10 }, { y: 100 }], Param)
+      const param = params.at(0)
+
+      const spyParams = sinon.spy()
+      const spyParamsProp = sinon.spy()
+      const spyParam = sinon.spy()
+
+      param.on('change:prop', spyParam)
+      params.on('change', spyParams)
+      params.on('change:prop', spyParamsProp)
+
+      // update
+      param.prop = 'z'
+      param.prop = 'translateX'
+
+      expect(spyParam.withArgs('z').calledOnce).to.be.true
+      expect(spyParam.withArgs('translateX').calledOnce).to.be.true
+      expect(spyParams.calledTwice).to.be.true
+      expect(spyParamsProp.calledTwice).to.be.true
+      expect(params.toObject()).to.deep.equal([{ translateX: 10 }, { y: 100 }])
+    })
 
   })
 
