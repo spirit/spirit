@@ -11,6 +11,14 @@ class List extends EventEmitter {
 
     this._model = model
 
+    if (model) {
+      const testProto = new model()
+
+      if (typeof testProto.toObject !== 'function') {
+        throw new Error('Invalid Model prototype. model.toObject does not exist.')
+      }
+    }
+
     // parse initial list
     if (Array.isArray(items)) {
       this._list = items.reduce((list, item) => {

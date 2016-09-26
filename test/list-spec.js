@@ -11,6 +11,13 @@ describe('list', () => {
     expect(list._maxListeners).equal(Infinity)
   })
 
+  describe('Model', () => {
+    it ('should fail on invalid model', () => {
+      class Model {}
+      expect(() => new List([], Model)).to.throw(/model.toObject does not exist/)
+    })
+  })
+
   describe('parse on creation', () => {
     it('should contain a predefined list', () => {
       const list = new List([1, 2, 3])
@@ -18,7 +25,7 @@ describe('list', () => {
     })
 
     it('should parse list on model', () => {
-      class Model {}
+      class Model { toObject() {} }
 
       const list = new List([new Model(), new Model()], Model)
       expect(list._model).equal(Model)
@@ -28,7 +35,7 @@ describe('list', () => {
     })
 
     it('should parse list on model.fromObject', () => {
-      class Model {}
+      class Model { toObject() {} }
       Model.fromObject = (obj) => new Model()
 
       const list = new List([{ foo: 'bar' }, { bar: 'foo' }], Model)
@@ -38,11 +45,10 @@ describe('list', () => {
     })
 
     it('should fail when model could not be parsed', () => {
-      class Model {}
+      class Model { toObject() {} }
 
       expect(() => new List([{ foo: 'bar' }, { bar: 'foo' }], Model))
         .to.throw(/Could not parse/)
-
     })
   })
 
@@ -93,7 +99,7 @@ describe('list', () => {
     })
 
     it('should fail on adding invalid item with model', () => {
-      class Model {}
+      class Model { toObject() {} }
       list = new List([], Model)
 
       expect(() => list.add(null)).to.throw(/Invalid item/)
@@ -103,7 +109,7 @@ describe('list', () => {
     })
 
     it('should add item of model instance', () => {
-      class Model {}
+      class Model { toObject() {} }
       list = new List([], Model)
       list.add(new Model())
       list.add(new Model())
@@ -118,6 +124,7 @@ describe('list', () => {
         constructor(obj) {
           Object.assign(this, obj)
         }
+        toObject() {}
       }
       Model.fromObject = (obj) => new Model(obj)
 
@@ -146,6 +153,7 @@ describe('list', () => {
         constructor(obj) {
           Object.assign(this, obj)
         }
+        toObject() {}
       }
       Model.fromObject = (obj) => new Model(obj)
 
@@ -192,7 +200,7 @@ describe('list', () => {
           list.add({ a: 'b' })
         ).to.be.an.instanceOf(Model).and.have.property('a', 'b')
 
-        const added = list.add([{b: 'c'}, {c: 'd'}])
+        const added = list.add([{ b: 'c' }, { c: 'd' }])
         expect(added).to.be.an('array')
         expect(added[0]).to.be.an.instanceOf(Model).and.have.property('b', 'c')
         expect(added[1]).to.be.an.instanceOf(Model).and.have.property('c', 'd')
@@ -229,7 +237,7 @@ describe('list', () => {
         expect(list.list).to.deep.equal([1, 2, 4])
       })
 
-      it ('should return removed value', () => {
+      it('should return removed value', () => {
         expect(list.remove('c')).equal('c')
         expect(list.remove(['a', 'b', 'd'])).to.deep.equal(['a', 'b', 'd'])
       })
@@ -243,6 +251,7 @@ describe('list', () => {
         constructor(obj) {
           this.obj = obj
         }
+        toObject() {}
       }
       Model.fromObject = (i) => new Model(i)
 
@@ -287,7 +296,7 @@ describe('list', () => {
         expect(list).to.have.lengthOf(1)
       })
 
-      it ('should return removed value', () => {
+      it('should return removed value', () => {
         expect(list.remove(list.at(0))).to.be.an.instanceof(Model).to.have.deep.property('obj.a', 'b')
 
         const removed = list.remove([list.at(0), list.at(2)])
@@ -295,6 +304,8 @@ describe('list', () => {
         expect(removed[0]).to.be.an.instanceOf(Model).to.have.deep.property('obj.b', 'c')
         expect(removed[1]).to.be.an.instanceOf(Model).to.have.deep.property('obj.d', 'e')
       })
+    })
+  })
 
     })
 
@@ -309,6 +320,7 @@ describe('list', () => {
         this.obj = obj
         Object.assign(this, obj)
       }
+      toObject() {}
     }
     Model.fromObject = (obj) => new Model(obj)
 
@@ -393,7 +405,7 @@ describe('list', () => {
     })
 
     describe.skip('change', () => {
-
+      // todo implement
     })
 
   })
