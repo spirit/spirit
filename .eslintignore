@@ -1,0 +1,5 @@
+test/
+lib/
+dist/
+webpack.config.js
+wallaby.config.js

@@ -16,6 +16,7 @@
     "build:umd:min": "NODE_ENV=production BABEL_ENV=umd webpack --progress -p",
     "build:lib": "babel src --out-dir lib",
     "build": "npm run build:umd && npm run build:umd:min && npm run build:lib",
+    "lint": "eslint .",
     "test": "NODE_ENV=test mocha --require babel-register --require ./test/bootstrap.js --timeout 5000"
   },
   "homepage": "https://spiritapp.io",
