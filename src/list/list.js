@@ -12,7 +12,7 @@ class List extends EventEmitter {
     this._model = model
 
     if (model) {
-      const testProto = new model()
+      const testProto = new model() // eslint-disable-line new-cap
 
       if (typeof testProto.toObject !== 'function') {
         throw new Error('Invalid Model prototype. model.toObject does not exist.')
