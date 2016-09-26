@@ -437,9 +437,185 @@ describe('utils', () => {
 
     describe('#remove', () => {
 
+      describe('no model', () => {
+
+        let list
+
+        beforeEach(() => {
+          list = new List(['a', 'b', 'c', 'd'])
+        })
+
+        it('should remove a single value', () => {
+          list.remove('a')
+          expect(list.list).to.deep.equal(['b', 'c', 'd'])
+
+          list.remove('c')
+          expect(list.list).to.deep.equal(['b', 'd'])
+        })
+
+        it('should remove array of values', () => {
+          list.remove(['a', 'c'])
+          expect(list.list).to.deep.equal(['b', 'd'])
+        })
+
+        it('should remove array of number values', () => {
+          list = new List([1, 2, 3, 4, 5])
+          list.remove([3, 5])
+          expect(list.list).to.deep.equal([1, 2, 4])
+        })
+      })
+
+      describe('with model', () => {
+
+        let list
+
+        class Model {
+          constructor(obj) {
+            this.obj = obj
+          }
+        }
+        Model.fromObject = (i) => new Model(i)
+
+        beforeEach(() => {
+          list = new List([
+            { a: 'b' },
+            { b: 'c' },
+            { c: 'd' },
+            { d: 'e' }
+          ], Model)
+        })
+
+        it('should have model instances with obj', () => {
+          expect(list.list.map(i => i.obj)).to.deep.equal([
+            { a: 'b' },
+            { b: 'c' },
+            { c: 'd' },
+            { d: 'e' }
+          ])
+        })
+
+        it('should remove model by instance', () => {
+          const a = list.at(0)
+          const c = list.at(2)
+
+          list.remove(a)
+          list.remove(c)
+
+          expect(list.list.map(i => i.obj)).to.deep.equal([
+            { b: 'c' },
+            { d: 'e' }
+          ])
+        })
+
+        it('should remove array of instances', () => {
+          list.remove([
+            list.at(0),
+            list.at(2),
+            list.at(3)
+          ])
+          expect(list.list.map(i => i.obj)).to.deep.equal([{ b: 'c' }])
+          expect(list).to.have.lengthOf(1)
+        })
+
+      })
+
     })
 
     describe('dispatch changes', () => {
+
+      let spy
+
+      class Model {
+        constructor(obj) {
+          this.obj = obj
+          Object.assign(this, obj)
+        }
+      }
+      Model.fromObject = (obj) => new Model(obj)
+
+      beforeEach(() => {
+        spy = sinon.spy()
+      })
+
+      describe('add', () => {
+
+        it('should listen for add events on primitive values', () => {
+          const list = new List()
+          list.on('add', spy)
+
+          list.add(1)
+          list.add([2, 3, 4])
+          list.add(5)
+
+          expect(spy.callCount).equal(5)
+
+          let values = []
+          for (let j = 0; j < spy.callCount; j++) {
+            values.push(spy.getCall(j).args[0])
+          }
+          expect(values).to.deep.equal([1, 2, 3, 4, 5])
+        })
+
+        it('should listen for add events for objects with model', () => {
+          const list = new List([], Model)
+          list.on('add', spy)
+
+          list.add({ a: 'b' })
+          list.add({ b: 'c' })
+          list.add([{ c: 'd' }, { d: 'e' }])
+
+          expect(spy.callCount).equal(4)
+          expect(spy.getCall(0).args[0]).to.be.an.instanceOf(Model).and.have.property('a', 'b')
+          expect(spy.getCall(1).args[0]).to.be.an.instanceOf(Model).and.have.property('b', 'c')
+          expect(spy.getCall(2).args[0]).to.be.an.instanceOf(Model).and.have.property('c', 'd')
+          expect(spy.getCall(3).args[0]).to.be.an.instanceOf(Model).and.have.property('d', 'e')
+        })
+      })
+
+      describe('remove', () => {
+        it('should listen for remove primitives', () => {
+          const list = new List([1, 2, 3, 4, 5])
+          list.on('remove', spy)
+
+          list.remove(2)
+          list.remove([3, 4, 5])
+          list.remove(1)
+
+          expect(spy.callCount).equal(5)
+          expect(spy.getCall(0).args[0]).equal(2)
+          expect(spy.getCall(1).args[0]).equal(3)
+          expect(spy.getCall(2).args[0]).equal(4)
+          expect(spy.getCall(3).args[0]).equal(5)
+          expect(spy.getCall(4).args[0]).equal(1)
+        })
+
+        it('should listen for remove events for objects with model', () => {
+          const list = new List([
+            { a: 'b' },
+            { b: 'c' },
+            { c: 'd' },
+            { d: 'e' }
+          ], Model)
+
+          list.on('remove', spy)
+
+          const a = list.at(0)
+          const c = list.at(2)
+          const d = list.at(3)
+
+          list.remove(c)
+          list.remove([a, d])
+
+          expect(spy.callCount).equal(3)
+          expect(spy.getCall(0).args[0]).to.be.and.instanceOf(Model).and.have.property('c', 'd')
+          expect(spy.getCall(1).args[0]).to.be.and.instanceOf(Model).and.have.property('a', 'b')
+          expect(spy.getCall(2).args[0]).to.be.and.instanceOf(Model).and.have.property('d', 'e')
+        })
+      })
+
+      describe.skip('change', () => {
+
+      })
 
     })
 

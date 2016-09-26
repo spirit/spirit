@@ -76,7 +76,7 @@ class List extends EventEmitter {
 
   /**
    * Add item to list
-   * @param item
+   * @param {*|Array} item
    */
   add(item) {
     const addSingle = (i) => {
@@ -101,6 +101,34 @@ class List extends EventEmitter {
     Array.isArray(item)
       ? item.forEach(addSingle)
       : addSingle(item)
+  }
+
+  /**
+   * Remove item from list
+   * @param {*|Array} item
+   */
+  remove(item) {
+    const removeSingle = (i) => {
+      const doRemove = (ins) => {
+        let index = this._list.indexOf(ins)
+        if (index !== -1) {
+          this._list.splice(index, 1)
+          this.emit('remove', ins)
+        }
+      }
+
+      if (this._model) {
+        if (i instanceof this._model) {
+          doRemove(i)
+        }
+      } else {
+        doRemove(i)
+      }
+    }
+
+    Array.isArray(item)
+      ? item.forEach(removeSingle)
+      : removeSingle(item)
   }
 
 }
