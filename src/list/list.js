@@ -77,8 +77,11 @@ class List extends EventEmitter {
   /**
    * Add item to list
    * @param {*|Array} item
+   * @returns {*}
    */
   add(item) {
+    let result = null
+
     const addSingle = (i) => {
       let newItem
 
@@ -94,13 +97,22 @@ class List extends EventEmitter {
         newItem = i
       }
 
+      Array.isArray(result)
+        ? result.push(newItem)
+        : result = newItem
+
       this._list.push(newItem)
       this.emit('add', newItem)
     }
 
-    Array.isArray(item)
-      ? item.forEach(addSingle)
-      : addSingle(item)
+    if (Array.isArray(item)) {
+      result = []
+      item.forEach(addSingle)
+    } else {
+      addSingle(item)
+    }
+
+    return result
   }
 
   /**
@@ -108,12 +120,18 @@ class List extends EventEmitter {
    * @param {*|Array} item
    */
   remove(item) {
+    let result = null
+
     const removeSingle = (i) => {
       const doRemove = (ins) => {
         let index = this._list.indexOf(ins)
         if (index !== -1) {
           this._list.splice(index, 1)
           this.emit('remove', ins)
+
+          Array.isArray(result)
+            ? result.push(ins)
+            : result = ins
         }
       }
 
@@ -126,9 +144,14 @@ class List extends EventEmitter {
       }
     }
 
-    Array.isArray(item)
-      ? item.forEach(removeSingle)
-      : removeSingle(item)
+    if (Array.isArray(item)) {
+      result = []
+      item.forEach(removeSingle)
+    } else {
+      removeSingle(item)
+    }
+
+    return result
   }
 
 }

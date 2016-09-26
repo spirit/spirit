@@ -1,4 +1,4 @@
-import { List } from '../utils'
+import List from '../list/list'
 import Param from './param'
 
 class Params extends List {
