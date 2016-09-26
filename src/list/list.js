@@ -24,10 +24,13 @@ class List extends EventEmitter {
       this._list = items.reduce((list, item) => {
         if (this._model) {
           if (item instanceof this._model) {
+            item._list = this
             list.push(item)
           } else {
             if (item instanceof Object && typeof model.fromObject === 'function') {
-              list.push(model.fromObject(item))
+              const itemFromModel = model.fromObject(item)
+              itemFromModel._list = this
+              list.push(itemFromModel)
             } else {
               throw new Error('Could not parse item from model')
             }
@@ -96,8 +99,10 @@ class List extends EventEmitter {
       if (this._model) {
         if (i instanceof this._model) {
           newItem = i
+          newItem._list = this
         } else if (i instanceof Object && typeof this._model.fromObject === 'function') {
           newItem = this._model.fromObject(i)
+          newItem._list = this
         } else {
           throw new Error('Invalid item.')
         }

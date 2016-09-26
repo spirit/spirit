@@ -16,6 +16,18 @@ describe('list', () => {
       class Model {}
       expect(() => new List([], Model)).to.throw(/model.toObject does not exist/)
     })
+    it ('should give list to model instances', () => {
+      class Model { toObject() {} }
+      Model.fromObject = (i) => new Model(i)
+
+      const list = new List([new Model()], Model)
+      expect(list.at(0)._list).to.equal(list)
+      expect(list.add(new Model())._list).to.equal(list)
+
+      list.add([{}, {}])
+      expect(list.at(2)._list).to.equal(list)
+      expect(list.at(3)._list).to.equal(list)
+    })
   })
 
   describe('parse on creation', () => {
