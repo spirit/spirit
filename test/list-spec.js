@@ -307,8 +307,47 @@ describe('list', () => {
     })
   })
 
+  describe('#toObject', () => {
+    it('should convert to readable object from primitives', () => {
+      expect(new List([1, 2, 3, 4, 5]).toObject()).to.deep.equal([1, 2, 3, 4, 5])
+      expect(new List([
+        { a: 'a' },
+        { b: 'b' }
+      ]).toObject()).to.deep.equal([
+        { a: 'a' },
+        { b: 'b' }
+      ])
     })
 
+    it('should convert to readable object from model instances', () => {
+      class Model {
+        constructor(obj) {
+          this.obj = obj
+        }
+
+        toObject() {
+          return this.obj
+        }
+      }
+      Model.fromObject = (i) => new Model(i)
+
+      const list = new List([
+        { a: 'a' },
+        { b: 'b' },
+        { c: 'c' }
+      ], Model)
+
+      const spyA = sinon.spy(list.at(0), 'toObject')
+      const spyB = sinon.spy(list.at(1), 'toObject')
+      const spyC = sinon.spy(list.at(2), 'toObject')
+
+      const obj = list.toObject()
+
+      expect(obj).to.deep.equal([{ a: 'a' }, { b: 'b' }, { c: 'c' }])
+      expect(spyA.called).to.be.true
+      expect(spyB.called).to.be.true
+      expect(spyC.called).to.be.true
+    })
   })
 
   describe('dispatch changes', () => {

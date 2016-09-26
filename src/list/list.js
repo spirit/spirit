@@ -162,6 +162,16 @@ class List extends EventEmitter {
     return result
   }
 
+  /**
+   * Get an object representation of this list
+   * @returns {Array}
+   */
+  toObject() {
+    return this._model
+      ? this.list.map(item => item.toObject())
+      : this.list
+  }
+
 }
 
 export default List
