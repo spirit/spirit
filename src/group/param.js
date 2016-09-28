@@ -75,6 +75,14 @@ class Param extends EventEmitter {
   }
 
   /**
+   * Get the list where this param is attached to
+   * @returns {List}
+   */
+  get list() {
+    return this._list
+  }
+
+  /**
    * Export param to a plain object
    * @returns {object}
    */
