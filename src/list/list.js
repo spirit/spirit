@@ -138,7 +138,7 @@ class List extends EventEmitter {
     const removeSingle = (i) => {
       const doRemove = (ins) => {
         let index = this._list.indexOf(ins)
-        if (index !== -1) {
+        if (index > -1) {
           this._list.splice(index, 1)
 
           if (ins._list && ins._list instanceof List) {
@@ -170,6 +170,21 @@ class List extends EventEmitter {
     }
 
     return result
+  }
+
+  /**
+   * Clear the list
+   */
+  clear() {
+    this.each(this.remove.bind(this))
+  }
+
+  /**
+   * Walk over each item
+   * @returns {*}
+   */
+  each(cb) {
+    return [...this.list].forEach(cb)
   }
 
   /**

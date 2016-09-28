@@ -12,11 +12,11 @@ describe('list', () => {
   })
 
   describe('Model', () => {
-    it ('should fail on invalid model', () => {
+    it('should fail on invalid model', () => {
       class Model {}
       expect(() => new List([], Model)).to.throw(/model.toObject does not exist/)
     })
-    it ('should give list to model instances', () => {
+    it('should give list to model instances', () => {
       class Model { toObject() {} }
       Model.fromObject = (i) => new Model(i)
 
@@ -136,6 +136,7 @@ describe('list', () => {
         constructor(obj) {
           Object.assign(this, obj)
         }
+
         toObject() {}
       }
       Model.fromObject = (obj) => new Model(obj)
@@ -165,6 +166,7 @@ describe('list', () => {
         constructor(obj) {
           Object.assign(this, obj)
         }
+
         toObject() {}
       }
       Model.fromObject = (obj) => new Model(obj)
@@ -263,6 +265,7 @@ describe('list', () => {
         constructor(obj) {
           this.obj = obj
         }
+
         toObject() {}
       }
       Model.fromObject = (i) => new Model(i)
@@ -319,6 +322,84 @@ describe('list', () => {
     })
   })
 
+  describe('#clear', () => {
+
+    let list,
+        a, b, c, d
+
+    class Model {
+      constructor(obj) {
+        this.obj = obj
+      }
+
+      toObject() {}
+    }
+    Model.fromObject = (i) => new Model(i)
+
+    beforeEach(() => {
+      list = new List([
+        { a: 'b' },
+        { b: 'c' },
+        { c: 'd' },
+        { d: 'e' }
+      ], Model)
+
+      a = list.at(0)
+      b = list.at(1)
+      c = list.at(2)
+      d = list.at(3)
+    })
+
+    it('should have list for each item', () => {
+      expect(a._list).equal(list)
+      expect(b._list).equal(list)
+      expect(c._list).equal(list)
+      expect(d._list).equal(list)
+    })
+
+    it('should remove all items', () => {
+      expect(list).to.have.lengthOf(4)
+      list.clear()
+      expect(list).to.have.lengthOf(0)
+
+      expect(a._list).equal(null)
+      expect(b._list).equal(null)
+      expect(c._list).equal(null)
+      expect(d._list).equal(null)
+    })
+  })
+
+  describe('#each', () => {
+
+    it('should create an immutable array', () => {
+      const list = new List([1, 2, 3, 4])
+      const length = list.length
+      const spy = sinon.spy()
+
+      list.each(item => {
+        list.remove(item)
+        spy()
+      })
+
+      expect(spy.callCount).equal(length)
+    })
+
+    it('should walk over each item', () => {
+      const list = new List([1, 2, 3, 4])
+      const spy = sinon.spy()
+
+      list.each(spy)
+
+      let calls = []
+      for (let i = 0; i < spy.callCount; i++) {
+        calls.push(spy.getCall(i).args[0])
+      }
+
+      expect(calls).to.deep.equal([1, 2, 3, 4])
+    })
+
+  })
+
   describe('#toObject', () => {
     it('should convert to readable object from primitives', () => {
       expect(new List([1, 2, 3, 4, 5]).toObject()).to.deep.equal([1, 2, 3, 4, 5])
@@ -371,6 +452,7 @@ describe('list', () => {
         this.obj = obj
         Object.assign(this, obj)
       }
+
       toObject() {}
     }
     Model.fromObject = (obj) => new Model(obj)
