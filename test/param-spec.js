@@ -1,4 +1,5 @@
 import Param from '../src/group/param'
+import Params from '../src/group/params'
 import EvalMap from '../src/group/evalmap'
 
 describe('param', () => {
@@ -79,32 +80,32 @@ describe('param', () => {
       expect(param.value).equal(8)
     })
 
-    it ('should evaluate mapping for object', () => {
+    it('should evaluate mapping for object', () => {
       param.value = '{ foo.bar + 10 }'
-      param.mappings.push(new EvalMap(/foo/, {bar: 10}))
+      param.mappings.push(new EvalMap(/foo/, { bar: 10 }))
       expect(param.value).equal(20)
     })
 
-    it ('should evaluate mapping for function', () => {
+    it('should evaluate mapping for function', () => {
       param.value = '{ bar() - 3 }'
-      param.mappings.push(new EvalMap(/bar/, function(){ return 5 }))
+      param.mappings.push(new EvalMap(/bar/, function() { return 5 }))
       expect(param.value).equal(2)
     })
 
-    it ('should evaluate multiple mappings', () => {
+    it('should evaluate multiple mappings', () => {
       param.value = '{ one() + two() }'
-      param.mappings.push(new EvalMap(/one/, function(){ return 1 }))
-      param.mappings.push(new EvalMap(/two/, function(){ return 2 }))
+      param.mappings.push(new EvalMap(/one/, function() { return 1 }))
+      param.mappings.push(new EvalMap(/two/, function() { return 2 }))
       expect(param.value).equal(3)
     })
 
-    it ('should fail on invalid evaluation', () => {
+    it('should fail on invalid evaluation', () => {
       param.value = '{ one() + two() }'
-      param.mappings.push(new EvalMap(/one/, function(){ return 1 }))
+      param.mappings.push(new EvalMap(/one/, function() { return 1 }))
       expect(() => param.value).to.throw(/two is not defined/)
     })
 
-    it ('should evaluate global function', () => {
+    it('should evaluate global function', () => {
       global.sayHello = (name) => `Hi there ${name}!`
 
       param.value = `{ sayHello('mr robot') }`
@@ -113,10 +114,49 @@ describe('param', () => {
       delete global.sayHello
     })
 
-    it ('should evaluate doubles', () => {
+    it('should evaluate doubles', () => {
       param.value = '{ test + test + test }'
       param.mappings.push(new EvalMap(/test/g, 5))
       expect(param.value).equal(15)
+    })
+
+  })
+
+  describe('have list', () => {
+
+    let params,
+        paramA,
+        paramB,
+        paramC
+
+    beforeEach(() => {
+      params = new Params()
+      paramA = new Param('x', 10)
+      paramB = new Param('y', 100)
+      paramC = new Param('z', 1000)
+    })
+
+    it('should have been added to a list of params', () => {
+      params.add([paramA, paramB, paramC])
+
+      expect(paramA.list).equal(params)
+      expect(paramB.list).equal(params)
+      expect(paramC.list).equal(params)
+    })
+
+    it ('should remove from list of params', () => {
+      params.add([paramA, paramB, paramC])
+      params.remove([paramA, paramB, paramC])
+
+      expect(paramA.list).equal(null)
+      expect(paramB.list).equal(null)
+      expect(paramC.list).equal(null)
+    })
+
+    it ('should not be able to set list of param', () => {
+      params.add(paramA)
+      expect(() => paramA.list = 123).to.throw(/Cannot set property list/)
+      expect(paramA.list).equal(params)
     })
 
   })

@@ -140,6 +140,11 @@ class List extends EventEmitter {
         let index = this._list.indexOf(ins)
         if (index !== -1) {
           this._list.splice(index, 1)
+
+          if (ins._list && ins._list instanceof List) {
+            ins._list = null
+          }
+
           this.emit('remove', ins)
 
           Array.isArray(result)
