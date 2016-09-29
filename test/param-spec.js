@@ -18,7 +18,14 @@ describe('param', () => {
     expect(new Param('x', 120).mappings).to.have.lengthOf(0)
   })
 
+  it ('should fail on invalid property', () => {
+    const param = new Param()
+    expect(() => param.prop = 123).to.throw(/Property needs to be a string/)
+    expect(() => param.prop = {}).to.throw(/Property needs to be a string/)
+  })
+
   describe('from object', () => {
+
     it('should fail on parse invalid object', () => {
       expect(() => Param.fromObject(null)).to.throw(/Object is invalid/)
       expect(() => Param.fromObject(123)).to.throw(/Object is invalid/)
@@ -34,9 +41,11 @@ describe('param', () => {
       expect(param.value).equal(120)
       expect(param.toObject()).deep.equal({ x: 120 })
     })
+
   })
 
   describe('css transform', () => {
+
     it('should indicate property as css transform', () => {
       expect(Param.fromObject({ x: 120 }).isCSSTransform()).to.be.true
       expect(Param.fromObject({ y: 120 }).isCSSTransform()).to.be.true
@@ -51,9 +60,11 @@ describe('param', () => {
       expect(Param.fromObject({ left: 12 }).isCSSTransform()).to.be.false
       expect(Param.fromObject({ borderBottomWidth: 12 }).isCSSTransform()).to.be.false
     })
+
   })
 
   describe('eval', () => {
+
     it('should be an evaluable param', () => {
       expect(new Param('x', '{ foo: "bar" }').isEval()).to.be.true
       expect(new Param('x', ' { foo: "bar" } ').isEval()).to.be.true
@@ -63,6 +74,7 @@ describe('param', () => {
       expect(new Param('x', '12').isEval()).to.be.false
       expect(new Param('x', 23).isEval()).to.be.false
     })
+
   })
 
   describe('eval mapping', () => {

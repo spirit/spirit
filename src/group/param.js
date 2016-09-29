@@ -12,7 +12,9 @@ class Param extends EventEmitter {
     super()
     this.setMaxListeners(Infinity)
 
-    Object.assign(this, { prop, value })
+    if (typeof prop === 'string' && value !== undefined) {
+      Object.assign(this, { prop, value })
+    }
   }
 
   get prop() {
@@ -20,6 +22,10 @@ class Param extends EventEmitter {
   }
 
   set prop(val) {
+    if (typeof val !== 'string') {
+      throw new Error('Property needs to be a string')
+    }
+
     const prevModel = this.toObject()
     const from = this._prop
     const to = val
