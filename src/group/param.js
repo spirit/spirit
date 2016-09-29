@@ -1,5 +1,16 @@
 import { EventEmitter } from 'events'
 
+/**
+ * Param
+ * Containing property and value that can be changed over time
+ *
+ * @fires Param#change
+ * @fires Param#change:prop
+ * @fires Param#change:value
+ * @fires List#change
+ * @fires List#change:prop
+ * @fires List#change:value
+ */
 class Param extends EventEmitter {
 
   _prop = null
@@ -10,6 +21,7 @@ class Param extends EventEmitter {
 
   constructor(prop, value) {
     super()
+
     this.setMaxListeners(Infinity)
 
     if (typeof prop === 'string' && value !== undefined) {
@@ -17,28 +29,80 @@ class Param extends EventEmitter {
     }
   }
 
+  /**
+   * Get current property
+   * @returns {string}
+   */
   get prop() {
     return this._prop
   }
 
+  /**
+   * Set property
+   * @param {string} val
+   * @fires Param#change:prop
+   * @fires List#change
+   * #fires List#change:prop
+   */
   set prop(val) {
     if (typeof val !== 'string') {
       throw new Error('Property needs to be a string')
     }
 
-    const prevModel = this.toObject()
-    const from = this._prop
-    const to = val
+    const evt = {
+      prevModel: this.toObject(),
+      model: { [val]: this.value },
+      changed: {
+        from: this._prop,
+        to: val
+      }
+    }
 
-    this._prop = to
-    this.emit('change:prop', to)
+    // update property
+    this._prop = val
+
+    /**
+     * Param event.
+     *
+     * @event Param#change:prop
+     * @type {string} new property
+     * @type {object}
+     * @property {object} prevModel - param before change
+     * @property {object} model - param after change
+     * @property {object} changed - {from, to}
+     */
+    this.emit('change:prop', val, evt)
 
     if (this._list) {
-      this._list.emit('change', { prevModel, model: this, from, to })
-      this._list.emit('change:prop', { prevModel, model: this, from, to })
+      /**
+       * List event.
+       *
+       * @event List#change
+       * @type {object}
+       * @property {object} prevModel - param before change
+       * @property {object} model - param after change
+       * @property {object} changed - {from, to}
+       */
+      this._list.emit('change', evt)
+
+      /**
+       * List event.
+       *
+       * @event List#change:prop
+       * @type {string} new property
+       * @type {object}
+       * @property {object} prevModel - param before change
+       * @property {object} model - param after change
+       * @property {object} changed - {from, to}
+       */
+      this._list.emit('change:prop', val, evt)
     }
   }
 
+  /**
+   * Get current value.
+   * @returns {*}
+   */
   get value() {
     if (this.isEval()) {
       // create available mappings for current value
@@ -66,17 +130,61 @@ class Param extends EventEmitter {
     return this._value
   }
 
+  /**
+   * Set current value
+   * @param {*} val
+   * @fires Param#change:value
+   * @fires List#change
+   * @fires List#change:value
+   */
   set value(val) {
-    const prevModel = this.toObject()
-    const from = this._value
-    const to = val
+    const evt = {
+      prevModel: this.toObject(),
+      model: { [this.prop]: val },
+      changed: {
+        from: this._value,
+        to: val
+      }
+    }
 
-    this._value = to
-    this.emit('change:value', to)
+    // set value
+    this._value = val
+
+    /**
+     * Param event.
+     *
+     * @event Param#change:value
+     * @type {*} new value
+     * @type {object}
+     * @property {object} prevModel - param before change
+     * @property {object} model - param after change
+     * @property {object} changed - {from, to}
+     */
+    this.emit('change:value', val, evt)
 
     if (this._list) {
-      this._list.emit('change', { prevModel, model: this, from, to })
-      this._list.emit('change:value', { prevModel, model: this, from, to })
+      /**
+       * List event.
+       *
+       * @event List#change
+       * @type {object}
+       * @property {object} prevModel - param before change
+       * @property {object} model - param after change
+       * @property {object} changed - {from, to}
+       */
+      this._list.emit('change', evt)
+
+      /**
+       * List event.
+       *
+       * @event List#change:value
+       * @type {*} new value
+       * @type {object}
+       * @property {object} prevModel - param before change
+       * @property {object} model - param after change
+       * @property {object} changed - {from, to}
+       */
+      this._list.emit('change:value', val, evt)
     }
   }
 

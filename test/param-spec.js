@@ -18,7 +18,7 @@ describe('param', () => {
     expect(new Param('x', 120).mappings).to.have.lengthOf(0)
   })
 
-  it ('should fail on invalid property', () => {
+  it('should fail on invalid property', () => {
     const param = new Param()
     expect(() => param.prop = 123).to.throw(/Property needs to be a string/)
     expect(() => param.prop = {}).to.throw(/Property needs to be a string/)
@@ -156,7 +156,7 @@ describe('param', () => {
       expect(paramC.list).equal(params)
     })
 
-    it ('should remove from list of params', () => {
+    it('should remove from list of params', () => {
       params.add([paramA, paramB, paramC])
       params.remove([paramA, paramB, paramC])
 
@@ -165,7 +165,7 @@ describe('param', () => {
       expect(paramC.list).equal(null)
     })
 
-    it ('should not be able to set list of param', () => {
+    it('should not be able to set list of param', () => {
       params.add(paramA)
       expect(() => paramA.list = 123).to.throw(/Cannot set property list/)
       expect(paramA.list).equal(params)
@@ -203,6 +203,27 @@ describe('param', () => {
       expect(spy.callCount).equal(3)
     })
 
+    it('should emit prop changes with previous model', () => {
+      param.on('change:prop', spy)
+
+      param.prop = 'y'
+      param.prop = 'z'
+
+      expect(spy.getCall(0).args[0]).to.equal('y')
+      expect(spy.getCall(0).args[1]).to.deep.equal({
+        prevModel: { x: '120' },
+        model: { y: '120' },
+        changed: { from: 'x', to: 'y' }
+      })
+
+      expect(spy.getCall(1).args[0]).to.equal('z')
+      expect(spy.getCall(1).args[1]).to.deep.equal({
+        prevModel: { y: '120' },
+        model: { z: '120' },
+        changed: { from: 'y', to: 'z' }
+      })
+    })
+
     it('should emit value changes', () => {
       param.on('change:value', spy)
       param.value = 120
@@ -218,6 +239,26 @@ describe('param', () => {
       }
 
       expect(values).deep.equal([120, 119, 118, 117, 116, 115, 114, 113, 112, 111])
+    })
+
+    it('should emit value changes with previous model', () => {
+      param.on('change:value', spy)
+      param.value = 100
+      param.value = 101
+
+      expect(spy.getCall(0).args[0]).to.equal(100)
+      expect(spy.getCall(0).args[1]).to.deep.equal({
+        prevModel: { x: '120' },
+        model: { x: 100 },
+        changed: { from: '120', to: 100 }
+      })
+
+      expect(spy.getCall(1).args[0]).to.equal(101)
+      expect(spy.getCall(1).args[1]).to.deep.equal({
+        prevModel: { x: 100 },
+        model: { x: 101 },
+        changed: { from: 100, to: 101 }
+      })
     })
 
   })
