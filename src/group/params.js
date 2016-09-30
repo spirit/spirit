@@ -1,6 +1,17 @@
 import List from '../list/list'
 import Param from './param'
 
+/**
+ * List of params.
+ * @fires Params#change:list
+ * @fires Params#add
+ * @fires Params#remove
+ *
+ * Bubble events from items
+ * @fires Params#change
+ * @fires Params#change:prop
+ * @fires Params#change:value
+ */
 class Params extends List {
 
   constructor(params) {
