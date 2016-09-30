@@ -25,7 +25,10 @@ class Param extends EventEmitter {
     this.setMaxListeners(Infinity)
 
     if (typeof prop === 'string' && value !== undefined) {
-      Object.assign(this, { prop, value })
+      Object.assign(this, {
+        _prop: prop,
+        _value: value
+      })
     }
   }
 
@@ -50,9 +53,10 @@ class Param extends EventEmitter {
     }
 
     const evt = {
-      prevModel: this.toObject(),
-      model: { [val]: this.value },
+      prevModel: Param.fromObject(this.toObject()),
+      model: Param.fromObject({ [val]: this.value }),
       changed: {
+        type: 'prop',
         from: this._prop,
         to: val
       }
@@ -82,7 +86,7 @@ class Param extends EventEmitter {
      * @property {object} model - param after change
      * @property {object} changed - {from, to}
      */
-    const evtChangeProp = ['change:prop', val, evt]
+    const evtChangeProp = ['change:prop', evt, val]
 
     this.emit(...evtChange)
     this.emit(...evtChangeProp)
@@ -133,9 +137,10 @@ class Param extends EventEmitter {
    */
   set value(val) {
     const evt = {
-      prevModel: this.toObject(),
-      model: { [this.prop]: val },
+      prevModel: Param.fromObject(this.toObject()),
+      model: Param.fromObject({ [this.prop]: val }),
       changed: {
+        type: 'value',
         from: this._value,
         to: val
       }
@@ -151,7 +156,7 @@ class Param extends EventEmitter {
      * @type {object}
      * @property {object} prevModel - param before change
      * @property {object} model - param after change
-     * @property {object} changed - {from, to}
+     * @property {object} changed - {type, from, to}
      */
     const evtChange = ['change', evt]
 
@@ -159,13 +164,13 @@ class Param extends EventEmitter {
      * Param event.
      *
      * @event Param#change:value
-     * @type {*} new value
      * @type {object}
      * @property {object} prevModel - param before change
      * @property {object} model - param after change
      * @property {object} changed - {from, to}
+     * @type {*} new value
      */
-    const evtChangeValue = ['change:value', val, evt]
+    const evtChangeValue = ['change:value', evt, val]
 
     this.emit(...evtChange)
     this.emit(...evtChangeValue)

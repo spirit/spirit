@@ -187,18 +187,16 @@ describe('params', () => {
       params.on('change', spyParams)
       params.on('change:value', spyParamsValue)
 
-      // update
       param.value++
       param.value++
 
-      expect(spyParam.withArgs(11).calledOnce).to.be.true
-      expect(spyParam.withArgs(12).calledOnce).to.be.true
+      expect(spyParam.calledTwice).to.be.true
       expect(spyParams.calledTwice).to.be.true
       expect(spyParamsValue.calledTwice).to.be.true
     })
 
     it('should emit param prop change', () => {
-      const params = new Params([{ x: 10 }, { y: 100 }], Param)
+      const params = new Params([{ x: 10 }, { y: 100 }])
       const param = params.at(0)
 
       const spyParams = sinon.spy()
@@ -213,8 +211,7 @@ describe('params', () => {
       param.prop = 'z'
       param.prop = 'translateX'
 
-      expect(spyParam.withArgs('z').calledOnce).to.be.true
-      expect(spyParam.withArgs('translateX').calledOnce).to.be.true
+      expect(spyParam.calledTwice).to.be.true
       expect(spyParams.calledTwice).to.be.true
       expect(spyParamsProp.calledTwice).to.be.true
       expect(params.toArray()).to.deep.equal([{ translateX: 10 }, { y: 100 }])

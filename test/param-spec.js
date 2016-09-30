@@ -198,8 +198,6 @@ describe('param', () => {
       param.prop = 'z'
       param.prop = 'y'
 
-      expect(spy.withArgs('y').callCount).equal(2)
-      expect(spy.withArgs('z').callCount).equal(1)
       expect(spy.callCount).equal(3)
     })
 
@@ -209,19 +207,15 @@ describe('param', () => {
       param.prop = 'y'
       param.prop = 'z'
 
-      expect(spy.getCall(0).args[0]).to.equal('y')
-      expect(spy.getCall(0).args[1]).to.deep.equal({
-        prevModel: { x: '120' },
-        model: { y: '120' },
-        changed: { from: 'x', to: 'y' }
-      })
+      expect(spy.getCall(0).args[1]).to.equal('y')
+      expect(spy.getCall(0).args[0].prevModel.toObject()).to.deep.equal({ x: '120' })
+      expect(spy.getCall(0).args[0].model.toObject()).to.deep.equal({ y: '120' })
+      expect(spy.getCall(0).args[0].changed).to.deep.equal({ type: 'prop', from: 'x', to: 'y' })
 
-      expect(spy.getCall(1).args[0]).to.equal('z')
-      expect(spy.getCall(1).args[1]).to.deep.equal({
-        prevModel: { y: '120' },
-        model: { z: '120' },
-        changed: { from: 'y', to: 'z' }
-      })
+      expect(spy.getCall(1).args[1]).to.equal('z')
+      expect(spy.getCall(1).args[0].prevModel.toObject()).to.deep.equal({ y: '120' })
+      expect(spy.getCall(1).args[0].model.toObject()).to.deep.equal({ z: '120' })
+      expect(spy.getCall(1).args[0].changed).to.deep.equal({ type: 'prop', from: 'y', to: 'z' })
     })
 
     it('should emit value changes', () => {
@@ -235,7 +229,7 @@ describe('param', () => {
 
       let values = []
       for (let j = 0; j < spy.callCount; j++) {
-        values.push(spy.getCall(j).args[0])
+        values.push(spy.getCall(j).args[1])
       }
 
       expect(values).deep.equal([120, 119, 118, 117, 116, 115, 114, 113, 112, 111])
@@ -246,18 +240,22 @@ describe('param', () => {
       param.value = 100
       param.value = 101
 
-      expect(spy.getCall(0).args[0]).to.equal(100)
-      expect(spy.getCall(0).args[1]).to.deep.equal({
-        prevModel: { x: '120' },
-        model: { x: 100 },
-        changed: { from: '120', to: 100 }
+      expect(spy.getCall(0).args[1]).to.equal(100)
+      expect(spy.getCall(0).args[0].prevModel.toObject()).to.deep.equal({ x: '120' })
+      expect(spy.getCall(0).args[0].model.toObject()).to.deep.equal({ x: 100 })
+      expect(spy.getCall(0).args[0].changed).to.deep.equal({
+        type: 'value',
+        from: '120',
+        to: 100
       })
 
-      expect(spy.getCall(1).args[0]).to.equal(101)
-      expect(spy.getCall(1).args[1]).to.deep.equal({
-        prevModel: { x: 100 },
-        model: { x: 101 },
-        changed: { from: 100, to: 101 }
+      expect(spy.getCall(1).args[1]).to.equal(101)
+      expect(spy.getCall(1).args[0].prevModel.toObject()).to.deep.equal({ x: 100 })
+      expect(spy.getCall(1).args[0].model.toObject()).to.deep.equal({ x: 101 })
+      expect(spy.getCall(1).args[0].changed).to.deep.equal({
+        type: 'value',
+        from: 100,
+        to: 101
       })
     })
 
