@@ -7,6 +7,12 @@ describe('params', () => {
     expect(new Params()).to.have.lengthOf(0)
   })
 
+  it('should parse object of params', () => {
+    const params = new Params({ x: 10, width: 100 })
+    expect(params).to.have.lengthOf(2)
+    expect(params.toArray()).to.deep.equal([{ x: 10 }, { width: 100 }])
+  })
+
   describe('list', () => {
     it('should get list', () => {
       const params = new Params([{ x: 10 }, { y: 20 }])
@@ -101,7 +107,10 @@ describe('params', () => {
   })
 
   describe('#toObject', () => {
-
+    it('should convert to a valid object', () => {
+      const params = new Params([{ x: 100 }, { y: 200 }, { z: 300 }])
+      expect(params.toObject()).to.deep.equal({x: 100, y: 200, z: 300})
+    })
   })
 
   describe('#haveProp', () => {
@@ -208,7 +217,7 @@ describe('params', () => {
       expect(spyParam.withArgs('translateX').calledOnce).to.be.true
       expect(spyParams.calledTwice).to.be.true
       expect(spyParamsProp.calledTwice).to.be.true
-      expect(params.toObject()).to.deep.equal([{ translateX: 10 }, { y: 100 }])
+      expect(params.toArray()).to.deep.equal([{ translateX: 10 }, { y: 100 }])
     })
 
   })

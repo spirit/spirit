@@ -15,6 +15,14 @@ import Param from './param'
 class Params extends List {
 
   constructor(params) {
+    // parse by object
+    if (!Array.isArray(params) && params instanceof Object) {
+      params = Object.keys(params).reduce((result, param) => {
+        result.push({ [param]: params[param] })
+        return result
+      }, [])
+    }
+
     super(params, Param)
   }
 
@@ -34,6 +42,14 @@ class Params extends List {
    */
   haveProp(prop) {
     return this._list.filter(p => p.prop === prop).length > 0
+  }
+
+  /**
+   * Convert params to an object
+   * @returns {object}
+   */
+  toObject() {
+    return this._list.reduce((obj, param) => ({ ...obj, ...param.toObject() }), {})
   }
 
 }
