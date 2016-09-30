@@ -64,6 +64,17 @@ class Param extends EventEmitter {
     /**
      * Param event.
      *
+     * @event Param#change
+     * @type {object}
+     * @property {object} prevModel - param before change
+     * @property {object} model - param after change
+     * @property {object} changed - {from, to}
+     */
+    const evtChange = ['change', evt]
+
+    /**
+     * Param event.
+     *
      * @event Param#change:prop
      * @type {string} new property
      * @type {object}
@@ -71,31 +82,14 @@ class Param extends EventEmitter {
      * @property {object} model - param after change
      * @property {object} changed - {from, to}
      */
-    this.emit('change:prop', val, evt)
+    const evtChangeProp = ['change:prop', val, evt]
+
+    this.emit(...evtChange)
+    this.emit(...evtChangeProp)
 
     if (this._list) {
-      /**
-       * List event.
-       *
-       * @event List#change
-       * @type {object}
-       * @property {object} prevModel - param before change
-       * @property {object} model - param after change
-       * @property {object} changed - {from, to}
-       */
-      this._list.emit('change', evt)
-
-      /**
-       * List event.
-       *
-       * @event List#change:prop
-       * @type {string} new property
-       * @type {object}
-       * @property {object} prevModel - param before change
-       * @property {object} model - param after change
-       * @property {object} changed - {from, to}
-       */
-      this._list.emit('change:prop', val, evt)
+      this._list.emit(...evtChange)
+      this._list.emit(...evtChangeProp)
     }
   }
 
@@ -153,6 +147,17 @@ class Param extends EventEmitter {
     /**
      * Param event.
      *
+     * @event Param#change
+     * @type {object}
+     * @property {object} prevModel - param before change
+     * @property {object} model - param after change
+     * @property {object} changed - {from, to}
+     */
+    const evtChange = ['change', evt]
+
+    /**
+     * Param event.
+     *
      * @event Param#change:value
      * @type {*} new value
      * @type {object}
@@ -160,31 +165,14 @@ class Param extends EventEmitter {
      * @property {object} model - param after change
      * @property {object} changed - {from, to}
      */
-    this.emit('change:value', val, evt)
+    const evtChangeValue = ['change:value', val, evt]
+
+    this.emit(...evtChange)
+    this.emit(...evtChangeValue)
 
     if (this._list) {
-      /**
-       * List event.
-       *
-       * @event List#change
-       * @type {object}
-       * @property {object} prevModel - param before change
-       * @property {object} model - param after change
-       * @property {object} changed - {from, to}
-       */
-      this._list.emit('change', evt)
-
-      /**
-       * List event.
-       *
-       * @event List#change:value
-       * @type {*} new value
-       * @type {object}
-       * @property {object} prevModel - param before change
-       * @property {object} model - param after change
-       * @property {object} changed - {from, to}
-       */
-      this._list.emit('change:value', val, evt)
+      this._list.emit(...evtChange)
+      this._list.emit(...evtChangeValue)
     }
   }
 
