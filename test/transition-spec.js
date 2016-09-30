@@ -104,6 +104,31 @@ describe('transition', () => {
     })
   })
 
+  describe('#toObject', () => {
+
+    let tr
+
+    beforeEach(() => {
+      tr = new Transition(12, { x: 100, y: 200, z: 300 }, 'Quint.easeOut')
+    })
+
+    it('should return a object with params as object', () => {
+      expect(tr.toObject()).to.deep.equal({
+        frame: 12,
+        ease: 'Quint.easeOut',
+        params: { x: 100, y: 200, z: 300 }
+      })
+    })
+
+    it('should return a object with params as array', () => {
+      expect(tr.toObject(true)).to.deep.equal({
+        frame: 12,
+        ease: 'Quint.easeOut',
+        params: [{ x: 100 }, { y: 200 }, { z: 300 }]
+      })
+    })
+  })
+
   describe('dispatch changes', () => {
 
     let transition,
@@ -132,7 +157,7 @@ describe('transition', () => {
       expect(spy.withArgs('Strong.easeOut').calledOnce).to.be.true
     })
 
-    it ('should not dispatch when ease is not changed ', () => {
+    it('should not dispatch when ease is not changed ', () => {
       transition.on('change:ease', spy)
       transition.ease = 'Linear.easeNone'
       expect(spy.callCount).equal(0)

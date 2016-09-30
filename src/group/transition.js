@@ -97,7 +97,7 @@ class Transition extends EventEmitter {
 
   /**
    * Set params
-   * @param {object|Params} p
+   * @param {Params} p
    */
   set params(p) {
     if (!(p instanceof Params)) {
@@ -107,6 +107,18 @@ class Transition extends EventEmitter {
     this._params.clear()
     this._params = p
     this.emit('change:params', p)
+  }
+
+  /**
+   * Convert this transition to object
+   * @returns {object}
+   */
+  toObject(paramsAsArray = false) {
+    return {
+      frame: this.frame,
+      ease: this.ease,
+      params: paramsAsArray ? this.params.toArray() : this.params.toObject()
+    }
   }
 
 }
