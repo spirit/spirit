@@ -138,6 +138,15 @@ class Transition extends EventEmitter {
     }
   }
 
+  /**
+   * Clean up this transition.
+   * Removes all listeners
+   */
+  destroy() {
+    this._params.removeAllListeners()
+    this.removeAllListeners()
+  }
+
 }
 
 export default Transition

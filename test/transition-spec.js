@@ -3,6 +3,16 @@ import Params from '../src/group/params'
 
 describe('transition', () => {
 
+  let sandbox
+
+  beforeEach(() => {
+  	sandbox = sinon.sandbox.create()
+  })
+
+  afterEach(() => {
+    sandbox.restore()
+  })
+
   describe('parse', () => {
     it('should fail with invalid frame', () => {
       expect(() => new Transition(null)).to.throw(/Invalid frame/)
@@ -129,6 +139,23 @@ describe('transition', () => {
     })
   })
 
+  describe('#destroy', () => {
+    it('should kill all listeners', () => {
+      const spy = sandbox.spy()
+      const tr = new Transition(0, {x: 100})
+      const x = tr.params.get('x')
+
+      sandbox.spy(tr.params, 'removeAllListeners')
+      tr.on('change:param', spy)
+      x.value++
+      expect(spy.calledOnce).to.be.true
+      tr.destroy()
+      expect(tr.params.removeAllListeners.calledOnce).to.be.true
+      x.value++
+      expect(spy.calledOnce).to.be.true
+    })
+  })
+
   describe('dispatch changes', () => {
 
     let transition,
@@ -136,7 +163,7 @@ describe('transition', () => {
 
     beforeEach(() => {
       transition = new Transition(0)
-      spy = sinon.spy()
+      spy = sandbox.spy()
     })
 
     it('should change frame', () => {
@@ -215,6 +242,5 @@ describe('transition', () => {
     })
 
   })
-
 
 })
