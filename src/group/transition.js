@@ -54,6 +54,10 @@ class Transition extends EventEmitter {
       throw new Error('Frame should be a number')
     }
 
+    if (f === this._frame) {
+      return
+    }
+
     this._frame = f
     this.emit('change:frame', f)
   }
@@ -71,6 +75,14 @@ class Transition extends EventEmitter {
    * @param {string|function} e
    */
   set ease(e) {
+    if (typeof e !== 'string' && typeof e !== 'function') {
+      throw new Error('Ease should be a string or function')
+    }
+
+    if (e === this._ease) {
+      return
+    }
+
     this._ease = e
     this.emit('change:ease', e)
   }

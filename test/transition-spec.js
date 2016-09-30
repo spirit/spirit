@@ -42,6 +42,22 @@ describe('transition', () => {
     })
   })
 
+  describe('frame', () => {
+    it('should fail when try to set invalid frame', () => {
+      const tr = new Transition(12)
+      expect(() => tr.frame = {}).to.throw(/Frame should be a number/)
+      expect(() => tr.frame = function() {}).to.throw(/Frame should be a number/)
+    })
+  })
+
+  describe('ease', () => {
+    it('should fail when try to set invalid ease', () => {
+      const tr = new Transition(12)
+      expect(() => tr.ease = {}).to.throw(/Ease should be a string or function/)
+      expect(() => tr.ease = 10).to.throw(/Ease should be a string or function/)
+    })
+  })
+
   describe('params', () => {
 
     let tr,
@@ -56,6 +72,7 @@ describe('transition', () => {
 
     it('should have params', () => {
       expect(tr.params.toObject()).deep.equal({ width: 100, height: 200 })
+      expect(tr.params.toArray()).deep.equal([{ width: 100 }, { height: 200 }])
     })
 
     it('should clear list on each param when changing params', () => {
@@ -83,7 +100,7 @@ describe('transition', () => {
 
     it('should reassign list to params by override params', () => {
       tr.params = [pW, pH, { top: '100px' }]
-      expect(tr.params.toObject()).to.deep.equal({width: 100, height: 200, top: '100px'})
+      expect(tr.params.toObject()).to.deep.equal({ width: 100, height: 200, top: '100px' })
     })
   })
 
@@ -103,10 +120,22 @@ describe('transition', () => {
       expect(spy.withArgs(10).calledOnce).to.be.true
     })
 
+    it('should not dispatch when frame is not changed', () => {
+      transition.on('change:frame', spy)
+      transition.frame = 0
+      expect(spy.callCount).equal(0)
+    })
+
     it('should change ease', () => {
       transition.on('change:ease', spy)
       transition.ease = 'Strong.easeOut'
       expect(spy.withArgs('Strong.easeOut').calledOnce).to.be.true
+    })
+
+    it ('should not dispatch when ease is not changed ', () => {
+      transition.on('change:ease', spy)
+      transition.ease = 'Linear.easeNone'
+      expect(spy.callCount).equal(0)
     })
 
     it('should change params', () => {
