@@ -171,9 +171,47 @@ describe('transition', () => {
       expect(spy.withArgs(newParams).calledOnce).to.be.true
     })
 
-    it('should bubble param change', () => {
-      transition.on('change:param', spy)
+    describe('bubble param events', () => {
 
+      beforeEach(() => {
+        transition.params = { x: 200, y: 300 }
+      })
+
+      it('should dispatch change:param', () => {
+        transition.on('change:param', spy)
+
+        const x = transition.params.get('x')
+        x.value++
+        x.value++
+
+        expect(spy.callCount).equal(2)
+        expect(spy.getCall(0).args[0].changed).to.deep.equal({ type: 'value', from: 200, to: 201 })
+        expect(spy.getCall(1).args[0].changed).to.deep.equal({ type: 'value', from: 201, to: 202 })
+      })
+
+      it('should dispatch change:param:prop', () => {
+        transition.on('change:param:prop', spy)
+
+        const x = transition.params.get('x')
+        x.prop = 'skewX'
+        x.prop = 'skewY'
+
+        expect(spy.callCount).equal(2)
+        expect(spy.getCall(0).args[0].changed).to.deep.equal({ type: 'prop', from: 'x', to: 'skewX' })
+        expect(spy.getCall(1).args[0].changed).to.deep.equal({ type: 'prop', from: 'skewX', to: 'skewY' })
+      })
+
+      it ('should dispatch change:param:value', () => {
+        transition.on('change:param:value', spy)
+
+        const x = transition.params.get('x')
+        x.value--
+        x.value--
+
+        expect(spy.callCount).equal(2)
+        expect(spy.getCall(0).args[0].changed).to.deep.equal({ type: 'value', from: 200, to: 199 })
+        expect(spy.getCall(1).args[0].changed).to.deep.equal({ type: 'value', from: 199, to: 198 })
+      })
     })
 
   })

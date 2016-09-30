@@ -104,8 +104,25 @@ class Transition extends EventEmitter {
       p = new Params(p)
     }
 
+    this._params.removeAllListeners()
     this._params.clear()
     this._params = p
+
+    // bubble change
+    this._params.on('change', function() {
+      this.emit('change:param', ...arguments)
+    }.bind(this))
+
+    // bubble change prop
+    this._params.on('change:prop', function(){
+      this.emit('change:param:prop', ...arguments)
+    }.bind(this))
+
+    // bubble change value
+    this._params.on('change:value', function(){
+      this.emit('change:param:value', ...arguments)
+    }.bind(this))
+
     this.emit('change:params', p)
   }
 
