@@ -191,7 +191,7 @@ class List extends EventEmitter {
    * Get an object representation of this list
    * @returns {Array}
    */
-  toObject() {
+  toArray() {
     return this._model
       ? this.list.map(item => item.toObject())
       : this.list

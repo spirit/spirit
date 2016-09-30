@@ -402,11 +402,11 @@ describe('list', () => {
 
   describe('#toObject', () => {
     it('should convert to readable object from primitives', () => {
-      expect(new List([1, 2, 3, 4, 5]).toObject()).to.deep.equal([1, 2, 3, 4, 5])
+      expect(new List([1, 2, 3, 4, 5]).toArray()).to.deep.equal([1, 2, 3, 4, 5])
       expect(new List([
         { a: 'a' },
         { b: 'b' }
-      ]).toObject()).to.deep.equal([
+      ]).toArray()).to.deep.equal([
         { a: 'a' },
         { b: 'b' }
       ])
@@ -434,7 +434,7 @@ describe('list', () => {
       const spyB = sinon.spy(list.at(1), 'toObject')
       const spyC = sinon.spy(list.at(2), 'toObject')
 
-      const obj = list.toObject()
+      const obj = list.toArray()
 
       expect(obj).to.deep.equal([{ a: 'a' }, { b: 'b' }, { c: 'c' }])
       expect(spyA.called).to.be.true
