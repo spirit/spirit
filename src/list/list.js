@@ -1,11 +1,18 @@
 import { EventEmitter } from 'events'
 
+/**
+ * List
+ *
+ * @fires List#add
+ * @fires List#remove
+ * @fires List#change:list
+ */
 class List extends EventEmitter {
 
   _list = []
   _model = null
 
-  constructor(items, model = null) {
+  constructor(items = [], model = null) {
     super()
     this.setMaxListeners(Infinity)
 
@@ -56,6 +63,7 @@ class List extends EventEmitter {
   /**
    * Reset the list
    * @param {Array} l
+   * @fires List#change:list
    */
   set list(l) {
     if (!Array.isArray(l)) {
@@ -63,6 +71,13 @@ class List extends EventEmitter {
     }
 
     this._list = l
+
+    /**
+     * List event.
+     *
+     * @event List#change:list
+     * @type {Array}
+     */
     this.emit('change:list', l)
   }
 
@@ -90,6 +105,7 @@ class List extends EventEmitter {
   /**
    * Add item to list
    * @param {*|Array} item
+   * @fires List#add
    * @returns {*}
    */
   add(item) {
@@ -117,6 +133,13 @@ class List extends EventEmitter {
         : result = newItem
 
       this._list.push(newItem)
+
+      /**
+       * List event.
+       *
+       * @event List#add
+       * @type {*}
+       */
       this.emit('add', newItem)
     }
 
@@ -132,6 +155,7 @@ class List extends EventEmitter {
 
   /**
    * Remove item from list
+   * @fires List#remove
    * @param {*|Array} item
    */
   remove(item) {
@@ -147,6 +171,12 @@ class List extends EventEmitter {
             ins._list = null
           }
 
+          /**
+           * List event.
+           *
+           * @event List#remove
+           * @type {*}
+           */
           this.emit('remove', ins)
 
           Array.isArray(result)
