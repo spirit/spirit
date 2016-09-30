@@ -19,28 +19,30 @@ class List extends EventEmitter {
       }
     }
 
-    // parse initial list
-    if (Array.isArray(items)) {
-      this._list = items.reduce((list, item) => {
-        if (this._model) {
-          if (item instanceof this._model) {
-            item._list = this
-            list.push(item)
-          } else {
-            if (item instanceof Object && typeof model.fromObject === 'function') {
-              const itemFromModel = model.fromObject(item)
-              itemFromModel._list = this
-              list.push(itemFromModel)
-            } else {
-              throw new Error('Could not parse item from model')
-            }
-          }
-        } else {
-          list.push(item)
-        }
-        return list
-      }, [])
+    if (!Array.isArray(items)) {
+      throw new Error('Items should be an array')
     }
+
+    // parse initial list
+    this._list = items.reduce((list, item) => {
+      if (this._model) {
+        if (item instanceof this._model) {
+          item._list = this
+          list.push(item)
+        } else {
+          if (item instanceof Object && typeof model.fromObject === 'function') {
+            const itemFromModel = model.fromObject(item)
+            itemFromModel._list = this
+            list.push(itemFromModel)
+          } else {
+            throw new Error('Could not parse item from model')
+          }
+        }
+      } else {
+        list.push(item)
+      }
+      return list
+    }, [])
   }
 
   /**

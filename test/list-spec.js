@@ -11,6 +11,10 @@ describe('list', () => {
     expect(list._maxListeners).equal(Infinity)
   })
 
+  it ('should fail provide something else than array', () => {
+    expect(() => new List({})).to.throw(/Items should be an array/)
+  })
+
   describe('Model', () => {
     it('should fail on invalid model', () => {
       class Model {}
