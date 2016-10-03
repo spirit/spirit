@@ -6,10 +6,12 @@ import Params from './params'
  * Containing frame, ease and params information.
  *
  * @fires Transition#change
- * @fires Transition@change:frame
- * @fires Transition@change:ease
- * @fires Transition@change:params
- * @fires Transition@change:param
+ * @fires Transition#change:frame
+ * @fires Transition#change:ease
+ * @fires Transition#change:params
+ * @fires Transition#change:param
+ * @fires Transition#add:param
+ * @fires Transition#remove:param
  */
 class Transition extends EventEmitter {
 
@@ -48,6 +50,7 @@ class Transition extends EventEmitter {
   /**
    * Set frame
    * @param {number} f
+   * @fires Transition#change:frame
    */
   set frame(f) {
     if (isNaN(f)) {
@@ -59,6 +62,13 @@ class Transition extends EventEmitter {
     }
 
     this._frame = f
+
+    /**
+     * Transition event.
+     *
+     * @event Transition#change:frame
+     * @type {number}
+     */
     this.emit('change:frame', f)
   }
 
@@ -73,6 +83,7 @@ class Transition extends EventEmitter {
   /**
    * Set ease
    * @param {string|function} e
+   * @fires Transition#change:ease
    */
   set ease(e) {
     if (typeof e !== 'string' && typeof e !== 'function') {
@@ -84,6 +95,13 @@ class Transition extends EventEmitter {
     }
 
     this._ease = e
+
+    /**
+     * Transition event.
+     *
+     * @event Transition#change:ease
+     * @type {string|function}
+     */
     this.emit('change:ease', e)
   }
 
@@ -98,6 +116,7 @@ class Transition extends EventEmitter {
   /**
    * Set params
    * @param {Params} p
+   * @fires Transition#change:params
    */
   set params(p) {
     if (!(p instanceof Params)) {
@@ -123,6 +142,12 @@ class Transition extends EventEmitter {
       this.emit('change:param:value', ...arguments)
     }.bind(this))
 
+    /**
+     * Transition event.
+     *
+     * @event Transition#change:params
+     * @type {Params}
+     */
     this.emit('change:params', p)
   }
 
