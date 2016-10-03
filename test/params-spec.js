@@ -162,6 +162,14 @@ describe('params', () => {
     })
   })
 
+  describe('duplicates', () => {
+    it ('should not allow duplicates', () => {
+      const params = new Params({x: 10, y: 100})
+      expect(() => params.add({x: 100})).to.throw(/List has duplicates/)
+      expect(() => new Params([{x: 10}, {x: 100}])).to.throw(/List has duplicates/)
+    })
+  })
+
   describe('dispatch changes', () => {
 
     it('should change list', () => {

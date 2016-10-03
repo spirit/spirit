@@ -24,6 +24,7 @@ class Params extends List {
     }
 
     super(params, Param)
+    this.duplicates = { prop: 'prop' }
   }
 
   /**
