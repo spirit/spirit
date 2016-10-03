@@ -52,6 +52,46 @@ describe('transition', () => {
     })
   })
 
+  describe('from object', () => {
+
+    it('should on parse invalid object', () => {
+      expect(() => Transition.fromObject(null)).to.throw(/Object is invalid/)
+      expect(() => Transition.fromObject(123)).to.throw(/Object is invalid/)
+      expect(() => Transition.fromObject([])).to.throw(/Object is invalid/)
+      expect(() => Transition.fromObject({})).to.throw(/Object is invalid/)
+    })
+
+    it('should parse transition from object', () => {
+      const tr = Transition.fromObject({ frame: 12, ease: 'Strong.easeOut', params: { x: 100, y: 200 } })
+
+      expect(tr).to.be.an.instanceOf(Transition)
+      expect(tr.frame).equal(12)
+      expect(tr.ease).equal('Strong.easeOut')
+      expect(tr.params).to.be.an.instanceOf(Params)
+      expect(tr.params).to.have.lengthOf(2)
+      expect(tr.toObject(true)).to.deep.equal({
+        frame: 12,
+        ease: 'Strong.easeOut',
+        params: [{ x: 100 }, { y: 200 }]
+      })
+    })
+
+    it('should parse transition without ease and params', () => {
+      const tr = Transition.fromObject({ frame: 5 })
+
+      expect(tr.frame).equal(5)
+      expect(tr.ease).equal('Linear.easeNone')
+      expect(tr.params).to.be.instanceOf(Params)
+      expect(tr.params).to.have.lengthOf(0)
+      expect(tr.toObject(true)).to.deep.equal({
+        frame: 5,
+        ease: 'Linear.easeNone',
+        params: []
+      })
+    })
+
+  })
+
   describe('frame', () => {
     it('should fail when try to set invalid frame', () => {
       const tr = new Transition(12)

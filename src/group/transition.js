@@ -166,7 +166,31 @@ class Transition extends EventEmitter {
     this._params.removeAllListeners()
     this.removeAllListeners()
   }
+}
 
+/**
+ * Parse Transition from object
+ * @param {object} obj {ease:string|function, frame:number, params:array|object}
+ * @example {frame: 12, ease: 'Linear.easeNone', params: {x: 100, y: 309}}
+ * @returns Transition
+ */
+Transition.fromObject = function(obj) {
+  if (!obj || typeof obj !== 'object' || obj instanceof Array) {
+    throw new Error('Object is invalid.')
+  }
+
+  const keys = Object.keys(obj)
+
+  if (!keys.includes('frame')) {
+    throw new Error('Object is invalid')
+  }
+
+  const frame = obj.frame
+  const ease = obj.ease || undefined
+  const params = obj.params || undefined
+  const args = [frame, params, ease].filter(arg => arg !== undefined)
+
+  return new Transition(...args)
 }
 
 export default Transition
