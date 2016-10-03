@@ -5,7 +5,8 @@ import {
   loadscript,
   jsonloader,
   gsap,
-  autobind
+  autobind,
+  bubbleEvent
 } from '../src/utils'
 
 import {
@@ -243,6 +244,26 @@ describe('utils', () => {
       new B()
     })
 
+  })
+
+  describe('bubbleEvent', () => {
+    it('should fail when setting invalid scope', () => {
+      expect(() => bubbleEvent('change', {})).to.throw(/Scope needs to be an event emitter./)
+    })
+
+    it('should bubble event', () => {
+      class MyEmitter extends require('events').EventEmitter {}
+      const spy = sinon.spy()
+      const myEmitter = new MyEmitter()
+      myEmitter.on('update', spy)
+
+      const fn = bubbleEvent('update', myEmitter)
+      const arg = { a: 200 }
+
+      fn(arg)
+
+      expect(spy.withArgs(arg).calledOnce).to.be.true
+    })
   })
 
 })
