@@ -11,7 +11,7 @@ describe('list', () => {
     expect(list._maxListeners).equal(Infinity)
   })
 
-  it ('should fail provide something else than array', () => {
+  it('should fail provide something else than array', () => {
     expect(() => new List({})).to.throw(/Items should be an array/)
   })
 
@@ -444,6 +444,46 @@ describe('list', () => {
       expect(spyA.called).to.be.true
       expect(spyB.called).to.be.true
       expect(spyC.called).to.be.true
+    })
+  })
+
+  describe('duplicates', () => {
+    it('should fail with dups check on instance level', () => {
+      const list = new List([1, 1])
+      expect(() => list.duplicates = false).to.throw(/List has duplicates/)
+    })
+
+    it('should continue with no dups on instance level', () => {
+      const list = new List([1, 2, 3])
+      expect(() => list.duplicates = false).not.to.throw(/List has duplicates/)
+      expect(list.duplicates).to.equal(false)
+    })
+
+    it('should fail with dups on property level', () => {
+      const list = new List([
+        { prop: 'x' },
+        { prop: 'x' },
+        { prop: 'z' },
+      ])
+      expect(() => list.duplicates = { prop: 'prop' }).to.throw(/List has duplicates/)
+    })
+
+    it('should continue with no dups on property level', () => {
+      const list = new List([
+        { prop: 'x' },
+        { prop: 'y' },
+        { prop: 'z' },
+      ])
+      expect(() => list.duplicates = { prop: 'prop' }).not.to.throw(/List has duplicates/)
+    })
+
+    it('should fail on adding duplicate', () => {
+      const list = new List([
+        { param: 'x', value: 10 },
+        { param: 'y', value: 100 }
+      ])
+      list.duplicates = { prop: 'param' }
+      expect(() => list.add({ param: 'x', value: 1000})).to.throw(/List has duplicates/)
     })
   })
 

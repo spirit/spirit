@@ -11,6 +11,7 @@ class List extends EventEmitter {
 
   _list = []
   _model = null
+  _duplicates = true
 
   constructor(items = [], model = null) {
     super()
@@ -50,6 +51,54 @@ class List extends EventEmitter {
       }
       return list
     }, [])
+  }
+
+  /**
+   * Get list to allow duplicates
+   * @returns {boolean|object}
+   */
+  get duplicates() {
+    return this._duplicates
+  }
+
+  /**
+   * Set list to allow duplicates
+   * @param {boolean|object} dup
+   * When dup is an object it can check on a property
+   * @example { prop: 'id' }
+   */
+  set duplicates(dup) {
+    this._duplicates = dup
+    this.checkOnDuplicates()
+  }
+
+  checkOnDuplicates() {
+    const dup = this._duplicates
+    let uniq = false
+
+    // check based on boolean
+    if (typeof dup === 'boolean' && dup === false) {
+      uniq = this.list
+        .map(item => ({ count: 1, item }))
+        .reduce((a, b) => {
+          a[b.item] = (a[b.item] || 0) + b.count
+          return a
+        }, {})
+    }
+
+    // check based on object property
+    if (dup instanceof Object && dup.hasOwnProperty('prop')) {
+      uniq = this.list
+        .map(item => ({ count: 1, prop: item[dup.prop] }))
+        .reduce((a, b) => {
+          a[b.prop] = (a[b.prop] || 0) + b.count
+          return a
+        }, {})
+    }
+
+    if (uniq && Object.keys(uniq).filter(a => uniq[a] > 1).length > 0) {
+      throw new Error('List has duplicates')
+    }
   }
 
   /**
@@ -149,6 +198,8 @@ class List extends EventEmitter {
     } else {
       addSingle(item)
     }
+
+    this.checkOnDuplicates()
 
     return result
   }
