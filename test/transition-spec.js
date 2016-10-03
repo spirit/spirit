@@ -6,7 +6,7 @@ describe('transition', () => {
   let sandbox
 
   beforeEach(() => {
-  	sandbox = sinon.sandbox.create()
+    sandbox = sinon.sandbox.create()
   })
 
   afterEach(() => {
@@ -142,7 +142,7 @@ describe('transition', () => {
   describe('#destroy', () => {
     it('should kill all listeners', () => {
       const spy = sandbox.spy()
-      const tr = new Transition(0, {x: 100})
+      const tr = new Transition(0, { x: 100 })
       const x = tr.params.get('x')
 
       sandbox.spy(tr.params, 'removeAllListeners')
@@ -228,7 +228,7 @@ describe('transition', () => {
         expect(spy.getCall(1).args[0].changed).to.deep.equal({ type: 'prop', from: 'skewX', to: 'skewY' })
       })
 
-      it ('should dispatch change:param:value', () => {
+      it('should dispatch change:param:value', () => {
         transition.on('change:param:value', spy)
 
         const x = transition.params.get('x')
@@ -238,6 +238,25 @@ describe('transition', () => {
         expect(spy.callCount).equal(2)
         expect(spy.getCall(0).args[0].changed).to.deep.equal({ type: 'value', from: 200, to: 199 })
         expect(spy.getCall(1).args[0].changed).to.deep.equal({ type: 'value', from: 199, to: 198 })
+      })
+
+      it('should dispatch add:param', () => {
+        transition.on('add:param', spy)
+        const param = transition.params.add({ z: 500 })
+        expect(spy.calledOnce).to.be.true
+        expect(spy.withArgs(param).calledOnce).to.be.true
+        expect(transition.params.toObject()).to.deep.equal({ x: 200, y: 300, z: 500 })
+      })
+
+      it('should dispatch remove:param', () => {
+        transition.on('remove:param', spy)
+
+        const param = transition.params.get('x')
+        transition.params.remove(param)
+
+        expect(spy.calledOnce).to.be.true
+        expect(spy.withArgs(param).calledOnce).to.be.true
+        expect(transition.params.toObject()).to.deep.equal({ y: 300 })
       })
     })
 

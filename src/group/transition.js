@@ -1,5 +1,6 @@
 import { EventEmitter } from 'events'
 import Params from './params'
+import { bubbleEvent } from '../utils'
 
 /**
  * Frame transition.
@@ -10,6 +11,8 @@ import Params from './params'
  * @fires Transition#change:ease
  * @fires Transition#change:params
  * @fires Transition#change:param
+ * @fires Transition#change:param:prop
+ * @fires Transition#change:param:value
  * @fires Transition#add:param
  * @fires Transition#remove:param
  */
@@ -127,20 +130,12 @@ class Transition extends EventEmitter {
     this._params.clear()
     this._params = p
 
-    // bubble change
-    this._params.on('change', function() {
-      this.emit('change:param', ...arguments)
-    }.bind(this))
-
-    // bubble change prop
-    this._params.on('change:prop', function(){
-      this.emit('change:param:prop', ...arguments)
-    }.bind(this))
-
-    // bubble change value
-    this._params.on('change:value', function(){
-      this.emit('change:param:value', ...arguments)
-    }.bind(this))
+    // bubble events
+    this._params.on('change', bubbleEvent('change:param', this))
+    this._params.on('change:prop', bubbleEvent('change:param:prop', this))
+    this._params.on('change:value', bubbleEvent('change:param:value', this))
+    this._params.on('add', bubbleEvent('add:param', this))
+    this._params.on('remove', bubbleEvent('remove:param', this))
 
     /**
      * Transition event.
