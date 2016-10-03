@@ -13,14 +13,16 @@ class List extends EventEmitter {
   _model = null
   _duplicates = true
 
-  constructor(items = [], model = null) {
+  constructor(items = [], model = null, defaultModelArgs = undefined) {
     super()
     this.setMaxListeners(Infinity)
 
     this._model = model
 
     if (model) {
-      const testProto = new model() // eslint-disable-line new-cap
+      const testProto = (defaultModelArgs !== undefined)
+        ? new model(...defaultModelArgs) // eslint-disable-line new-cap
+        : new model() // eslint-disable-line new-cap
 
       if (typeof testProto.toObject !== 'function') {
         throw new Error('Invalid Model prototype. model.toObject does not exist.')

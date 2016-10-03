@@ -15,6 +15,22 @@ describe('list', () => {
     expect(() => new List({})).to.throw(/Items should be an array/)
   })
 
+  it('should execute model with default args', () => {
+    const sandbox = sinon.sandbox.create()
+    const spy = sandbox.spy()
+
+    class Model {
+      constructor() { spy(...arguments) }
+
+      toObject() {}
+    }
+
+    new List([], Model, [{ a: 1, b: 2 }, 12])
+
+    expect(spy.calledOnce).to.be.true
+    expect(spy.getCall(0).args).to.deep.equal([{ a: 1, b: 2 }, 12])
+  })
+
   describe('Model', () => {
     it('should fail on invalid model', () => {
       class Model {}
@@ -483,7 +499,7 @@ describe('list', () => {
         { param: 'y', value: 100 }
       ])
       list.duplicates = { prop: 'param' }
-      expect(() => list.add({ param: 'x', value: 1000})).to.throw(/List has duplicates/)
+      expect(() => list.add({ param: 'x', value: 1000 })).to.throw(/List has duplicates/)
     })
   })
 
