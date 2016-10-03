@@ -15,6 +15,16 @@ describe('transitions', () => {
     expect(trs.at(2).toObject(true)).to.deep.equal({ frame: 49, ease: 'Linear.easeNone', params: [] })
   })
 
+  describe('duplicates', () => {
+    it('should not allow duplicate frames', () => {
+      expect(() => new Transitions([{ frame: 10 }, { frame: 10 }])).to.throw(/List has duplicates/)
+    })
+    it('should not allow add duplicate', () => {
+      const trs = new Transitions([{ frame: 12 }])
+      expect(() => trs.add({frame: 12})).to.throw(/List has duplicates/)
+    })
+  })
+
   describe('#toArray', () => {
 
     let trs
@@ -59,4 +69,5 @@ describe('transitions', () => {
       expect(trs.get(13)).to.be.undefined
     })
   })
+  
 })

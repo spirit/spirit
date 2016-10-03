@@ -14,6 +14,8 @@ import Param from './param'
  */
 class Params extends List {
 
+  duplicates = { prop: 'prop' }
+
   constructor(params) {
     // parse by object
     if (!Array.isArray(params) && params instanceof Object) {
@@ -24,7 +26,6 @@ class Params extends List {
     }
 
     super(params, Param)
-    this.duplicates = { prop: 'prop' }
   }
 
   /**

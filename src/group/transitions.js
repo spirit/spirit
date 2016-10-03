@@ -3,9 +3,10 @@ import Transition from './transition'
 
 class Transitions extends List {
 
+  duplicates = { prop: 'frame' }
+
   constructor(transitions) {
     super(transitions, Transition, [0])
-    this.duplicates = { prop: 'frame' }
   }
 
   /**
