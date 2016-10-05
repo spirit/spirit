@@ -12,6 +12,7 @@ class List extends EventEmitter {
   _list = []
   _model = null
   _duplicates = true
+  _sortOn = false
 
   constructor(items = [], model = null, defaultModelArgs = undefined) {
     super()
@@ -74,6 +75,9 @@ class List extends EventEmitter {
     this.checkOnDuplicates()
   }
 
+  /**
+   * Check current list on duplicates
+   */
   checkOnDuplicates() {
     const dup = this._duplicates
     let uniq = false
@@ -104,6 +108,38 @@ class List extends EventEmitter {
   }
 
   /**
+   * Get the sort type of this list
+   * @returns {boolean|string}
+   */
+  get sortOn() {
+    return this._sortOn
+  }
+
+  /**
+   * Set the sort type of this list
+   * @param {boolean|string} sortType
+   */
+  set sortOn(sortType) {
+    this._sortOn = sortType
+    this.sort()
+  }
+
+  /**
+   * Sort list based on sort type
+   */
+  sort() {
+    const so = this._sortOn
+
+    // sort on primitives
+    if (typeof so === 'boolean' && so === true) {
+      this._list = this._list.sort()
+    }
+
+    // sort on property
+    if (typeof so === 'string') {
+      this._list = this._list.sort((a, b) => a[so] - b[so])
+    }
+  }
    * Get the list
    * @returns {Array}
    */
@@ -202,6 +238,7 @@ class List extends EventEmitter {
     }
 
     this.checkOnDuplicates()
+    this.sort()
 
     return result
   }
@@ -254,6 +291,7 @@ class List extends EventEmitter {
       removeSingle(item)
     }
 
+    this.sort()
     return result
   }
 

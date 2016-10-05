@@ -503,6 +503,57 @@ describe('list', () => {
     })
   })
 
+  describe('sort on', () => {
+    it('should not sort list', () => {
+      const list = new List([1, 4, 2])
+      expect(list.toArray()).to.deep.equal([1, 4, 2])
+    })
+
+    it('should sort on primitives', () => {
+      const list = new List([1, 4, 2])
+
+      list.sortOn = true
+      expect(list.sortOn).equal(true)
+
+      expect(list.toArray()).to.deep.equal([1, 2, 4])
+
+      list.add(3)
+      expect(list.toArray()).to.deep.equal([1, 2, 3, 4])
+
+      list.remove(2)
+      expect(list.toArray()).to.deep.equal([1, 3, 4])
+    })
+
+    it('should sort on property', () => {
+      const list = new List([
+        { frame: 50 },
+        { frame: 33 },
+        { frame: 2 },
+        { frame: 5 },
+        { frame: 22 }
+      ])
+
+      list.sortOn = 'frame'
+
+      expect(list.toArray()).to.deep.equal([
+        { frame: 2 },
+        { frame: 5 },
+        { frame: 22 },
+        { frame: 33 },
+        { frame: 50 }
+      ])
+
+      list.add({ frame: 3 })
+      expect(list.toArray()).to.deep.equal([
+        { frame: 2 },
+        { frame: 3 },
+        { frame: 5 },
+        { frame: 22 },
+        { frame: 33 },
+        { frame: 50 }
+      ])
+    })
+  })
   describe('dispatch changes', () => {
 
     let spy
@@ -595,10 +646,6 @@ describe('list', () => {
         expect(spy.getCall(1).args[0]).to.be.and.instanceOf(Model).and.have.property('a', 'b')
         expect(spy.getCall(2).args[0]).to.be.and.instanceOf(Model).and.have.property('d', 'e')
       })
-    })
-
-    describe.skip('change', () => {
-      // todo implement
     })
 
   })
