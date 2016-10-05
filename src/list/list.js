@@ -40,11 +40,17 @@ class List extends EventEmitter {
       if (this._model) {
         if (item instanceof this._model) {
           item._list = this
+          if (item.setupBubbleEvents && typeof item.setupBubbleEvents === 'function') {
+            item.setupBubbleEvents()
+          }
           list.push(item)
         } else {
           if (item instanceof Object && typeof model.fromObject === 'function') {
             const itemFromModel = model.fromObject(item)
             itemFromModel._list = this
+            if (itemFromModel.setupBubbleEvents && typeof itemFromModel.setupBubbleEvents === 'function') {
+              itemFromModel.setupBubbleEvents()
+            }
             list.push(itemFromModel)
           } else {
             throw new Error('Could not parse item from model')
@@ -246,9 +252,15 @@ class List extends EventEmitter {
         if (i instanceof this._model) {
           newItem = i
           newItem._list = this
+          if (newItem.setupBubbleEvents && typeof newItem.setupBubbleEvents === 'function') {
+            newItem.setupBubbleEvents()
+          }
         } else if (i instanceof Object && typeof this._model.fromObject === 'function') {
           newItem = this._model.fromObject(i)
           newItem._list = this
+          if (newItem.setupBubbleEvents && typeof newItem.setupBubbleEvents === 'function') {
+            newItem.setupBubbleEvents()
+          }
         } else {
           throw new Error('Invalid item.')
         }
@@ -390,5 +402,11 @@ class List extends EventEmitter {
   }
 
 }
+
+List.Events = [
+  'change:list',
+  'add',
+  'remove'
+]
 
 export default List

@@ -32,10 +32,12 @@ describe('list', () => {
   })
 
   describe('Model', () => {
+
     it('should fail on invalid model', () => {
       class Model {}
       expect(() => new List([], Model)).to.throw(/model.toObject does not exist/)
     })
+
     it('should give list to model instances', () => {
       class Model { toObject() {} }
       Model.fromObject = (i) => new Model(i)
@@ -48,6 +50,53 @@ describe('list', () => {
       expect(list.at(2)._list).to.equal(list)
       expect(list.at(3)._list).to.equal(list)
     })
+
+  })
+
+  describe('bubble events', () => {
+
+    it('should setup bubble events', () => {
+      class Model {
+        toObject() {}
+
+        setupBubbleEvents() {}
+      }
+
+      const a = new Model()
+      const b = new Model()
+
+      const spyA = sinon.spy(a, 'setupBubbleEvents')
+      const spyB = sinon.spy(b, 'setupBubbleEvents')
+
+      const list = new List([
+        a,
+        b
+      ], Model)
+
+      expect(spyA.calledOnce).to.be.true
+      expect(spyB.calledOnce).to.be.true
+    })
+
+    it('should setup bubble events from object', () => {
+      const spy = sinon.spy()
+
+      class Model {
+        toObject() {}
+
+        setupBubbleEvents() {
+          spy()
+        }
+      }
+      Model.fromObject = () => new Model()
+
+      new List([
+        { a: 'a' },
+        { b: 'b' }
+      ], Model)
+
+      expect(spy.calledTwice).to.be.true
+    })
+
   })
 
   describe('parse on creation', () => {
@@ -239,6 +288,23 @@ describe('list', () => {
         expect(added[0]).to.be.an.instanceOf(Model).and.have.property('b', 'c')
         expect(added[1]).to.be.an.instanceOf(Model).and.have.property('c', 'd')
       })
+
+      it('should setup bubble events', () => {
+        class Model {
+          toObject() {}
+
+          setupBubbleEvents() {}
+        }
+
+        list = new List([], Model)
+
+        const m = new Model()
+        const spy = sinon.spy(m, 'setupBubbleEvents')
+
+        list.add(m)
+        expect(spy.calledOnce).to.be.true
+      })
+
     })
   })
 
