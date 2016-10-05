@@ -1,28 +1,46 @@
 import Transitions from './transitions'
 import { EventEmitter } from 'events'
+import { context } from '../utils'
 
+/**
+ * Timeline.
+ */
 class Timeline extends EventEmitter {
 
-  el = null
+  type = 'dom'
+  transformObject = null
   label = null
-  timelines = null
+  transitions = null
 
-  constructor(el, transitions = new Transitions(), label) {
+  /**
+   * Create new Timeline instance
+   *
+   * @param {string} type default = dom
+   * @param {HTMLElement|Object} transformObject
+   * @param {Array|Transitions} transitions
+   * @param {string|null} label
+   */
+  constructor(type = 'dom', transformObject = null, transitions = new Transitions(), label = null) {
     super()
+    this.setMaxListeners(Infinity)
 
-    if (label === undefined) {
-      label = null
-    }
-
-    if (!el || window && !(el instanceof window.HTMLElement)) {
-      throw new Error('HTMLElement is required.')
+    if (!(transitions instanceof Transitions)) {
+      transitions = new Transitions(transitions)
     }
 
     Object.assign(this, {
-      el,
-      label,
-      transitions: transitions || new Transitions()
+      type,
+      transformObject,
+      transitions,
+      label
     })
+
+    if (type === 'dom') {
+      if (!transformObject || context.isBrowser() && !(transformObject instanceof window.HTMLElement)) {
+        throw new Error('HTMLElement is required.')
+      }
+    }
+  }
   }
 
 }
