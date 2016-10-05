@@ -21,7 +21,7 @@ describe('transitions', () => {
     })
     it('should not allow add duplicate', () => {
       const trs = new Transitions([{ frame: 12 }])
-      expect(() => trs.add({frame: 12})).to.throw(/List has duplicates/)
+      expect(() => trs.add({ frame: 12 })).to.throw(/List has duplicates/)
     })
   })
 
@@ -127,7 +127,7 @@ describe('transitions', () => {
       ])
     })
 
-    it ('should have linked the transitions', () => {
+    it('should have linked the transitions', () => {
       expect(trs.get(2)).to.have.property('_prev', null)
       expect(trs.get(2)).to.have.property('_next', trs.get(15))
 
@@ -139,4 +139,47 @@ describe('transitions', () => {
     })
 
   })
+
+  describe('destroy', () => {
+
+    it('should destroy all transitions', () => {
+
+      const trs = new Transitions([
+        { frame: 12, params: { x: 100, y: 200 } },
+        { frame: 24, params: { x: 100, y: 200 } },
+        { frame: 48, params: { x: 100, y: 200 } }
+      ])
+
+      const spyTrs = sinon.spy()
+      const spyTr = sinon.spy()
+
+      trs.on('change:frame', spyTrs)
+      trs.on('change:param:value', spyTrs)
+      trs.on('change:params', spyTrs)
+
+      trs.get(12).on('change:param', spyTr)
+      trs.get(12).on('change:frame', spyTr)
+      trs.get(24).on('change:ease', spyTr)
+
+      // mutate
+      trs.get(12).frame = 33
+      trs.get(33).params.get('x').value = 1000
+      trs.get(24).ease = 'Quint.easeOut'
+      trs.get(48).params = []
+
+      expect(spyTrs.callCount).to.equal(3)
+      expect(spyTr.callCount).to.equal(3)
+
+      trs.destroy()
+
+      // mutate
+      trs.get(33).frame = 12
+      trs.get(12).params.get('x').value = 100
+
+      expect(spyTrs.callCount).to.equal(3)
+      expect(spyTr.callCount).to.equal(3)
+    })
+
+  })
+
 })
