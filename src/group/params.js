@@ -56,4 +56,13 @@ class Params extends List {
 
 }
 
+Params.Events = [
+  'change:list',
+  'add',
+  'remove',
+  'change',
+  'change:prop',
+  'change:value'
+]
+
 export default Params
