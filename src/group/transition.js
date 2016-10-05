@@ -1,6 +1,7 @@
 import { EventEmitter } from 'events'
 import Params from './params'
-import { bubbleEvent } from '../utils'
+import { events } from '../utils'
+
 
 /**
  * Frame transition.
@@ -10,9 +11,11 @@ import { bubbleEvent } from '../utils'
  * @fires Transition#change:frame
  * @fires Transition#change:ease
  * @fires Transition#change:params
+ *
  * @fires Transition#change:param
  * @fires Transition#change:param:prop
  * @fires Transition#change:param:value
+ *
  * @fires Transition#add:param
  * @fires Transition#remove:param
  */
@@ -39,7 +42,13 @@ class Transition extends EventEmitter {
       params = new Params(params)
     }
 
-    Object.assign(this, { frame, params, ease })
+    Object.assign(this, {
+      _frame: frame,
+      _params: params,
+      _ease: ease
+    })
+
+    this.setupBubbleEvents()
   }
 
   /**
@@ -130,12 +139,7 @@ class Transition extends EventEmitter {
     this._params.clear()
     this._params = p
 
-    // bubble events
-    this._params.on('change', bubbleEvent('change:param', this))
-    this._params.on('change:prop', bubbleEvent('change:param:prop', this))
-    this._params.on('change:value', bubbleEvent('change:param:value', this))
-    this._params.on('add', bubbleEvent('add:param', this))
-    this._params.on('remove', bubbleEvent('remove:param', this))
+    this.setupBubbleEvents()
 
     /**
      * Transition event.
@@ -144,6 +148,29 @@ class Transition extends EventEmitter {
      * @type {Params}
      */
     this.emit('change:params', p)
+
+  setupBubbleEvents() {
+    events.clearEvents(this._params, [
+      'change',
+      'change:prop',
+      'change:value',
+      'add',
+      'remove'
+    ])
+
+    this._params.on('change', events.bubbleEvent('change:param', this))
+    this._params.on('change:prop', events.bubbleEvent('change:param:prop', this))
+    this._params.on('change:value', events.bubbleEvent('change:param:value', this))
+    this._params.on('add', events.bubbleEvent('add:param', this))
+    this._params.on('remove', events.bubbleEvent('remove:param', this))
+
+    if (this._list) {
+      this._params.on('change', events.bubbleEvent('change:param', this._list))
+      this._params.on('change:prop', events.bubbleEvent('change:param:prop', this._list))
+      this._params.on('change:value', events.bubbleEvent('change:param:value', this._list))
+      this._params.on('add', events.bubbleEvent('add:param', this._list))
+      this._params.on('remove', events.bubbleEvent('remove:param', this._list))
+    }
   }
 
   /**
