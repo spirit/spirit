@@ -15,6 +15,12 @@ class List extends EventEmitter {
   _sortOn = false
   _linkedList = false
 
+  /**
+   * Create List.
+   * @param {Array} items
+   * @param {*} model
+   * @param {Array} defaultModelArgs
+   */
   constructor(items = [], model = null, defaultModelArgs = undefined) {
     super()
     this.setMaxListeners(Infinity)

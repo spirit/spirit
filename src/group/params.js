@@ -16,6 +16,10 @@ class Params extends List {
 
   duplicates = { prop: 'prop' }
 
+  /**
+   * Create params.
+   * @param {Array} params
+   */
   constructor(params) {
     // parse by object
     if (!Array.isArray(params) && params instanceof Object) {

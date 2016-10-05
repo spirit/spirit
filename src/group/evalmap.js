@@ -1,5 +1,10 @@
 class EvalMap {
 
+  /**
+   * Create an evaluable map
+   * @param {RegExp} regex
+   * @param {*} map
+   */
   constructor(regex, map) {
     if (!regex || regex && !(regex instanceof RegExp)) {
       throw new Error('Invalid expression.')

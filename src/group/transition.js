@@ -26,6 +26,12 @@ class Transition extends EventEmitter {
   _ease = null
   _list = null
 
+  /**
+   * Create Transition.
+   * @param {number} frame
+   * @param {Array|Params} params
+   * @param {string|function} ease
+   */
   constructor(frame, params = new Params(), ease = 'Linear.easeNone') {
     super()
     this.setMaxListeners(Infinity)

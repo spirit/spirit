@@ -29,6 +29,10 @@ class Transitions extends List {
   sortOn = 'frame'
   linkedList = true
 
+  /**
+   * Create transitions
+   * @param {Array} transitions
+   */
   constructor(transitions) {
     super(transitions, Transition, [0])
   }

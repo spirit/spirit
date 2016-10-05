@@ -19,6 +19,11 @@ class Param extends EventEmitter {
 
   mappings = []
 
+  /**
+   * Create Param.
+   * @param {string} prop
+   * @param {*} value
+   */
   constructor(prop, value) {
     super()
 
