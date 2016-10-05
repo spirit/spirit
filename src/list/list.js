@@ -13,6 +13,7 @@ class List extends EventEmitter {
   _model = null
   _duplicates = true
   _sortOn = false
+  _linkedList = false
 
   constructor(items = [], model = null, defaultModelArgs = undefined) {
     super()
@@ -140,6 +141,40 @@ class List extends EventEmitter {
       this._list = this._list.sort((a, b) => a[so] - b[so])
     }
   }
+
+  /**
+   * Is current list linked?
+   * @returns {boolean}
+   */
+  get linkedList() {
+    return this._linkedList
+  }
+
+  /**
+   * Set current list as a linked list
+   * @param {boolean} linked
+   */
+  set linkedList(linked) {
+    this._linkedList = linked
+    this.linkItems()
+  }
+
+  /**
+   * Link items to each other as a linked list based on sortOn
+   * if this list is setup as a linked list
+   */
+  linkItems() {
+    if (this._linkedList) {
+      for (let i = 0; i < this._list.length; i++) {
+        if (this._list[i] instanceof Object) {
+          this._list[i]._prev = (i > 0) ? this._list[i - 1] : null
+          this._list[i]._next = (i < this._list.length - 1) ? this._list[i + 1] : null
+        }
+      }
+    }
+  }
+
+  /**
    * Get the list
    * @returns {Array}
    */
@@ -239,6 +274,7 @@ class List extends EventEmitter {
 
     this.checkOnDuplicates()
     this.sort()
+    this.linkItems()
 
     return result
   }
@@ -259,6 +295,16 @@ class List extends EventEmitter {
 
           if (ins._list && ins._list instanceof List) {
             ins._list = null
+          }
+
+          if (ins instanceof Object) {
+            if ('_prev' in ins) {
+              delete ins._prev
+            }
+
+            if ('_next' in ins) {
+              delete ins._next
+            }
           }
 
           /**
@@ -292,6 +338,8 @@ class List extends EventEmitter {
     }
 
     this.sort()
+    this.linkItems()
+
     return result
   }
 
@@ -315,9 +363,24 @@ class List extends EventEmitter {
    * @returns {Array}
    */
   toArray() {
-    return this._model
+    const l = this._model
       ? this.list.map(item => item.toObject())
       : this.list
+
+    return l.reduce((a, b) => {
+      if (b instanceof Object) {
+        const obj = { ...b }
+        delete obj._prev
+        delete obj._next
+        delete obj._list
+
+        a.push(obj)
+      } else {
+        a.push(b)
+      }
+
+      return a
+    }, [])
   }
 
 }

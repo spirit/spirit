@@ -554,6 +554,102 @@ describe('list', () => {
       ])
     })
   })
+
+  describe('linked list', () => {
+
+    let list
+
+    beforeEach(() => {
+      list = new List([
+        { frame: 50 },
+        { frame: 33 },
+        { frame: 60 },
+        { frame: 2 }
+      ])
+
+      list.sortOn = 'frame'
+      list.linkedList = true
+    })
+
+    const assertLinkedListDescent = () => {
+      for (let i = list.length - 1; i > -1; i--) {
+        expect(list.at(i)).to.have.property('_prev', (i === 0) ? null : list.at(i - 1))
+      }
+    }
+
+    const assertLinkedListAscent = () => {
+      for (let i = 0; i < list.length; i++) {
+        expect(list.at(i)).to.have.property('_next', (i === list.length - 1) ? null : list.at(i + 1))
+      }
+    }
+
+    it('should link sorted list', () => {
+      expect(list.linkedList).to.be.true
+      assertLinkedListDescent()
+      assertLinkedListAscent()
+    })
+
+    it('should iterate over linked list', () => {
+      let f = list.at(0)
+      let frames = []
+
+      while (f) {
+        frames.push(f.frame)
+        f = f._next
+      }
+      expect(frames).to.deep.equal([2, 33, 50, 60])
+    })
+
+    it('should add and remove items and have reassigned prev and next', () => {
+      list.remove(list.at(0))
+      list.remove(list.at(0))
+      list.add({ frame: 45 })
+      list.add({ frame: 55 })
+      list.add({ frame: 1 })
+      list.remove(list.at(0))
+
+      expect(list.list.map(i => i.frame)).to.deep.equal([45, 50, 55, 60])
+      assertLinkedListDescent()
+      assertLinkedListAscent()
+    })
+
+    it('should reassign prev and next for each item when adding items', () => {
+      list.add({ frame: 45 })
+      list.add({ frame: 55 })
+      list.add({ frame: 1 })
+
+      expect(list.list.map(i => i.frame)).to.deep.equal([1, 2, 33, 45, 50, 55, 60])
+      assertLinkedListDescent()
+      assertLinkedListAscent()
+    })
+
+    it('should reassign prev and next for each item when removing items', () => {
+      list.remove(list.at(0))
+      list.remove(list.at(1))
+
+      expect(list.list.map(i => i.frame)).to.deep.equal([33, 60])
+      assertLinkedListDescent()
+      assertLinkedListAscent()
+    })
+
+    it('should clear prev and next on removal', () => {
+      const removed = list.remove(list.at(0))
+      expect(removed).not.to.have.property('_prev')
+      expect(removed).not.to.have.property('_next')
+    })
+
+    it('should exclude prev and next from items in toArray()', () => {
+      list.toArray().forEach(item => {
+        expect(item).not.to.have.property('_prev')
+        expect(item).not.to.have.property('_next')
+      })
+
+      assertLinkedListAscent()
+      assertLinkedListDescent()
+    })
+
+  })
+
   describe('dispatch changes', () => {
 
     let spy
