@@ -185,14 +185,15 @@ describe('transition', () => {
       const tr = new Transition(0, { x: 100 })
       const x = tr.params.get('x')
 
-      sandbox.spy(tr.params, 'removeAllListeners')
       tr.on('change:param', spy)
+      expect(spy.callCount).equal(0)
+
       x.value++
-      expect(spy.calledOnce).to.be.true
+      expect(spy.callCount).equal(1)
+
       tr.destroy()
-      expect(tr.params.removeAllListeners.calledOnce).to.be.true
       x.value++
-      expect(spy.calledOnce).to.be.true
+      expect(spy.callCount).equal(1)
     })
   })
 
@@ -209,7 +210,8 @@ describe('transition', () => {
     it('should change frame', () => {
       transition.on('change:frame', spy)
       transition.frame = 10
-      expect(spy.withArgs(10).calledOnce).to.be.true
+
+      expect(spy.getCall(0).args[1]).to.equal(10)
     })
 
     it('should not dispatch when frame is not changed', () => {
@@ -221,7 +223,8 @@ describe('transition', () => {
     it('should change ease', () => {
       transition.on('change:ease', spy)
       transition.ease = 'Strong.easeOut'
-      expect(spy.withArgs('Strong.easeOut').calledOnce).to.be.true
+
+      expect(spy.getCall(0).args[1]).to.equal('Strong.easeOut')
     })
 
     it('should not dispatch when ease is not changed ', () => {
@@ -235,7 +238,8 @@ describe('transition', () => {
 
       transition.on('change:params', spy)
       transition.params = newParams
-      expect(spy.withArgs(newParams).calledOnce).to.be.true
+
+      expect(spy.getCall(0).args[1]).to.equal(newParams)
     })
 
     describe('bubble param events', () => {
