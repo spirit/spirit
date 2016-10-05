@@ -69,5 +69,74 @@ describe('transitions', () => {
       expect(trs.get(13)).to.be.undefined
     })
   })
-  
+
+  describe('#haveFrame', () => {
+
+    let trs
+
+    beforeEach(() => {
+      trs = new Transitions([{ frame: 0 }, { frame: 12 }, { frame: 49, params: { x: 200, y: 500 } }])
+    })
+
+    it('should have transition with frame', () => {
+      expect(trs.haveFrame(12)).to.be.true
+    })
+
+    it('should not have a transition with frame', () => {
+      expect(trs.haveFrame(13)).to.be.false
+    })
+  })
+
+  describe('sort', () => {
+    let trs
+
+    beforeEach(() => {
+      trs = new Transitions([
+        { frame: 40 },
+        { frame: 2 },
+        { frame: 15, params: { x: 200, y: 500 } }
+      ])
+    })
+
+    it('should have transitions sorted by frame', () => {
+      expect(trs.toArray()).to.deep.equal([
+        { frame: 2, ease: 'Linear.easeNone', params: {} },
+        {
+          frame: 15,
+          ease: 'Linear.easeNone',
+          params: { x: 200, y: 500 }
+        },
+        { frame: 40, ease: 'Linear.easeNone', params: {} }
+      ])
+    })
+
+    it('should automatically insert transition by frame', () => {
+      trs.add([{ frame: 33 }, { frame: 1 }])
+      expect(trs.list.map(tr => tr.frame)).to.deep.equal([1, 2, 15, 33, 40])
+    })
+  })
+
+  describe('linked transitions', () => {
+    let trs
+
+    beforeEach(() => {
+      trs = new Transitions([
+        { frame: 40 },
+        { frame: 2 },
+        { frame: 15, params: { x: 200, y: 500 } }
+      ])
+    })
+
+    it ('should have linked the transitions', () => {
+      expect(trs.get(2)).to.have.property('_prev', null)
+      expect(trs.get(2)).to.have.property('_next', trs.get(15))
+
+      expect(trs.get(15)).to.have.property('_prev', trs.get(2))
+      expect(trs.get(15)).to.have.property('_next', trs.get(40))
+
+      expect(trs.get(40)).to.have.property('_prev', trs.get(15))
+      expect(trs.get(40)).to.have.property('_next', null)
+    })
+
+  })
 })
