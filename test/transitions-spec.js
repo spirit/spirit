@@ -182,4 +182,127 @@ describe('transitions', () => {
 
   })
 
+  describe('dispatch changes', () => {
+
+    let sandbox,
+        trs,
+        spy
+
+    beforeEach(() => {
+      sandbox = sinon.sandbox.create()
+      spy = sandbox.spy()
+      trs = new Transitions([
+        { frame: 1 },
+        { frame: 10 },
+        { frame: 20 },
+      ])
+    })
+
+    afterEach(() => {
+      sandbox.restore()
+      trs.each(tr => tr.destroy())
+      trs.removeAllListeners()
+    })
+
+    it('should change list', () => {
+      trs.on('change:list', spy)
+
+      const list = []
+      trs.list = list
+
+      expect(spy.withArgs(list).calledOnce).to.be.true
+    })
+
+    it('should add transition', () => {
+      trs.on('add', spy)
+      const added = trs.add({ frame: 2 })
+      expect(spy.withArgs(added).calledOnce).to.be.true
+    })
+
+    it('should remove transition', () => {
+      trs.on('remove', spy)
+      const removed = trs.remove(trs.at(0))
+      expect(spy.withArgs(removed).calledOnce).to.be.true
+    })
+
+    it('should change frame of a transition', () => {
+      trs.on('change:frame', spy)
+      trs.at(0).frame = 12
+      trs.at(0).frame = 13
+      expect(spy.calledTwice).to.be.true
+    })
+
+    it('should change ease of a transition', () => {
+      trs.on('change:ease', spy)
+      trs.at(0).ease = 'Linear.easeNone'
+      trs.at(0).ease = 'Strong.easeOut'
+      expect(spy.calledOnce).to.be.true
+    })
+
+    it('should change params of a transition', () => {
+      trs.on('change:params', spy)
+      trs.at(0).params = { x: 1, y: 2 }
+      expect(spy.getCall(0).args[1].toArray()).to.deep.equal([
+        { x: 1 },
+        { y: 2 }
+      ])
+    })
+
+    it('should change a param of a transition', () => {
+      trs.on('change:param', spy)
+      const tr = trs.add({ frame: 100, params: { x: 200, y: 300 } })
+      tr.params.get('x').value++
+      expect(spy.calledOnce).to.be.true
+    })
+
+    it('should change a param:prop of a transition', () => {
+      trs.on('change:param:prop', spy)
+      const tr = trs.add({ frame: 100, params: { x: 200, y: 300 } })
+      tr.params.get('x').prop = 'z'
+      expect(spy.getCall(0).args[1]).to.equal('z')
+    })
+
+    it('should change param:value of a transition', () => {
+      trs.on('change:param:value', spy)
+      const tr = trs.add({ frame: 100, params: { x: 200, y: 300 } })
+      tr.params.get('x').value = 500
+      expect(spy.getCall(0).args[1]).to.equal(500)
+    })
+
+    it('should add param of a transition', () => {
+      trs.on('add:param', spy)
+      const added = trs.get(1).params.add({ top: '200px' })
+      expect(spy.withArgs(added).calledOnce).to.be.true
+    })
+
+    it('should remove param of a transition', () => {
+      trs.on('remove:param', spy)
+      trs.get(1).params = { x: 500, y: 1000, z: 900 }
+
+      const removeZ = trs.get(1).params.remove(trs.get(1).params.get('z'))
+      const removeX = trs.get(1).params.remove(trs.get(1).params.get('x'))
+
+      expect(spy.callCount).to.equal(2)
+      expect(spy.withArgs(removeZ).calledOnce).to.be.true
+      expect(spy.withArgs(removeX).calledOnce).to.be.true
+    })
+
+    it('should emit changes', () => {
+      trs.on('change', spy)
+
+      trs.get(10).frame = 15
+      trs.get(20).ease = 'Quint.easeInOut'
+      trs.get(15).params = []
+
+      expect(spy.callCount).to.equal(3)
+      expect(spy.getCall(0).args[0].changed).to.deep.equal({ type: 'frame', from: 10, to: 15 })
+      expect(spy.getCall(1).args[0].changed).to.deep.equal({
+        type: 'ease',
+        from: 'Linear.easeNone',
+        to: 'Quint.easeInOut'
+      })
+      expect(spy.getCall(2).args[0].changed).to.deep.equal({ type: 'params', from: [], to: [] })
+    })
+  })
+
 })
