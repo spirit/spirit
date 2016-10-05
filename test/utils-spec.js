@@ -6,7 +6,7 @@ import {
   jsonloader,
   gsap,
   autobind,
-  bubbleEvent
+  events
 } from '../src/utils'
 
 import {
@@ -246,24 +246,111 @@ describe('utils', () => {
 
   })
 
-  describe('bubbleEvent', () => {
-    it('should fail when setting invalid scope', () => {
-      expect(() => bubbleEvent('change', {})).to.throw(/Scope needs to be an event emitter./)
+  describe('events', () => {
+
+    describe('bubbleEvent', () => {
+
+      it('should fail when setting invalid scope', () => {
+        expect(() => events.bubbleEvent('change', {})).to.throw(/Scope needs to be an event emitter./)
+      })
+
+      it('should bubble event', () => {
+        class MyEmitter extends require('events').EventEmitter {}
+        const spy = sinon.spy()
+        const myEmitter = new MyEmitter()
+        myEmitter.on('update', spy)
+
+        const fn = events.bubbleEvent('update', myEmitter)
+        const arg = { a: 200 }
+
+        fn(arg)
+
+        expect(spy.withArgs(arg).calledOnce).to.be.true
+      })
     })
 
-    it('should bubble event', () => {
-      class MyEmitter extends require('events').EventEmitter {}
-      const spy = sinon.spy()
-      const myEmitter = new MyEmitter()
-      myEmitter.on('update', spy)
+    describe('create event object for model', () => {
 
-      const fn = bubbleEvent('update', myEmitter)
-      const arg = { a: 200 }
+      class Model {
+        frame = 0
 
-      fn(arg)
+        constructor(obj = {}) {
+          Object.assign(this, obj)
+        }
+      }
+      Model.fromObject = (obj) => new Model(obj)
 
-      expect(spy.withArgs(arg).calledOnce).to.be.true
+      it('should create a valid event object for model', () => {
+        const m = new Model()
+        const evtObj = events.createEventObjectForModel(Model, m, 'frame', 0, 1)
+
+        expect(evtObj).to.deep.equal({
+          prevModel: { frame: 0 },
+          model: { frame: 1 },
+          changed: { type: 'frame', from: 0, to: 1 }
+        })
+      })
+
     })
+
+    describe('clear events', () => {
+
+      it('should clear all events for modern node implementations', () => {
+        class MyEmitter extends require('events').EventEmitter {
+          eventNames() {
+            return ['foo', 'bar']
+          }
+        }
+
+        const spyFoo = sinon.spy()
+        const spyBar = sinon.spy()
+
+        const emitter = new MyEmitter()
+        emitter.on('foo', spyFoo)
+        emitter.on('bar', spyBar)
+
+        emitter.emit('foo')
+        emitter.emit('bar')
+
+        expect(spyFoo.calledOnce).to.be.true
+        expect(spyBar.calledOnce).to.be.true
+
+        events.clearEvents(emitter)
+
+        emitter.emit('foo')
+        emitter.emit('bar')
+
+        expect(spyFoo.calledOnce).to.be.true
+        expect(spyBar.calledOnce).to.be.true
+      })
+
+      it ('should clear all events for legacy node implementations', () => {
+        class MyEmitter extends require('events').EventEmitter {}
+
+        const spyFoo = sinon.spy()
+        const spyBar = sinon.spy()
+
+        const emitter = new MyEmitter()
+        emitter.on('foo', spyFoo)
+        emitter.on('bar', spyBar)
+
+        emitter.emit('foo')
+        emitter.emit('bar')
+
+        expect(spyFoo.calledOnce).to.be.true
+        expect(spyBar.calledOnce).to.be.true
+
+        events.clearEvents(emitter, ['foo', 'bar'])
+
+        emitter.emit('foo')
+        emitter.emit('bar')
+
+        expect(spyFoo.calledOnce).to.be.true
+        expect(spyBar.calledOnce).to.be.true
+      })
+
+    })
+
   })
 
 })
