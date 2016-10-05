@@ -182,10 +182,6 @@ describe('param', () => {
       spy = sinon.spy()
     })
 
-    afterEach(() => {
-      param.removeAllListeners()
-    })
-
     it('should emit prop changes', () => {
       param.on('change:prop', spy)
 
@@ -257,6 +253,24 @@ describe('param', () => {
         from: 100,
         to: 101
       })
+    })
+
+    it ('should not dispatch for unchanged prop', () => {
+      param.on('change:prop', spy)
+      param.prop = 'x'
+      expect(spy.callCount).equal(0)
+
+      param.prop = 'z'
+      expect(spy.callCount).equal(1)
+    })
+
+    it ('should not dispatch for unchanged value', () => {
+      param.on('change:value', spy)
+      param.value = '120'
+      expect(spy.callCount).equal(0)
+
+      param.value = 50
+      expect(spy.callCount).equal(1)
     })
 
   })

@@ -43,6 +43,7 @@ class Param extends EventEmitter {
   /**
    * Set property
    * @param {string} val
+   * @fires Param#change
    * @fires Param#change:prop
    * @fires List#change
    * #fires List#change:prop
@@ -52,6 +53,18 @@ class Param extends EventEmitter {
       throw new Error('Property needs to be a string')
     }
 
+    if (val === this._prop) {
+      return
+    }
+
+    /**
+     * Event object.
+     *
+     * @type {object}
+     * @property {object} prevModel - param before change
+     * @property {object} model - param after change
+     * @property {object} changed - {type, from, to}
+     */
     const evt = {
       prevModel: Param.fromObject(this.toObject()),
       model: Param.fromObject({ [val]: this.value }),
@@ -67,24 +80,13 @@ class Param extends EventEmitter {
 
     /**
      * Param event.
-     *
      * @event Param#change
-     * @type {object}
-     * @property {object} prevModel - param before change
-     * @property {object} model - param after change
-     * @property {object} changed - {from, to}
      */
     const evtChange = ['change', evt]
 
     /**
      * Param event.
-     *
      * @event Param#change:prop
-     * @type {string} new property
-     * @type {object}
-     * @property {object} prevModel - param before change
-     * @property {object} model - param after change
-     * @property {object} changed - {from, to}
      */
     const evtChangeProp = ['change:prop', evt, val]
 
@@ -131,11 +133,25 @@ class Param extends EventEmitter {
   /**
    * Set current value
    * @param {*} val
+   * @fires Param#change
    * @fires Param#change:value
    * @fires List#change
    * @fires List#change:value
    */
   set value(val) {
+
+    if (val === this._value) {
+      return
+    }
+
+    /**
+     * Event object.
+     *
+     * @type {object}
+     * @property {object} prevModel - param before change
+     * @property {object} model - param after change
+     * @property {object} changed - {type, from, to}
+     */
     const evt = {
       prevModel: Param.fromObject(this.toObject()),
       model: Param.fromObject({ [this.prop]: val }),
@@ -151,24 +167,13 @@ class Param extends EventEmitter {
 
     /**
      * Param event.
-     *
      * @event Param#change
-     * @type {object}
-     * @property {object} prevModel - param before change
-     * @property {object} model - param after change
-     * @property {object} changed - {type, from, to}
      */
     const evtChange = ['change', evt]
 
     /**
      * Param event.
-     *
      * @event Param#change:value
-     * @type {object}
-     * @property {object} prevModel - param before change
-     * @property {object} model - param after change
-     * @property {object} changed - {from, to}
-     * @type {*} new value
      */
     const evtChangeValue = ['change:value', evt, val]
 
@@ -245,5 +250,11 @@ Param.fromObject = function(obj) {
 
   return new Param(prop, value)
 }
+
+Param.Events = [
+  'change',
+  'change:prop',
+  'change:value'
+]
 
 export default Param
