@@ -7,7 +7,6 @@ import { EventEmitter } from 'events'
  * @returns {function}
  */
 export function bubbleEvent(evt, scope) {
-
   if (!(scope instanceof EventEmitter)) {
     throw new Error('Scope needs to be an event emitter.')
   }
