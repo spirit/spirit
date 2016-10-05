@@ -169,6 +169,8 @@ class List extends EventEmitter {
         if (this._list[i] instanceof Object) {
           this._list[i]._prev = (i > 0) ? this._list[i - 1] : null
           this._list[i]._next = (i < this._list.length - 1) ? this._list[i + 1] : null
+        } else {
+          throw new Error('Can not link primitives.')
         }
       }
     }
@@ -193,6 +195,10 @@ class List extends EventEmitter {
     }
 
     this._list = l
+
+    if (this._linkedList) {
+      this.linkItems()
+    }
 
     /**
      * List event.

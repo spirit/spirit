@@ -648,6 +648,11 @@ describe('list', () => {
       assertLinkedListDescent()
     })
 
+    it('should fail to set linked list on primitives', () => {
+      expect(() => list.list = [1, 2, 3, 4]).to.throw(/Can not link primitives/)
+      expect(() => list.list = ['a', 'b', 'c', 'd']).to.throw(/Can not link primitives/)
+    })
+
   })
 
   describe('dispatch changes', () => {
