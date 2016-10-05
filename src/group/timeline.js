@@ -41,6 +41,22 @@ class Timeline extends EventEmitter {
       }
     }
   }
+
+  toObject() {
+    let obj = {
+      type: this.type,
+      transformObject: this.transformObject,
+      transitions: this.transitions.toArray(),
+      label: this.label
+    }
+
+    Object.keys(obj).forEach(key => {
+      if (!obj[key]) {
+        delete obj[key]
+      }
+    })
+
+    return obj
   }
 
 }

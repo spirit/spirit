@@ -52,7 +52,7 @@ describe('timeline', () => {
     it('should parse transitions by Transition object', () => {
       const transitions = new Transitions([{ frame: 10 }, { frame: 20 }])
       const tl = new Timeline('dom', el, transitions)
-      
+
       expect(tl.transitions).to.be.an.instanceOf(Transitions)
       expect(tl.transitions.toArray()).to.deep.equal([
         { frame: 10, params: {}, ease: 'Linear.easeNone' },
@@ -62,5 +62,27 @@ describe('timeline', () => {
 
   })
 
+  describe('#toObject', () => {
+
+    it('should convert timeline to object without label', () => {
+      const tl = new Timeline('dom', el, [{ frame: 10 }, { frame: 20 }, { frame: 30 }])
+
+      expect(tl.toObject()).to.deep.equal({
+        type: 'dom',
+        transformObject: el,
+        transitions: [
+          { frame: 10, params: {}, ease: 'Linear.easeNone' },
+          { frame: 20, params: {}, ease: 'Linear.easeNone' },
+          { frame: 30, params: {}, ease: 'Linear.easeNone' }
+        ]
+      })
+    })
+
+    it('should convert timeline to object with label', () => {
+      const tl = new Timeline('dom', el, [{ frame: 10 }, { frame: 20 }, { frame: 30 }], 'myLabel')
+      expect(tl.toObject()).to.have.property('label', 'myLabel')
+    })
+
+  })
 
 })
