@@ -29,7 +29,7 @@ class Transition extends EventEmitter {
   /**
    * Create Transition.
    * @param {number} frame
-   * @param {Array|Params} params
+   * @param {Array|Params|object} params
    * @param {string|function} ease
    */
   constructor(frame, params = new Params(), ease = 'Linear.easeNone') {
@@ -178,6 +178,8 @@ class Transition extends EventEmitter {
       p = new Params(p)
     }
 
+    const mappings = this.params.mappings
+
     const evt = events.createEventObjectForModel(
       Transition,
       this.toObject(),
@@ -190,6 +192,7 @@ class Transition extends EventEmitter {
 
     this._params.clear()
     this._params = p
+    this._params.mappings = mappings
 
     this.setupBubbleEvents()
 
