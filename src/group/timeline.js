@@ -1,12 +1,11 @@
 import Transitions from './transitions'
-import { EventEmitter } from 'events'
-import { context } from '../utils'
+import { context, convert } from '../utils'
 import EvalMap from './evalmap'
 
 /**
  * Timeline.
  */
-class Timeline extends EventEmitter {
+class Timeline {
 
   type = 'dom'
   transformObject = null
@@ -22,9 +21,6 @@ class Timeline extends EventEmitter {
    * @param {string|null} label
    */
   constructor(type = 'dom', transformObject = null, transitions = new Transitions(), label = null) {
-    super()
-    this.setMaxListeners(Infinity)
-
     if (!(transitions instanceof Transitions)) {
       transitions = new Transitions(transitions)
     }
@@ -62,6 +58,25 @@ class Timeline extends EventEmitter {
     return obj
   }
 
+Timeline.fromObject = function(obj) {
+  if (!obj || typeof obj !== 'object' || obj instanceof Array) {
+    throw new Error('Object is invalid.')
+  }
+
+  const keys = Object.keys(obj)
+
+  if (!keys.includes('transformObject')) {
+    throw new Error('Object is invalid')
+  }
+
+  let args = convert.objectToArray(obj).filter(arg => arg !== undefined)
+  args = {
+    type: 'dom',
+    transitions: [],
+    ...convert.arrayToObject(args)
+  }
+
+  return new Timeline(args.type, args.transformObject, args.transitions, args.label || undefined)
 }
 
 export default Timeline

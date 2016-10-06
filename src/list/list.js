@@ -19,7 +19,7 @@ class List extends EventEmitter {
    * Create List.
    * @param {Array} items
    * @param {*} model
-   * @param {Array} defaultModelArgs
+   * @param {Array|undefined} defaultModelArgs
    */
   constructor(items = [], model = null, defaultModelArgs = undefined) {
     super()

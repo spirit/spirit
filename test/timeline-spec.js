@@ -62,6 +62,51 @@ describe('timeline', () => {
 
   })
 
+  describe('parse fromObject', () => {
+
+    it('should fail with invalid type', () => {
+      expect(() => Timeline.fromObject(123)).to.throw(/Object is invalid/)
+      expect(() => Timeline.fromObject([])).to.throw(/Object is invalid/)
+    })
+
+    it('should fail when no transformObject is provided', () => {
+      expect(() => Timeline.fromObject({})).to.throw(/Object is invalid/)
+    })
+
+    it('should fail if transformObject is not a HTMLElement', () => {
+      expect(() => Timeline.fromObject({ transformObject: 123 })).to.throw(/HTMLElement is required/)
+    })
+
+    it('should create a timeline', () => {
+      expect(() => Timeline.fromObject({ transformObject: el })).to.not.throw(Error)
+    })
+
+    it('should create a timeline with transformObject as object', () => {
+      expect(() => {
+        Timeline.fromObject({ type: 'object', transformObject: { a: 'a', b: 'b' } })
+      }).not.to.throw(Error)
+    })
+
+    it('should create a timeline with transitions', () => {
+      const tl = Timeline.fromObject({
+        transformObject: el,
+        transitions: [
+          { frame: 0, params: { x: 10, y: 10 } },
+          { frame: 100, params: { x: 200, y: 0 } },
+          { frame: 200, params: { x: 0, y: 0 } }
+        ]
+      })
+
+      expect(tl.toObject()).to.have.property('transformObject', el)
+      expect(tl.toObject()).to.have.property('transitions').to.deep.equal([
+        { frame: 0, params: { x: 10, y: 10 }, ease: 'Linear.easeNone' },
+        { frame: 100, params: { x: 200, y: 0 }, ease: 'Linear.easeNone' },
+        { frame: 200, params: { x: 0, y: 0 }, ease: 'Linear.easeNone' }
+      ])
+    })
+  })
+
+
   describe('#toObject', () => {
 
     it('should convert timeline to object without label', () => {
