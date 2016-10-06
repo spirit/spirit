@@ -1,5 +1,6 @@
 import Transitions from '../src/group/transitions'
 import Transition from '../src/group/transition'
+import EvalMap from '../src/group/evalmap'
 
 describe('transitions', () => {
 
@@ -136,6 +137,50 @@ describe('transitions', () => {
 
       expect(trs.get(40)).to.have.property('_prev', trs.get(15))
       expect(trs.get(40)).to.have.property('_next', null)
+    })
+
+  })
+
+  describe('mapping', () => {
+
+    let trs
+
+    beforeEach(() => {
+      trs = new Transitions([{ frame: 1 }, { frame: 2 }, { frame: 3 }, { frame: 4 }])
+      trs.mappings = [
+        new EvalMap(/foo/, { foo: 'bar' }),
+        new EvalMap(/bar/, { bar: 'foo' })
+      ]
+    })
+
+    it('should apply mappings for existing transitions', () => {
+      trs.each(tr => {
+        expect(tr.params.mappings).to.deep.equal(trs.mappings)
+      })
+    })
+
+    it('should apply mappings for transitions to add', () => {
+      const added = trs.add({ frame: 10 })
+      expect(added.params.mappings).to.deep.equal(trs.mappings)
+    })
+
+    it('should remove mappings on transition removal', () => {
+      expect(trs.remove(trs.get(1)))
+        .to.have.deep.property('params.mappings')
+        .to.deep.equal([])
+
+      trs.remove([trs.get(2), trs.get(4)]).forEach(tr => {
+        expect(tr)
+          .to.have.deep.property('params.mappings')
+          .to.deep.equal([])
+      })
+    })
+
+    it('should reassign mappings for new params', () => {
+      trs.get(2).params = { x: 200, y: 300 }
+      expect(trs.get(2))
+        .to.have.deep.property('params.mappings')
+        .to.deep.equal(trs.mappings)
     })
 
   })

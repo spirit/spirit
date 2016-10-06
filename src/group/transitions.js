@@ -29,6 +29,8 @@ class Transitions extends List {
   sortOn = 'frame'
   linkedList = true
 
+  _mappings = []
+
   /**
    * Create transitions
    * @param {Array} transitions
@@ -52,6 +54,54 @@ class Transitions extends List {
    */
   haveFrame(frame) {
     return this._list.filter(tr => tr.frame === frame).length > 0
+  }
+
+  /**
+   * Get mappings for these transitions
+   * @returns {Array}
+   */
+  get mappings() {
+    return this._mappings
+  }
+
+  /**
+   * Set mappings for these transitions
+   * @param {Array} mappings
+   */
+  set mappings(mappings) {
+    this._mappings = mappings
+    this.each(tr => { tr.params.mappings = [...mappings] })
+  }
+
+  /**
+   * Apply mappings to child transition
+   * @param {*|Array} tr
+   * @returns {*}
+   */
+  add(tr) {
+    const affected = super.add(tr)
+    const exec = (transition) => { transition.params.mappings = [...this.mappings] }
+
+    Array.isArray(affected)
+      ? affected.forEach(exec)
+      : exec(affected)
+
+    return affected
+  }
+
+  /**
+   * Remove mappings from transition on removal
+   * @param {*|Array} transition
+   */
+  remove(tr) {
+    const affected = super.remove(tr)
+    const exec = (transition) => { transition.params.mappings = [] }
+
+    Array.isArray(affected)
+      ? affected.forEach(exec)
+      : exec(affected)
+
+    return affected
   }
 
   /**
