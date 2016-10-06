@@ -1,17 +1,6 @@
 import List from '../list/list'
 import Param from './param'
-
-/**
- * Parse object to array
- * @param {object} obj
- * @returns {Array}
- */
-function objectToArray(obj) {
-  return Object.keys(obj).reduce((a, b) => {
-    a.push({ [b]: obj[b] })
-    return a
-  }, [])
-}
+import { convert } from '../utils'
 
 /**
  * List of params.
@@ -35,7 +24,7 @@ class Params extends List {
    */
   constructor(params = []) {
     if (!Array.isArray(params) && params instanceof Object) {
-      params = objectToArray(params)
+      params = convert.objectToArray(params)
     }
 
     super(params, Param)
@@ -83,7 +72,7 @@ class Params extends List {
    */
   add(p) {
     if (p instanceof Object && !(p instanceof Param) && !Array.isArray(p) && Object.keys(p).length > 1) {
-      p = objectToArray(p)
+      p = convert.objectToArray(p)
     }
 
     const affected = super.add(p)
