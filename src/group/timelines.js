@@ -1,17 +1,23 @@
-class Timelines {
+import List from '../list/list'
+import Timeline from './timeline'
 
-  list = []
+class Timelines extends List {
 
-  add() {
-
+  /**
+   * Create timelines instance.
+   * @param {Array} timelines
+   */
+  constructor(timelines = []) {
+    super(timelines, Timeline, ['object', {}])
   }
 
-  remove() {
-
-  }
-
-  get length() {
-    return this.list.length
+  /**
+   * Get timeline by transformObject
+   * @param {HTMLElement|object} transformObject
+   * @returns {Timeline}
+   */
+  get(transformObject) {
+    return this._list.find(tl => tl.transformObject === transformObject)
   }
 
 }
