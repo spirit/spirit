@@ -6,7 +6,8 @@ import {
   jsonloader,
   gsap,
   autobind,
-  events
+  events,
+  convert
 } from '../src/utils'
 
 import {
@@ -324,7 +325,7 @@ describe('utils', () => {
         expect(spyBar.calledOnce).to.be.true
       })
 
-      it ('should clear all events for legacy node implementations', () => {
+      it('should clear all events for legacy node implementations', () => {
         class MyEmitter extends require('events').EventEmitter {}
 
         const spyFoo = sinon.spy()
@@ -349,6 +350,26 @@ describe('utils', () => {
         expect(spyBar.calledOnce).to.be.true
       })
 
+    })
+
+  })
+
+  describe('convert', () => {
+
+    it('should convert object to array', () => {
+      expect(convert.objectToArray({ a: 'a', b: 'b', c: 'c' })).to.deep.equal([
+        { a: 'a' },
+        { b: 'b' },
+        { c: 'c' }
+      ])
+    })
+
+    it('should convert array to object', () => {
+      expect(convert.arrayToObject([{ a: 'a' }, { b: 'b' }, { c: 'c' }])).to.deep.equal({
+        a: 'a',
+        b: 'b',
+        c: 'c'
+      })
     })
 
   })
