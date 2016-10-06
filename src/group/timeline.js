@@ -1,6 +1,7 @@
 import Transitions from './transitions'
 import { EventEmitter } from 'events'
 import { context } from '../utils'
+import EvalMap from './evalmap'
 
 /**
  * Timeline.
@@ -40,6 +41,8 @@ class Timeline extends EventEmitter {
         throw new Error('HTMLElement is required.')
       }
     }
+
+    this.transitions.mappings = [new EvalMap(/this/g, transformObject)]
   }
 
   toObject() {

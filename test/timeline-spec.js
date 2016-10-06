@@ -85,4 +85,60 @@ describe('timeline', () => {
 
   })
 
+  describe('apply mappings to transitions', () => {
+
+    describe('as object', () => {
+      let tl
+
+      beforeEach(() => {
+        tl = new Timeline('object', { foo: 5, bar: 2 }, [
+          { frame: 10, params: { total: '{this.foo * this.bar}' } },
+          { frame: 20, params: { total: '{this.foo - 10}' } },
+          { frame: 30, params: { total: '{this.foo + 10}' } }
+        ])
+      })
+
+      it('should apply {this} mapping to transition params', () => {
+        expect(tl.transitions.get(10).params.get('total').value).to.equal(10)
+        expect(tl.transitions.get(20).params.get('total').value).to.equal(-5)
+        expect(tl.transitions.get(30).params.get('total').value).to.equal(15)
+      })
+
+      it('should apply this mapping for transitions to add', () => {
+        const added = tl.transitions.add({
+          frame: 0,
+          params: {
+            bar: '{ (this.bar * 100) + "px" }'
+          }
+        })
+        expect(added.toObject()).to.have.deep.property('params.bar', '200px')
+      })
+
+      it('should apply this mapping for params to add', () => {
+        const added = tl.transitions.get(10).params.add({ foo: '{this.foo + this.bar}' })
+        expect(added).to.have.property('value', 7)
+      })
+    })
+
+    describe('as dom', () => {
+
+      it('should evaluate {this} as the transform element', () => {
+        const div = document.createElement('div')
+        div.style.width = '100px'
+
+        const tl = new Timeline('dom', div, [{
+          frame: 0,
+          params: {
+            x: '{ window.getComputedStyle(this).width }'
+          }
+        }])
+
+        expect(tl.toObject()).to.have.deep.property('transitions[0].params.x', '100px')
+      })
+
+    })
+
+
+  })
+
 })
