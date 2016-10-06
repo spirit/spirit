@@ -65,6 +65,12 @@ describe('params', () => {
       expect(params.at(1).toObject()).deep.equal({ y: 300 })
     })
 
+    it('should add by multiple object', () => {
+      params.add({ a: 'a', b: 'b', c: 'c' })
+      expect(params.toObject()).to.deep.equal({ a: 'a', b: 'b', c: 'c' })
+      params.each(p => expect(p).instanceOf(Param))
+    })
+
     it('should add by param', () => {
       params.add(new Param('x', 200))
       params.add(new Param('y', 300))
@@ -109,7 +115,7 @@ describe('params', () => {
   describe('#toObject', () => {
     it('should convert to a valid object', () => {
       const params = new Params([{ x: 100 }, { y: 200 }, { z: 300 }])
-      expect(params.toObject()).to.deep.equal({x: 100, y: 200, z: 300})
+      expect(params.toObject()).to.deep.equal({ x: 100, y: 200, z: 300 })
     })
   })
 
@@ -163,10 +169,10 @@ describe('params', () => {
   })
 
   describe('duplicates', () => {
-    it ('should not allow duplicates', () => {
-      const params = new Params({x: 10, y: 100})
-      expect(() => params.add({x: 100})).to.throw(/List has duplicates/)
-      expect(() => new Params([{x: 10}, {x: 100}])).to.throw(/List has duplicates/)
+    it('should not allow duplicates', () => {
+      const params = new Params({ x: 10, y: 100 })
+      expect(() => params.add({ x: 100 })).to.throw(/List has duplicates/)
+      expect(() => new Params([{ x: 10 }, { x: 100 }])).to.throw(/List has duplicates/)
     })
   })
 

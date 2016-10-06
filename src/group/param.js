@@ -129,6 +129,7 @@ class Param extends EventEmitter {
       for (let mapping in mappings) {
         val = val.replace(mappings[mapping].regex, `mappings[${mapping}].map`)
       }
+
       return eval(val) // eslint-disable-line no-eval
     }
 
