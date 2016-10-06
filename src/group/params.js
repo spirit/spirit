@@ -27,6 +27,7 @@ function objectToArray(obj) {
 class Params extends List {
 
   duplicates = { prop: 'prop' }
+  _mappings = []
 
   /**
    * Create params.
@@ -38,6 +39,23 @@ class Params extends List {
     }
 
     super(params, Param)
+  }
+
+  /**
+   * Get mappings for these transitions
+   * @returns {Array}
+   */
+  get mappings() {
+    return this._mappings
+  }
+
+  /**
+   * Set mappings for these transitions
+   * @param {Array} mappings
+   */
+  set mappings(mappings) {
+    this._mappings = mappings
+    this.each(p => { p.mappings = [...mappings] })
   }
 
   /**
@@ -69,9 +87,31 @@ class Params extends List {
     }
 
     const affected = super.add(p)
+    const exec = (param) => { param.mappings = [...this.mappings] }
+
+    Array.isArray(affected)
+      ? affected.forEach(exec)
+      : exec(affected)
 
     return affected
   }
+
+  /**
+   * Remove param
+   * @param {*|Array} p
+   */
+  remove(p) {
+    const affected = super.remove(p)
+    const exec = (param) => { param.mappings = [] }
+
+    Array.isArray(affected)
+      ? affected.forEach(exec)
+      : exec(affected)
+
+    return affected
+  }
+
+  /**
    * Convert params to an object
    * @returns {object}
    */

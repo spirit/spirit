@@ -1,5 +1,6 @@
 import Params from '../src/group/params'
 import Param from '../src/group/param'
+import EvalMap from '../src/group/evalmap'
 
 describe('params', () => {
 
@@ -174,6 +175,78 @@ describe('params', () => {
       expect(() => params.add({ x: 100 })).to.throw(/List has duplicates/)
       expect(() => new Params([{ x: 10 }, { x: 100 }])).to.throw(/List has duplicates/)
     })
+  })
+
+  describe('mappings', () => {
+
+    let mappings, params
+
+    beforeEach(() => {
+      mappings = [
+        new EvalMap(/foo/, 'this is foo!'),
+        new EvalMap(/bar/, 'this is bar!'),
+      ]
+
+      params = new Params({ one: 1, two: 2, three: 3 })
+    })
+
+    it('should have mapping for each param', () => {
+      params.each(p => expect(p).to.have.property('mappings').to.deep.equal([]))
+      params.mappings = mappings
+      params.each(p => expect(p).to.have.property('mappings').to.deep.equal(mappings))
+    })
+
+    it('should have mapping for param to add', () => {
+      params.mappings = mappings
+      const added = params.add({ a: 123 })
+      expect(added).to.have.property('mappings').to.deep.equal(mappings)
+
+      const multipleA = params.add([{ x: 100 }, { y: 200 }])
+      multipleA.forEach(p => expect(p).to.have.property('mappings').to.deep.equal(mappings))
+
+      const multipleB = params.add({ width: 10, height: 20 })
+      multipleB.forEach(p => expect(p).to.have.property('mappings').to.deep.equal(mappings))
+    })
+
+    it('should clear mapping for param to remove', () => {
+      params.mappings = mappings
+      expect(params.remove(params.get('one')))
+        .to.have.property('mappings')
+        .to.deep.equal([])
+
+      params.remove([params.get('two'), params.get('three')]).forEach(p => {
+        expect(p)
+          .to.have.property('mappings')
+          .to.deep.equal([])
+      })
+
+      expect(params.toArray()).to.deep.equal([])
+      expect(params).to.have.lengthOf(0)
+    })
+
+    it('should evaluate mapping', () => {
+      params.mappings = mappings
+      params.add({ foo: `{foo}`, bar: `{bar}` })
+      expect(params.toArray()).to.deep.equal([
+        { one: 1 },
+        { two: 2 },
+        { three: 3 },
+        { foo: 'this is foo!' },
+        { bar: 'this is bar!' }
+      ])
+
+      expect(params.toObject()).to.deep.equal({
+        one: 1,
+        two: 2,
+        three: 3,
+        foo: 'this is foo!',
+        bar: 'this is bar!'
+      })
+
+      params.mappings = [...mappings, new EvalMap(/hello/g, name => `hello ${name}!`)]
+      expect(params.add({ hello: '{hello("there")}' })).to.have.property('value', 'hello there!')
+    })
+
   })
 
   describe('dispatch changes', () => {
