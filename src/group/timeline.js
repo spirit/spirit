@@ -58,6 +58,12 @@ class Timeline {
     return obj
   }
 
+  destroy() {
+    this.transitions.each(tr => tr.destroy())
+  }
+
+}
+
 Timeline.fromObject = function(obj) {
   if (!obj || typeof obj !== 'object' || obj instanceof Array) {
     throw new Error('Object is invalid.')

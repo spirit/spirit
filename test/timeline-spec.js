@@ -183,6 +183,28 @@ describe('timeline', () => {
 
     })
 
+  })
+
+  describe('destroy', () => {
+
+    it('should destroy all transitions on timeline', () => {
+      const tl = new Timeline('dom', el, [
+        { frame: 0, params: { x: 0, y: 0 } },
+        { frame: 100, params: { x: 100, y: 100 } }
+      ])
+
+      const spy = sinon.spy()
+
+      const tr =tl.transitions.get(0)
+
+      tr.on('change:param', spy)
+      tr.params.get('x').value = 10
+
+      tl.destroy()
+
+      tr.params.get('x').value = 20
+      expect(spy.callCount).to.equal(1)
+    })
 
   })
 
