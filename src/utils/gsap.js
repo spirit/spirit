@@ -1,5 +1,6 @@
 import config from '../config/config'
 import loadScript from './loadscript'
+import Timeline from '../group/timeline'
 import Params from '../group/params'
 
 /**
@@ -60,4 +61,39 @@ export function constructTweenParams(params) {
   })
 
   return result
+}
+
+/**
+ * Generate timeline from data
+ * @param {Timeline} tl
+ */
+export function generateTimeline(tl) {
+  if (!tl || !(tl instanceof Timeline)) {
+    throw new Error('Need valid timeline data to generate GSAP timeline from')
+  }
+
+  if (!config.gsap.timeline) {
+    throw new Error('GSAP not set. Please make sure GSAP is available.')
+  }
+
+  if (tl.type !== 'dom') {
+    throw new Error('Timeline invalid. Needs a timeline with type of dom.')
+  }
+
+  const timeline = new config.gsap.timeline({
+    frames: true,
+    paused: true
+  })
+
+  tl.transitions.each(tr => {
+    const frame = tr._prev ? tr.frame - tr._prev.frame : tr.frame
+    const prevFrame = tr._prev ? tr._prev.frame : 0
+    const params = { ...constructTweenParams(tr.params), ease: tr.ease }
+
+    if (Object.keys(params).length > 0) {
+      timeline.add(config.gsap.tween.to(tl.transformObject, frame, params).play(), prevFrame)
+    }
+  })
+
+  return timeline
 }

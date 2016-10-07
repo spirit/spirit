@@ -1,5 +1,6 @@
 import config from '../src/config/config'
 import Params from '../src/group/params'
+import Timeline from '../src/group/timeline'
 
 import {
   context,
@@ -192,9 +193,68 @@ describe('utils', () => {
 
     })
 
+    describe('generate timeline', () => {
 
-      const err = await resolvePromise(gsap.ensure())
-      expect(err).to.be.an('error').match(/GSAP not found/)
+      const div = document.createElement('div')
+
+      it('should fail on invalid data', () => {
+        expect(() => gsap.generateTimeline()).to.throw(/Need valid timeline/)
+        expect(() => gsap.generateTimeline([])).to.throw(/Need valid timeline/)
+        expect(() => gsap.generateTimeline({})).to.throw(/Need valid timeline/)
+      })
+
+      it('should fail if gsap timeline is not set', () => {
+        expect(() => gsap.generateTimeline(new Timeline('dom', div))).to.throw(/GSAP not set/)
+      })
+
+      it('should fail if provided timeline is not of type "dom"', () => {
+        config.gsap.timeline = function() {}
+        expect(() => gsap.generateTimeline(new Timeline('object', {})))
+          .to.throw(/Timeline invalid. Needs a timeline with type of dom/)
+      })
+
+      describe('on generated', () => {
+
+        let timeline
+
+        beforeEach(async() => {
+          config.gsap.autoInjectUrl = 'test/fixtures/gsap.js'
+          await gsap.ensure()
+
+          timeline = gsap.generateTimeline(
+            new Timeline('dom', div, [
+              { frame: 0, params: { x: 100, y: 100, rotateX: 300 } },
+              { frame: 100, params: { rotateX: 500 } }
+            ])
+          )
+        })
+
+        it('should have _gsTransform and _gsTweenID added to div', () => {
+          expect(div._gsTransform).to.be.an('object')
+          expect(div._gsTweenID).to.be.an('string')
+        })
+
+        it('should have a gsap timeline with correct duration', () => {
+          expect(timeline).to.be.an.instanceOf(config.gsap.timeline)
+          expect(timeline.duration()).to.equal(100)
+        })
+
+        it('should have gsap children', () => {
+          expect(timeline.getChildren()).to.have.lengthOf(2)
+
+          const children = timeline.getChildren()
+          expect(children[0].vars).to.deep.equal({
+            css: {
+              x: 100,
+              y: 100,
+              rotationX: '+=300deg'
+            },
+            ease: 'Linear.easeNone'
+          })
+        })
+
+      })
+      
     })
 
   })
