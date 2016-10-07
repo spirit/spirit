@@ -130,6 +130,10 @@ class Group extends EventEmitter {
           this.timelines.list.filter(tl => tl.type === 'dom').forEach(tl => {
             const el = tl.transformObject
 
+            if (!(el instanceof window.HTMLElement)) {
+              throw new Error('transformObject is not an HTMLElement')
+            }
+
             // kill existing tweens
             config.gsap.tween.killTweensOf(el)
             delete el._gsTransform

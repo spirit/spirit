@@ -130,19 +130,16 @@ describe('group', () => {
     let group
 
     beforeEach(() => {
+      config.gsap.autoInjectUrl = 'test/fixtures/gsap.js'
       group = new Group()
-      config.gsap = { ...configGsap }
     })
+
 
     afterEach(() => {
       config.gsap = { ...configGsap }
     })
 
     describe('ensure gsap', () => {
-
-      beforeEach(() => {
-        config.gsap.autoInjectUrl = 'test/fixtures/gsap.js'
-      })
 
       it('should ensure gsap before construct animation', async() => {
         const spy = sandbox.spy(gsap, 'ensure')
@@ -156,6 +153,65 @@ describe('group', () => {
         config.gsap.autoInject = false
         const result = await resolvePromise(group.construct())
         expect(result).to.be.an('error').to.match(/GSAP not found/)
+      })
+
+      it('should fail when can not construct timeline', async() => {
+        group.timelines = [{ transformObject: divA } ]
+        group.timelines.get(divA).transformObject = null // needs to be set, silently fails
+        const tl = await resolvePromise(group.construct())
+        expect(tl).to.be.an('error').to.match(/Could not construct timeline/)
+      })
+
+    })
+
+    describe('modify timeline', () => {
+
+      beforeEach(() => {
+        const tlA = {
+          transformObject: divA,
+          transitions: [
+            { frame: 0, params: { x: 0, y: 0 } },
+            { frame: 100, params: { x: 1000 } },
+            { frame: 200, params: { y: 1000 } }
+          ]
+        }
+
+        const tlB = {
+          transformObject: divB,
+          transitions: [
+            { frame: 250, params: { scale: 1.5 } }
+          ]
+        }
+
+        const tlC = {
+          transformObject: divC,
+          transitions: [
+            { frame: 50, params: { skewX: 300 } },
+            { frame: 150, params: { rotateZ: 360 } },
+          ]
+        }
+
+        group.timelines = [tlA, tlB, tlC]
+      })
+
+      it('should create a valid gsap timeline', async() => {
+        const tl = await group.construct()
+        expect(tl).to.be.an.instanceOf(config.gsap.timeline)
+        expect(group.timeline).to.equal(tl)
+        expect(tl.duration()).to.equal(250)
+      })
+
+      it('should kill and clear existing timeline', async() => {
+        await group.construct()
+        group.timelines.get(divA).transitions.get(100).params.get('x').value = 500
+
+        const spyKill = sandbox.spy(group.timeline, 'kill')
+        const spyClear = sandbox.spy(group.timeline, 'clear')
+
+        await group.construct()
+
+        expect(spyKill.calledOnce).to.be.true
+        expect(spyClear.calledOnce).to.be.true
       })
 
     })
