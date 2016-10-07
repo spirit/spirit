@@ -224,7 +224,8 @@ describe('utils', () => {
           timeline = gsap.generateTimeline(
             new Timeline('dom', div, [
               { frame: 0, params: { x: 100, y: 100, rotateX: 300 } },
-              { frame: 100, params: { rotateX: 500 } }
+              { frame: 100, params: { rotateX: 500 } },
+              { frame: 200, params: { x: 1000 } }
             ])
           )
         })
@@ -236,25 +237,45 @@ describe('utils', () => {
 
         it('should have a gsap timeline with correct duration', () => {
           expect(timeline).to.be.an.instanceOf(config.gsap.timeline)
-          expect(timeline.duration()).to.equal(100)
+          expect(timeline.duration()).to.equal(200)
         })
 
-        it('should have gsap children', () => {
-          expect(timeline.getChildren()).to.have.lengthOf(2)
+        it('should use frames and is paused', () => {
+          expect(timeline.vars).to.deep.equal({ frames: true, paused: true })
+        })
 
-          const children = timeline.getChildren()
-          expect(children[0].vars).to.deep.equal({
-            css: {
-              x: 100,
-              y: 100,
-              rotationX: '+=300deg'
-            },
-            ease: 'Linear.easeNone'
+        describe('children', () => {
+
+          it('should have children', () => {
+            expect(timeline.getChildren()).to.have.lengthOf(3)
           })
+
+          it('should have parent timeline', () => {
+            const children = timeline.getChildren()
+            children.forEach(child => expect(child.timeline).to.equal(timeline))
+          })
+
+          it('should have correct transitions', () => {
+            const children = timeline.getChildren()
+            expect(children[0].vars).to.deep.equal({
+              css: { x: 100, y: 100, rotationX: '+=300deg' },
+              ease: 'Linear.easeNone'
+            })
+            expect(children[1].vars).to.deep.equal({ rotationX: '+=500deg', ease: 'Linear.easeNone' })
+            expect(children[2].vars).to.deep.equal({ x: 1000, ease: 'Linear.easeNone' })
+          })
+
+          it ('should have the correct offset', () => {
+            const children = timeline.getChildren()
+            expect(children[0].startTime()).to.equal(0)
+            expect(children[1].startTime()).to.equal(0)
+            expect(children[2].startTime()).to.equal(100)
+          })
+
         })
 
       })
-      
+
     })
 
   })
