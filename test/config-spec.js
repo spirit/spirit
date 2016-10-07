@@ -1,7 +1,13 @@
 import config from '../src/config/config'
 import setup from '../src/config/setup'
 
+const configGsap = { ...config.gsap }
+
 describe('config', () => {
+
+  afterEach(() => {
+    config.gsap = { ...configGsap }
+  })
 
   it('should reject invalid type', () => {
     expect(() => setup(123)).to.throw(/Invalid type/)
@@ -11,10 +17,10 @@ describe('config', () => {
     expect(() => setup({})).to.throw(/Invalid object/)
   })
 
-  it ('should store gsap into config', () => {
+  it('should store gsap into config', () => {
     setup({
-      tween: function(){},
-      timeline: function(){}
+      tween: function() {},
+      timeline: function() {}
     })
 
     expect(config.gsap.tween).to.be.a('function')
