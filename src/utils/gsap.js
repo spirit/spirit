@@ -1,5 +1,6 @@
 import config from '../config/config'
 import loadScript from './loadscript'
+import Params from '../group/params'
 
 /**
  * Check on gsap presence
@@ -30,4 +31,33 @@ export function ensure() {
 
       return Promise.resolve()
     })
+}
+
+/**
+ * Construct tween object from params
+ * @param {Params|object} params
+ * @returns {object}
+ */
+export function constructTweenParams(params) {
+  if (!(params instanceof Params)) {
+    params = new Params(params)
+  }
+
+  const table = {
+    'rotateX': { prop: 'rotationX', value: '+={value}deg' },
+    'rotateY': { prop: 'rotationY', value: '+={value}deg' },
+    'rotateZ': { prop: 'rotationZ', value: '+={value}deg' },
+    'skewX': { prop: 'skewX', value: '{value}deg' },
+    'skewY': { prop: 'skewY', value: '{value}deg' }
+  }
+
+  let result = {}
+
+  params.each(param => {
+    table.hasOwnProperty(param.prop)
+      ? result[table[param.prop].prop] = table[param.prop].value.replace('{value}', param.value)
+      : result[param.prop] = param.value
+  })
+
+  return result
 }

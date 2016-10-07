@@ -1,4 +1,5 @@
 import config from '../src/config/config'
+import Params from '../src/group/params'
 
 import {
   context,
@@ -14,6 +15,8 @@ import {
   req as jsonloaderReq,
   cache as jsonloaderCache
 } from '../src/utils/jsonloader'
+
+const gsapConfig = { ...config.gsap }
 
 describe('utils', () => {
 
@@ -128,44 +131,67 @@ describe('utils', () => {
 
   describe('gsap', () => {
 
-    let autoInjectUrl
-
     beforeEach(() => {
-      autoInjectUrl = config.gsap.autoInjectUrl
-      config.gsap.autoInject = true
-      config.gsap.tween = null
-      config.gsap.timeline = null
+      config.gsap = { ...gsapConfig }
     })
 
     afterEach(() => {
-      config.gsap.autoInjectUrl = autoInjectUrl
+      config.gsap = { ...gsapConfig }
     })
 
-    it('should not contain any gsap', () => {
-      expect(gsap.has()).to.be.false
+    describe('ensure', () => {
+
+      it('should not contain any gsap', () => {
+        expect(gsap.has()).to.be.false
+      })
+
+      it('should ensure gsap', async() => {
+        config.gsap.autoInjectUrl = 'test/fixtures/gsap.js'
+
+        expect(gsap.has()).to.be.false
+
+        await gsap.ensure()
+
+        expect(window.TweenMax).to.be.a('function')
+        expect(window.TimelineMax).to.be.a('function')
+        expect(gsap.has()).to.be.true
+      })
+
+      it('should resolve if already has gsap', async() => {
+        config.gsap.tween = function() {}
+        config.gsap.timeline = function() {}
+        await gsap.ensure()
+        expect(gsap.has()).to.be.true
+      })
+
+      it('should reject ensure() when autoInject is false', async() => {
+        config.gsap.autoInject = false
+
+        const err = await resolvePromise(gsap.ensure())
+        expect(err).to.be.an('error').match(/GSAP not found/)
+      })
+
     })
 
-    it('should ensure gsap', async() => {
-      config.gsap.autoInjectUrl = 'test/fixtures/gsap.js'
+    describe('construct tween object from params', () => {
 
-      expect(gsap.has()).to.be.false
+      it('should create tween object from Params instance', () => {
+        const constructed = gsap.constructTweenParams(new Params({ x: 100, y: 200 }))
+        expect(constructed).to.deep.equal({ x: 100, y: 200 })
+      })
 
-      await gsap.ensure()
+      it('should create tween object from an object', () => {
+        const constructed = gsap.constructTweenParams({ x: 100, y: 200 })
+        expect(constructed).to.deep.equal({ x: 100, y: 200 })
+      })
 
-      expect(window.TweenMax).to.be.a('function')
-      expect(window.TimelineMax).to.be.a('function')
-      expect(gsap.has()).to.be.true
+      it('should create tween object with modified values', () => {
+        const constructed = gsap.constructTweenParams({ x: 100, y: 200, rotateZ: 400 })
+        expect(constructed).to.deep.equal({ x: 100, y: 200, rotationZ: '+=400deg' })
+      })
+
     })
 
-    it('should resolve if already has gsap', async() => {
-      config.gsap.tween = function() {}
-      config.gsap.timeline = function() {}
-      await gsap.ensure()
-      expect(gsap.has()).to.be.true
-    })
-
-    it('should reject ensure() when autoInject is false', async() => {
-      config.gsap.autoInject = false
 
       const err = await resolvePromise(gsap.ensure())
       expect(err).to.be.an('error').match(/GSAP not found/)
