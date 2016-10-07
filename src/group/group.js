@@ -1,7 +1,12 @@
+import config from '../config/config'
 import { gsap } from '../utils'
 import Timelines from './timelines'
 import { EventEmitter } from 'events'
 
+/**
+ * Group defaults
+ * @type {object}
+ */
 export const groupDefaults = {
   fps: 30,
   name: 'untitled',
@@ -16,6 +21,12 @@ class Group extends EventEmitter {
   _name = groupDefaults.name
   _fps = groupDefaults.fps
   _timelines = groupDefaults.timelines
+
+  /**
+   * Gsap timeline
+   * @type {null|config.gsap.timeline}
+   */
+  timeline = null
 
   /**
    * Create a group instance.
@@ -100,15 +111,39 @@ class Group extends EventEmitter {
   }
 
   /**
-   * Construct gsap timeline animation
-   * Translate timelines to valid gsap timeline
+   * Construct gsap timeline
    */
   construct() {
     return new Promise((resolve, reject) => {
       const doConstruct = () => {
-        // implement constructing timelines,
-        // waiting for timelines to be implemented
-        resolve()
+        try {
+          // initiate an empty gsap timeline
+          if (this.timeline && this.timeline instanceof config.gsap.timeline) {
+            this.timeline.kill()
+            this.timeline.clear()
+          } else {
+            this.timeline = new config.gsap.timeline({ frame: true, paused: true }) // eslint-disable-line new-cap
+            this.timeline.autoRemoveChildren = false
+          }
+
+          // create a valid gsap timeline out of timelines
+          this.timelines.list.filter(tl => tl.type === 'dom').forEach(tl => {
+            const el = tl.transformObject
+
+            // kill existing tweens
+            config.gsap.tween.killTweensOf(el)
+            delete el._gsTransform
+            delete el._gsTweenID
+            el.setAttribute('style', '')
+
+            // stack timelines to group timeline
+            this.timeline.add(gsap.generateTimeline(tl).play(), 0)
+          })
+
+          resolve(this.timeline)
+        } catch (err) {
+          reject(new Error(`Could not construct timeline: ${err.message}`))
+        }
       }
 
       gsap.ensure()

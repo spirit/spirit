@@ -1,6 +1,9 @@
 import { gsap } from '../src/utils'
+import config from '../src/config/config'
 import Group, { groupDefaults } from '../src/group/group'
 import Timelines from '../src/group/timelines'
+
+const configGsap = { ...config.gsap }
 
 describe('group', () => {
 
@@ -122,16 +125,41 @@ describe('group', () => {
     })
   })
 
-  describe('construct gsap timeline', () => {
-    it('should ensure gsap before construct animation', async() => {
-      const group = new Group()
-      const spy = sandbox.spy(gsap, 'ensure')
+  describe('construct', () => {
 
-      const result = await resolvePromise(group.construct())
+    let group
 
-      expect(spy.called).to.be.true
-      expect(result).not.to.be.an('error')
+    beforeEach(() => {
+      group = new Group()
+      config.gsap = { ...configGsap }
     })
+
+    afterEach(() => {
+      config.gsap = { ...configGsap }
+    })
+
+    describe('ensure gsap', () => {
+
+      beforeEach(() => {
+        config.gsap.autoInjectUrl = 'test/fixtures/gsap.js'
+      })
+
+      it('should ensure gsap before construct animation', async() => {
+        const spy = sandbox.spy(gsap, 'ensure')
+        const result = await resolvePromise(group.construct())
+
+        expect(spy.called).to.be.true
+        expect(result).not.to.be.an('error')
+      })
+
+      it('should fail when gsap can not be loaded', async() => {
+        config.gsap.autoInject = false
+        const result = await resolvePromise(group.construct())
+        expect(result).to.be.an('error').to.match(/GSAP not found/)
+      })
+
+    })
+
   })
 
 })
