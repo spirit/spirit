@@ -7,6 +7,7 @@ module.exports = function(wallaby) {
     files: [
       { pattern: 'src/**/*.js', load: false },
       { pattern: 'test/fixtures/*.*', instrument: false },
+      { pattern: 'test/fixtures/group/*.*', instrument: true },
       'test/bootstrap.js'
     ],
 
