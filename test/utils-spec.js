@@ -2,6 +2,8 @@ import config from '../src/config/config'
 import Params from '../src/group/params'
 import Timeline from '../src/group/timeline'
 
+import { post } from './fixtures/group/dom'
+
 import {
   context,
   loadscript,
@@ -9,7 +11,8 @@ import {
   gsap,
   autobind,
   events,
-  convert
+  convert,
+  xpath
 } from '../src/utils'
 
 import {
@@ -265,7 +268,7 @@ describe('utils', () => {
             expect(children[2].vars).to.deep.equal({ x: 1000, ease: 'Linear.easeNone' })
           })
 
-          it ('should have the correct offset', () => {
+          it('should have the correct offset', () => {
             const children = timeline.getChildren()
             expect(children[0].startTime()).to.equal(0)
             expect(children[1].startTime()).to.equal(0)
@@ -477,6 +480,69 @@ describe('utils', () => {
         b: 'b',
         c: 'c'
       })
+    })
+
+  })
+
+  describe('xpath', () => {
+
+    let container,
+        post1,
+        post2
+
+    beforeEach(() => {
+      container = document.createElement('div')
+      container.setAttribute('id', 'container')
+      document.body.appendChild(container)
+
+      post1 = post()
+      post2 = post()
+
+      container.appendChild(post1)
+      container.appendChild(post2)
+    })
+
+    afterEach(() => {
+      document.body.removeChild(container)
+    })
+
+    describe('get expression', () => {
+
+      it('should get xpath string relative to html', () => {
+        const a = xpath.getExpression(post2.querySelector('.post-date'))
+        const b = xpath.getExpression(post2.querySelector('.post-args'))
+
+        expect(a).to.equal('/html[1]/body[1]/div[1]/div[2]/div[1]/div[1]/span[1]')
+        expect(b).to.equal('/html[1]/body[1]/div[1]/div[2]/div[1]/div[1]/span[2]')
+      })
+
+      it ('should get xpath relative to parent element', () => {
+        const a = xpath.getExpression(post2.querySelector('.post-date'), container)
+        const b = xpath.getExpression(post2.querySelector('.post-args'), container)
+
+        expect(a).to.equal('div[2]/div[1]/div[1]/span[1]')
+        expect(b).to.equal('div[2]/div[1]/div[1]/span[2]')
+      })
+
+      it ('should get null', () => {
+        expect(xpath.getExpression('div[3]', container)).to.equal(null)
+        expect(xpath.getExpression('div[3]/div[2]/span[1]', container)).to.equal(null)
+      })
+
+    })
+
+    describe('get element', () => {
+
+      it ('should get element by expression from html', () => {
+        const element = xpath.getElement('/html[1]/body[1]/div[1]/div[2]/div[1]/div[1]/span[1]')
+        expect(element).to.equal(post2.querySelector('.post-date'))
+      })
+
+      it ('should get element by expression relative to parent element', () => {
+        const element = xpath.getElement('div[1]/div[1]/div[1]/span[2]', container)
+        expect(element).to.equal(post1.querySelector('.post-args'))
+      })
+
     })
 
   })
