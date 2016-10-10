@@ -1,5 +1,4 @@
-import Groups from '../src/group/groups'
-import Group from '../src/group/group'
+import { Groups, Group }from '../src/group'
 import { simpleGroups } from './fixtures/group/groups'
 
 describe('groups', () => {
