@@ -1,7 +1,7 @@
-import { gsap } from '../src/utils'
 import config from '../src/config/config'
-import Group, { groupDefaults } from '../src/group/group'
-import Timelines from '../src/group/timelines'
+import { gsap } from '../src/utils'
+import { Group, Timelines } from '../src/group'
+import { groupDefaults } from '../src/group/group'
 
 const configGsap = { ...config.gsap }
 
@@ -23,11 +23,17 @@ describe('group', () => {
 
   describe('parse', () => {
     it('should create an empty group', () => {
-      const group = new Group()
+      const group = new Group({ name: 'test' })
 
       expect(group.fps).equal(groupDefaults.fps)
-      expect(group.name).equal(groupDefaults.name)
+      expect(group.name).equal('test')
       expect(group.timelines).equal(groupDefaults.timelines)
+    })
+
+    it('should fail to create a group without a name', () => {
+      expect(() => new Group()).to.throw(/Cannot create group without a name/)
+      expect(() => new Group({ name: '' })).to.throw(/Cannot create group without a name/)
+      expect(() => new Group({ name: 123 })).to.throw(/Cannot create group without a name/)
     })
 
     it('should create a named group', () => {
@@ -36,7 +42,7 @@ describe('group', () => {
     })
 
     it('should have empty timelines', () => {
-      const group = new Group()
+      const group = new Group({ name: 'group' })
       expect(group.timelines).to.be.an.instanceOf(Timelines)
       expect(group.timelines).to.have.lengthOf(0)
     })
@@ -73,13 +79,13 @@ describe('group', () => {
     })
 
     it('should fail set invalid fps', () => {
-      const group = new Group()
+      const group = new Group({ name: 'group' })
       expect(group.fps).equal(30)
       expect(() => { group.fps = '12' }).to.throw(/Fps needs to be a number/)
     })
 
     it('should fail set invalid name', () => {
-      const group = new Group()
+      const group = new Group({ name: 'untitled' })
       expect(group.name).equal('untitled')
       expect(() => { group.name = 123 }).to.throw(/Name needs to be a string/)
     })
@@ -156,7 +162,7 @@ describe('group', () => {
 
     beforeEach(() => {
       config.gsap.autoInjectUrl = 'test/fixtures/gsap.js'
-      group = new Group()
+      group = new Group({ name: 'group' })
     })
 
 

@@ -11,7 +11,7 @@ class Groups extends List {
    * @param {Array} data
    */
   constructor(rootEl = document.body, data = []) {
-    super(data, Group)
+    super(data, Group, [{ name: 'untitled' }])
 
     if (!(rootEl instanceof window.HTMLElement)) {
       throw new Error('No root element provided.')

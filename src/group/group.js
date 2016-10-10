@@ -9,7 +9,6 @@ import { EventEmitter } from 'events'
  */
 export const groupDefaults = {
   fps: 30,
-  name: 'untitled',
   timelines: new Timelines()
 }
 
@@ -32,8 +31,14 @@ class Group extends EventEmitter {
    * Create a group instance.
    * @param props
    */
-  constructor(props = groupDefaults) {
+  constructor(props = {}) {
     super()
+    this.setMaxListeners(Infinity)
+
+    if (!props.name || typeof props.name !== 'string' || props.name.trim() === '') {
+      throw new Error('Cannot create group without a name.')
+    }
+
     Object.assign(this, { ...groupDefaults, ...props })
   }
 
@@ -47,7 +52,7 @@ class Group extends EventEmitter {
 
   /**
    * Set timelines
-   * @param {Array|Timelines} timelines
+   * @param {Timelines} timelines
    */
   set timelines(timelines) {
     if (!(timelines instanceof Timelines)) {
