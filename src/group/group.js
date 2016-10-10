@@ -112,6 +112,7 @@ class Group extends EventEmitter {
 
   /**
    * Construct gsap timeline
+   * @returns {Promise}
    */
   construct() {
     return new Promise((resolve, reject) => {
@@ -156,6 +157,10 @@ class Group extends EventEmitter {
     })
   }
 
+}
+
+Group.fromObject = function(obj) {
+  return new Group(obj)
 }
 
 export default Group

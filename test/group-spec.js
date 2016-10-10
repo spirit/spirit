@@ -86,6 +86,31 @@ describe('group', () => {
 
   })
 
+  describe('fromObject', () => {
+    it('should return a valid group from object', () => {
+      const g = Group.fromObject({
+        name: 'ghost',
+        fps: 25,
+        timelines: [
+          { transformObject: divA, transitions: [{ frame: 10, params: { x: 100, y: 100 } }] }
+        ]
+      })
+      expect(g).to.be.an.instanceOf(Group)
+
+      expect(g.toObject()).to.deep.equal({
+        name: 'ghost',
+        fps: 25,
+        timelines: [
+          {
+            type: 'dom',
+            transformObject: divA,
+            transitions: [{ frame: 10, params: { x: 100, y: 100 }, ease: 'Linear.easeNone' }]
+          }
+        ]
+      })
+    })
+  })
+
   describe('toObject', () => {
     it('should convert group to valid object', () => {
       const group = new Group({
@@ -156,7 +181,7 @@ describe('group', () => {
       })
 
       it('should fail when can not construct timeline', async() => {
-        group.timelines = [{ transformObject: divA } ]
+        group.timelines = [{ transformObject: divA }]
         group.timelines.get(divA).transformObject = null // needs to be set, silently fails
         const tl = await resolvePromise(group.construct())
         expect(tl).to.be.an('error').to.match(/Could not construct timeline/)
