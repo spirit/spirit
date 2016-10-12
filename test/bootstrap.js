@@ -13,3 +13,24 @@ global.sinon = sinon
 
 global.resolvePromise = (promise) => new Promise(resolve => promise.then(resolve).catch(resolve))
 global.XMLHttpRequest = window.XMLHttpRequest
+
+global.stubXhr = function(sandbox, props) {
+  const defaults = {
+    open: function() {},
+    send: function() {
+      this.onreadystatechange.call(this)
+    },
+    readyState: 4,
+    status: 200,
+    responseText: ''
+  }
+
+  props = { ...defaults, ...props }
+
+  sandbox.stub(global, 'XMLHttpRequest').returns(new function() {
+    props.open = props.open.bind(this)
+    props.send = props.send.bind(this)
+
+    Object.assign(this, props)
+  })
+}

@@ -68,27 +68,6 @@ describe('utils', () => {
       sandbox.restore()
     })
 
-    let xhrDefaults = {
-      open: function() {},
-      send: function() {
-        this.onreadystatechange.call(this)
-      },
-      readyState: 4,
-      status: 200,
-      responseText: ''
-    }
-
-    function stubXhr(props) {
-      props = Object.assign({}, xhrDefaults, props)
-
-      sandbox.stub(global, 'XMLHttpRequest').returns(new function() {
-        props.open = props.open.bind(this)
-        props.send = props.send.bind(this)
-
-        Object.assign(this, props)
-      })
-    }
-
     it('should reject when context is not browser', async() => {
       sinon.stub(context, 'isBrowser').returns(false)
 
@@ -109,7 +88,7 @@ describe('utils', () => {
     })
 
     it('should reject as invalid request', async() => {
-      stubXhr({
+      stubXhr(sandbox, {
         open: () => {
           throw new Error('Invalid')
         }
@@ -120,12 +99,12 @@ describe('utils', () => {
     })
 
     it('should resolve json', async() => {
-      stubXhr({ responseText: `{"foo": "bar"}` })
+      stubXhr(sandbox, { responseText: `{"foo": "bar"}` })
       expect(await jsonloader('test.json')).to.deep.equal({ foo: 'bar' })
     })
 
     it('should reject invalid json', async() => {
-      stubXhr({ responseText: `{foo": "bar"}` })
+      stubXhr(sandbox, { responseText: `{foo": "bar"}` })
 
       const err = await resolvePromise(jsonloader('invalid-json.json'))
       expect(err).to.be.an('error').match(/Invalid json/)
@@ -516,7 +495,7 @@ describe('utils', () => {
         expect(b).to.equal('/html[1]/body[1]/div[1]/div[2]/div[1]/div[1]/span[2]')
       })
 
-      it ('should get xpath relative to parent element', () => {
+      it('should get xpath relative to parent element', () => {
         const a = xpath.getExpression(post2.querySelector('.post-date'), container)
         const b = xpath.getExpression(post2.querySelector('.post-args'), container)
 
@@ -524,7 +503,7 @@ describe('utils', () => {
         expect(b).to.equal('div[2]/div[1]/div[1]/span[2]')
       })
 
-      it ('should get null', () => {
+      it('should get null', () => {
         expect(xpath.getExpression('div[3]', container)).to.equal(null)
         expect(xpath.getExpression('div[3]/div[2]/span[1]', container)).to.equal(null)
       })
@@ -533,12 +512,12 @@ describe('utils', () => {
 
     describe('get element', () => {
 
-      it ('should get element by expression from html', () => {
+      it('should get element by expression from html', () => {
         const element = xpath.getElement('/html[1]/body[1]/div[1]/div[2]/div[1]/div[1]/span[1]')
         expect(element).to.equal(post2.querySelector('.post-date'))
       })
 
-      it ('should get element by expression relative to parent element', () => {
+      it('should get element by expression relative to parent element', () => {
         const element = xpath.getElement('div[1]/div[1]/div[1]/span[2]', container)
         expect(element).to.equal(post1.querySelector('.post-args'))
       })

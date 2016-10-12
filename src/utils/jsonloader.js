@@ -43,10 +43,10 @@ export default function(url) {
     }
 
     try {
-      xmlhttp.open('GET', url, true)
+      xmlhttp.open('GET', encodeURI(url), true)
       xmlhttp.send()
     } catch (err) {
-      reject(new Error('Could not open request'))
+      reject(new Error(`Could not open request. Unable to load ${url}`))
     }
   })
 
