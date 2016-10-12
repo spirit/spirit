@@ -1,8 +1,9 @@
 import { create, load } from '../src/data/parser'
 import { context } from '../src/utils'
+import { cache, req } from '../src/utils/jsonloader'
 import { Timeline, Groups } from '../src/group'
-import { timeline } from './fixtures/group/groups-data'
-import { post } from './fixtures/group/dom'
+import { timeline, jsonGhost } from './fixtures/group/groups-data'
+import { post, ghost } from './fixtures/group/dom'
 
 describe('parser', () => {
 
@@ -172,7 +173,69 @@ describe('parser', () => {
 
   describe('load', () => {
 
-  })
+    beforeEach(() => {
+      Object.keys(cache).forEach(key => delete cache[key])
+      Object.keys(req).forEach(key => delete req[key])
+    })
 
+    it('should fail to create in node', async() => {
+      sandbox.stub(context, 'isBrowser').returns(false)
+
+      const result = await resolvePromise(load('animation.json'))
+      expect(result).to.be.an('error').to.match(/can only be executed in browser/)
+    })
+
+    it('should fail to load json', async() => {
+      stubXhr(sandbox, {
+        open: () => {
+          throw new Error('Invalid')
+        }
+      })
+
+      const result = await resolvePromise(load('animation.json'))
+      expect(result).to.be.an('error').to.match(/Unable to load animation\.json/)
+    })
+
+    it('should load json data via jsonloader', async() => {
+      stubXhr(sandbox, { responseText: jsonGhost })
+
+      const url = 'animation.json'
+      await resolvePromise(load(url))
+
+      expect(Object.keys(cache)).to.deep.equal([url])
+      expect(cache[url]).to.deep.equal(JSON.parse(jsonGhost))
+    })
+
+    it('should try to create groups from data', async() => {
+      stubXhr(sandbox, { responseText: jsonGhost })
+
+      const result = await resolvePromise(load('animation.json'))
+      expect(result).to.be.an('error').to.match(/Cannot find element/)
+    })
+
+    describe('parse', () => {
+
+      let gc
+
+      beforeEach(() => {
+        gc = ghost()
+        stubXhr(sandbox, { responseText: jsonGhost })
+      })
+
+      it('should parse animation and create valid groups', async() => {
+        const groups = await resolvePromise(load('animation.json', gc))
+        const timelines = groups.get('ghost').timelines
+
+        expect(timelines).to.have.lengthOf(4)
+
+        expect(timelines.at(0)).to.have.property('transformObject').to.equal(gc.querySelector('svg'))
+        expect(timelines.at(1)).to.have.property('transformObject').to.equal(gc.querySelector('path:first-child'))
+        expect(timelines.at(2)).to.have.property('transformObject').to.equal(gc.querySelector('g'))
+        expect(timelines.at(3)).to.have.property('transformObject').to.equal(gc.querySelector('path:last-child'))
+      })
+
+    })
+
+  })
 
 })

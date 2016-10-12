@@ -1,4 +1,4 @@
-import { context, xpath } from '../utils'
+import { context, jsonloader, xpath } from '../utils'
 import { Groups, Group } from '../group'
 
 /**
@@ -41,17 +41,17 @@ function getTransformObject(container, tl) {
 /**
  * Parse groups
  * @param {object|Array} data to import
- * @param {HTMLElement} rootEl root element
+ * @param {HTMLElement} element root element
  * @returns Groups
  */
-export function create(data, rootEl = undefined) {
+export function create(data, element = undefined) {
   if (!context.isBrowser()) {
     throw new Error('Invalid context. spirit.create() can only be executed in browser.')
   }
 
   // ensure root element
-  if (!(rootEl instanceof window.HTMLElement)) {
-    rootEl = document.body
+  if (!(element instanceof window.HTMLElement)) {
+    element = document.body
   }
 
   if (!Array.isArray(data) && data['groups'] && Array.isArray(data['groups'])) {
@@ -62,7 +62,7 @@ export function create(data, rootEl = undefined) {
     data = [data]
   }
 
-  const groups = new Groups(rootEl, [])
+  const groups = new Groups(element, [])
 
   data.forEach(g => {
     const d = {
@@ -73,7 +73,7 @@ export function create(data, rootEl = undefined) {
 
     g.timelines.forEach(tl => {
       d.timelines.push({
-        transformObject: getTransformObject(rootEl, tl),
+        transformObject: getTransformObject(element, tl),
         label: (tl.label && typeof tl.label === 'string' && tl.label.trim() !== '')
           ? tl.label
           : tl.expression
@@ -92,12 +92,10 @@ export function create(data, rootEl = undefined) {
  * @param {HTMLElement} element
  * @returns {Promise}
  */
-export function load(url, element) {
-  // if (!isBrowser()) {
-  //   return Promise.reject(new Error('Invalid context: spirit.load() can only be executed in browser.'))
-  // }
+export function load(url, element = undefined) {
+  if (!context.isBrowser()) {
+    return Promise.reject(new Error('Invalid context: spirit.load() can only be executed in browser.'))
+  }
 
-  // return ensureGsap()
-  //   .then(() => jsonLoader(url))
-  //   .then(data => create(data, element))
+  return jsonloader(url).then(data => create(data, element))
 }
