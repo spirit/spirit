@@ -74,9 +74,8 @@ export function create(data, element = undefined) {
     g.timelines.forEach(tl => {
       d.timelines.push({
         transformObject: getTransformObject(element, tl),
-        label: (tl.label && typeof tl.label === 'string' && tl.label.trim() !== '')
-          ? tl.label
-          : tl.expression
+        transitions: tl.transitions,
+        label: (tl.label && typeof tl.label === 'string' && tl.label.trim() !== '') ? tl.label : tl.path
       })
     })
 
