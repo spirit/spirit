@@ -78,6 +78,10 @@ class Group extends EventEmitter {
       throw new Error('Fps needs to be a number')
     }
     this._fps = fps
+
+    if (this.timeline && this.timeline instanceof config.gsap.timeline) {
+      this.timeline.timeScale(fps / 60)
+    }
   }
 
   /**
@@ -152,6 +156,9 @@ class Group extends EventEmitter {
             // stack timelines to group timeline
             this.timeline.add(gsap.generateTimeline(tl).play(), 0)
           })
+
+          // update timescale based on fps
+          this.timeline.timeScale(this.fps / 60)
 
           resolve(this.timeline)
         } catch (err) {

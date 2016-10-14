@@ -165,7 +165,6 @@ describe('group', () => {
       group = new Group({ name: 'group' })
     })
 
-
     afterEach(() => {
       config.gsap = { ...configGsap }
     })
@@ -246,6 +245,50 @@ describe('group', () => {
       })
 
     })
+
+  })
+
+  describe('timeline.timeScale with fps', () => {
+
+    let group
+
+    beforeEach(() => {
+      config.gsap.autoInjectUrl = 'test/fixtures/gsap.js'
+      group = new Group({ name: 'group' })
+      group.timelines = [{
+        transformObject: divA,
+        transitions: [
+          { frame: 0, params: { x: 0 } },
+          { frame: 120, params: { x: 1000 } }
+        ]
+      }]
+    })
+
+    afterEach(() => {
+      config.gsap = { ...configGsap }
+    })
+
+    it('should match fps with timeScale on construct', async () => {
+      const tl = await group.construct()
+
+      expect(group.fps).to.equal(30)
+      expect(tl.timeScale()).to.equal(0.5)
+      expect(tl.endTime() - tl.startTime()).to.equal(240)
+    })
+
+    it ('should update timescale on fps change', async() => {
+      const tl = await group.construct()
+      expect(tl.timeScale()).to.equal(0.5)
+
+      group.fps = 60
+      expect(tl.timeScale()).to.equal(1)
+      expect(tl.endTime() - tl.startTime()).to.equal(120)
+
+      group.fps = 12
+      expect(tl.timeScale()).to.equal(0.2)
+      expect(tl.endTime() - tl.startTime()).to.equal(600)
+    })
+
 
   })
 
