@@ -1,6 +1,7 @@
 import config from './config/config'
 import setup from './config/setup'
 import { create, load } from './data/parser'
+import groups from './registry/registry'
 
 import {
   Group,
@@ -19,6 +20,7 @@ export {
   setup,
   load,
   create,
+  groups,
   Group,
   Groups,
   EvalMap,

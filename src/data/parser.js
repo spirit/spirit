@@ -1,5 +1,6 @@
 import { context, jsonloader, xpath } from '../utils'
 import { Groups, Group } from '../group'
+import registry from '../registry/registry'
 
 /**
  * Get transform object from container
@@ -79,7 +80,9 @@ export function create(data, element = undefined) {
       })
     })
 
-    groups.add(new Group(d))
+    const group = new Group(d)
+    groups.add(group)
+    registry.add(group)
   })
 
   return groups
