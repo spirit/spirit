@@ -2,6 +2,7 @@ import config from '../config/config'
 import loadScript from './loadscript'
 import Timeline from '../group/timeline'
 import Params from '../group/params'
+import debug from './debug'
 
 /**
  * Check on gsap presence
@@ -22,7 +23,43 @@ export function ensure() {
   }
 
   if (!config.gsap.autoInject) {
+    if (debug) {
+      console.warn(`
+      
+        It seems that you have disabled autoInject. GSAP can not be found by Spirit.
+        Please make sure you provide the tween and timeline to Spirit.
+      
+        For example:
+        
+        spirit.setup({
+          tween: TweenMax,
+          timeline: TimelineMax
+        })
+        
+        Or enable the autoInject "spirit.config.gsap.autoInject = true".
+        
+      `)
+    }
+
     return Promise.reject(new Error('GSAP not found.'))
+  }
+
+  if (debug) {
+    console.warn(`
+      
+      GSAP is being fetched from CDN: ${config.gsap.autoInjectUrl}.
+      If you already have GSAP installed, please provide it to Spirit:
+      
+        spirit.setup({
+          tween: TweenMax,
+          timeline: TimelineMax
+        })
+      
+      You want to use another cdn? Change it here:
+       
+        spirit.config.gsap.autoInjectUrl = 'https://cdn.xxx'
+      
+    `)
   }
 
   return loadScript(config.gsap.autoInjectUrl)

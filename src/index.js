@@ -2,6 +2,7 @@ import config from './config/config'
 import setup from './config/setup'
 import { create, load } from './data/parser'
 import groups from './registry/registry'
+import { debug } from './utils'
 
 const version = global.VERSION
 
@@ -35,3 +36,6 @@ export {
   Transitions
 }
 
+if (debug) {
+  console.warn('You are running the development build of Spirit.')
+}

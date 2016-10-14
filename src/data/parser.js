@@ -1,4 +1,4 @@
-import { context, jsonloader, xpath } from '../utils'
+import { context, jsonloader, xpath, debug } from '../utils'
 import { Groups, Group } from '../group'
 
 /**
@@ -15,6 +15,11 @@ function getTransformObject(container, tl) {
       to = container.querySelector(`[data-spirit-id="${tl.id}"]`)
 
       if (!to && !tl.path) {
+        if (debug) {
+          console.group('Unable to resolve element by [data-spirit-id] attribute')
+          console.warn(`Timeline: `, tl)
+          console.groupEnd()
+        }
         throw new Error(`Cannot find element with [data-spirit-id="${tl.id}"]`)
       }
     }
@@ -26,11 +31,21 @@ function getTransformObject(container, tl) {
       to = xpath.getElement(tl.path, container)
 
       if (!to) {
+        if (debug) {
+          console.group('Unable to resolve element by path expression')
+          console.warn(`Timeline: `, tl)
+          console.groupEnd()
+        }
         throw new Error(`Cannot find element with path expression ${tl.path}`)
       }
     }
 
     if (!to) {
+      if (debug) {
+        console.group('Unable to resolve element')
+        console.warn(`Timeline: `, tl)
+        console.groupEnd()
+      }
       throw new Error('Cannot find element.')
     }
   }
