@@ -13,7 +13,7 @@
   ],
   "scripts": {
     "build:umd": "BABEL_ENV=umd webpack --progress",
-    "build:umd:min": "NODE_ENV=production BABEL_ENV=umd webpack --progress -p",
+    "build:umd:min": "NODE_ENV=production BABEL_ENV=umd webpack --progress",
     "build:lib": "babel src --out-dir lib",
     "build": "npm run build:umd && npm run build:umd:min && npm run build:lib",
     "lint": "eslint .",

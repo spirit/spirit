@@ -40,4 +40,19 @@ const config = {
     })
   ]
 }
+
+if (isProd) {
+  config.plugins.push(
+    new webpack.optimize.OccurrenceOrderPlugin(),
+    new webpack.optimize.DedupePlugin(),
+    new webpack.optimize.UglifyJsPlugin({
+      compress: {
+        warnings: false,
+        drop_console: true,
+        screw_ie8: true
+      }
+    })
+  )
+}
+
 module.exports = config
