@@ -6,8 +6,10 @@ import * as xpath from './xpath'
 import loadscript from './loadscript'
 import jsonloader from './jsonloader'
 import autobind from './autobind'
+import debug from './debug'
 
 export {
+  debug,
   context,
   gsap,
   loadscript,

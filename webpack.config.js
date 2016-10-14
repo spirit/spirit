@@ -9,7 +9,7 @@ const banner = `Spirit.js v${version}
 (c) ${new Date().getFullYear()} Patrick Brouwer
 Released under the MIT License.`
 
-module.exports = {
+const config = {
   devtool: isProd ? 'hidden-source-map' : 'cheap-eval-source-map',
   context: path.join(__dirname, './src'),
   entry: 'index',
@@ -34,6 +34,9 @@ module.exports = {
   },
   plugins: [
     new webpack.BannerPlugin(banner),
-    new webpack.DefinePlugin({ "global.VERSION": JSON.stringify(version) })
+    new webpack.DefinePlugin({
+      "process.env.NODE_ENV": JSON.stringify(isProd ? 'production' : 'development')
+    })
   ]
 }
+module.exports = config

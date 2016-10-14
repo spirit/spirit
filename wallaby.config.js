@@ -32,6 +32,7 @@ module.exports = function(wallaby) {
     },
 
     setup: function setup() {
+      process.env.NODE_ENV = 'test'
       require('./test/bootstrap')
     }
 
