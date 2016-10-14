@@ -81,7 +81,7 @@ export function generateTimeline(tl) {
   }
 
   const timeline = new config.gsap.timeline({
-    frames: true,
+    useFrames: true,
     paused: true
   })
 

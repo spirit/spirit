@@ -223,7 +223,8 @@ describe('utils', () => {
         })
 
         it('should use frames and is paused', () => {
-          expect(timeline.vars).to.deep.equal({ frames: true, paused: true })
+          expect(timeline.vars).to.deep.equal({ useFrames: true, paused: true })
+          expect(timeline.usesFrames()).to.be.true
         })
 
         describe('children', () => {

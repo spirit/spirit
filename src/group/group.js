@@ -128,7 +128,10 @@ class Group extends EventEmitter {
             this.timeline.kill()
             this.timeline.clear()
           } else {
-            this.timeline = new config.gsap.timeline({ frame: true, paused: true }) // eslint-disable-line new-cap
+            this.timeline = new config.gsap.timeline({  // eslint-disable-line new-cap
+              useFrames: true,
+              paused: true
+            })
             this.timeline.autoRemoveChildren = false
           }
 
