@@ -35,6 +35,7 @@ const config = {
   plugins: [
     new webpack.BannerPlugin(banner),
     new webpack.DefinePlugin({
+      "global.VERSION": JSON.stringify(version),
       "process.env.NODE_ENV": JSON.stringify(isProd ? 'production' : 'development')
     })
   ]
