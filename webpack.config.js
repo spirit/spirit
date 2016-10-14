@@ -33,6 +33,7 @@ module.exports = {
     ]
   },
   plugins: [
-    new webpack.BannerPlugin(banner)
+    new webpack.BannerPlugin(banner),
+    new webpack.DefinePlugin({ "global.VERSION": JSON.stringify(version) })
   ]
 }
