@@ -1,8 +1,6 @@
-dist/spirit.js.map
-dist/spirit.min.js.gz
+examples/
 node_modules/
-.DS_Store
 .idea/
 lib/
-coverage
-perf
+.DS_Store
+dist/spirit.js.map
