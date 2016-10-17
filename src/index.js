@@ -4,7 +4,7 @@ import { create, load } from './data/parser'
 import groups from './registry/registry'
 import { debug } from './utils'
 
-const version = global.VERSION
+const version = require('../package.json').version
 
 import {
   Group,
