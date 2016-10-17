@@ -5,11 +5,9 @@
   "description": "The animation toolkit for the web",
   "main": "dist/spirit.min.js",
   "files": [
-    "dist/spirit.js",
-    "dist/spirit.js.map",
-    "dist/spirit.min.js",
-    "dist/spirit.min.js.map",
-    "src"
+    "LICENSE",
+    "dist/",
+    "lib/"
   ],
   "scripts": {
     "build": "npm run build:umd && npm run build:umd:min && npm run build:lib",
