@@ -26,7 +26,7 @@ const config = {
     ]
   },
   resolve: {
-    extensions: ['', '.js'],
+    extensions: ['.js'],
     modules: [
       path.resolve('./src'),
       'node_modules',
