@@ -17,7 +17,7 @@ function getTransformObject(container, tl) {
       if (!to && !tl.path) {
         if (debug) {
           console.group('Unable to resolve element by [data-spirit-id] attribute')
-          console.warn(`Timeline: `, tl)
+          console.warn('Timeline: ', tl)
           console.groupEnd()
         }
         throw new Error(`Cannot find element with [data-spirit-id="${tl.id}"]`)
@@ -33,7 +33,7 @@ function getTransformObject(container, tl) {
       if (!to) {
         if (debug) {
           console.group('Unable to resolve element by path expression')
-          console.warn(`Timeline: `, tl)
+          console.warn('Timeline: ', tl)
           console.groupEnd()
         }
         throw new Error(`Cannot find element with path expression ${tl.path}`)
@@ -43,7 +43,7 @@ function getTransformObject(container, tl) {
     if (!to) {
       if (debug) {
         console.group('Unable to resolve element')
-        console.warn(`Timeline: `, tl)
+        console.warn('Timeline: ', tl)
         console.groupEnd()
       }
       throw new Error('Cannot find element.')

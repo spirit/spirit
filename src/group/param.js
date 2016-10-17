@@ -145,7 +145,6 @@ class Param extends EventEmitter {
    * @fires List#change:value
    */
   set value(val) {
-
     if (val === this._value) {
       return
     }

@@ -56,7 +56,7 @@ export function createEventObjectForModel(model, obj, prop, prevVal, nextVal) {
 export function clearEvents(emitter, events = []) {
   if (emitter.eventNames && typeof emitter.eventNames === 'function') {
     emitter.eventNames().forEach(e => emitter.removeAllListeners(e))
-  }else{
+  } else {
     events.forEach(e => emitter.removeAllListeners(e))
   }
 }

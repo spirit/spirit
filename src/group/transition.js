@@ -2,7 +2,6 @@ import { EventEmitter } from 'events'
 import Params from './params'
 import { events } from '../utils'
 
-
 /**
  * Frame transition.
  * Containing frame, ease and params information.

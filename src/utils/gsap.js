@@ -117,7 +117,7 @@ export function generateTimeline(tl) {
     throw new Error('Timeline invalid. Needs a timeline with type of dom.')
   }
 
-  const timeline = new config.gsap.timeline({
+  const timeline = new config.gsap.timeline({ // eslint-disable-line new-cap
     useFrames: true,
     paused: true
   })
