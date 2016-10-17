@@ -1,0 +1,13 @@
+examples/
+node_modules/
+src/
+test/
+.babelrc
+.editorconfig
+.eslintignore
+.eslintrc.json
+.gitignore
+.travis.yml
+wallaby.config.js
+webpack.config.js
+stats.json
