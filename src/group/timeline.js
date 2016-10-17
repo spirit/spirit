@@ -33,8 +33,8 @@ class Timeline {
     })
 
     if (type === 'dom') {
-      if (!transformObject || context.isBrowser() && !(transformObject instanceof window.HTMLElement)) {
-        throw new Error('HTMLElement is required.')
+      if (!transformObject || context.isBrowser() && !(transformObject instanceof window.Element)) {
+        throw new Error('transformObject needs to be an element.')
       }
     }
 

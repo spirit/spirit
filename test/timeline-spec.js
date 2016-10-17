@@ -12,7 +12,7 @@ describe('timeline', () => {
   describe('type is DOM element', () => {
 
     it('should require an html element', () => {
-      expect(() => new Timeline()).to.throw(/HTMLElement is required/)
+      expect(() => new Timeline()).to.throw(/transformObject needs to be an element/)
     })
 
     it('should have element and transitions defined', () => {
@@ -74,7 +74,7 @@ describe('timeline', () => {
     })
 
     it('should fail if transformObject is not a HTMLElement', () => {
-      expect(() => Timeline.fromObject({ transformObject: 123 })).to.throw(/HTMLElement is required/)
+      expect(() => Timeline.fromObject({ transformObject: 123 })).to.throw(/transformObject needs to be an element/)
     })
 
     it('should create a timeline', () => {

@@ -143,8 +143,8 @@ class Group extends EventEmitter {
           this.timelines.list.filter(tl => tl.type === 'dom').forEach(tl => {
             const el = tl.transformObject
 
-            if (!(el instanceof window.HTMLElement)) {
-              throw new Error('transformObject is not an HTMLElement')
+            if (!(el instanceof window.Element)) {
+              throw new Error('transformObject is not an Element')
             }
 
             // kill existing tweens
