@@ -12,12 +12,20 @@
     "src"
   ],
   "scripts": {
+    "build": "npm run build:umd && npm run build:umd:min && npm run build:lib",
     "build:umd": "BABEL_ENV=umd webpack --progress",
     "build:umd:min": "NODE_ENV=production BABEL_ENV=umd webpack --progress",
     "build:lib": "babel src --out-dir lib",
-    "build": "npm run build:umd && npm run build:umd:min && npm run build:lib",
+    "build:lib:watch": "babel -w src --out-dir lib",
+    "analyse": "webpack src/index.js dist/spirit.js --json > stats.json",
+    "analyse:size": "webpack --json | webpack-bundle-size-analyzer",
     "lint": "eslint .",
-    "test": "NODE_ENV=test mocha --require babel-register --require ./test/bootstrap.js"
+    "test": "NODE_ENV=test mocha --require babel-register --require ./test/bootstrap.js",
+    "test:watch": "NODE_ENV=test mocha -w --require babel-register --require ./test/bootstrap.js",
+    "preversion": "npm test && npm run lint",
+    "postversion": "git push && git push --tags",
+    "prepublish": "npm test && npm run lint && npm run build",
+    "publish:beta": "npm publish --tag beta"
   },
   "homepage": "https://spiritapp.io",
   "repository": {
@@ -56,6 +64,7 @@
     "jsdom": "9.8.0",
     "mocha": "3.1.2",
     "sinon": "1.17.6",
-    "webpack": "2.1.0-beta.25"
+    "webpack": "2.1.0-beta.25",
+    "webpack-bundle-size-analyzer": "2.2.0"
   }
 }
