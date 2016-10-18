@@ -54,6 +54,24 @@ function getTransformObject(container, tl) {
 }
 
 /**
+ * Get label for timeline to parse
+ * @param {object} tl
+ * @returns {string}
+ */
+function getLabel(tl) {
+  if (typeof tl.label === 'string' && tl.label.trim().length > 0) {
+    return tl.label
+  }
+  if (tl.id) {
+    return tl.id
+  }
+  if (tl.path) {
+    return tl.path
+  }
+  return 'undefined'
+}
+
+/**
  * Parse groups
  * @param {object|Array} data to import
  * @param {HTMLElement} element root element
@@ -90,7 +108,7 @@ export function create(data, element = undefined) {
       d.timelines.push({
         transformObject: getTransformObject(element, tl),
         transitions: tl.transitions,
-        label: (tl.label && typeof tl.label === 'string' && tl.label.trim() !== '') ? tl.label : tl.path
+        label: getLabel(tl)
       })
     })
 
