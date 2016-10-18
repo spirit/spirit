@@ -1,7 +1,7 @@
 # Spirit
 
 [![npm version](https://badge.fury.io/js/spiritjs.svg)](https://badge.fury.io/js/spiritjs) 
- [![Build Status](https://travis-ci.org/spirit/spirit.svg?branch=es6-rewrite)](https://travis-ci.org/spirit/spirit)
+ [![Build Status](https://travis-ci.org/spirit/spirit.svg?branch=master)](https://travis-ci.org/spirit/spirit)
 
 ![](https://spiritapp.io/spirit.jpg)
 
@@ -83,9 +83,11 @@ groups.get('wave').construct().then(tl => tl.play())
 #### Standalone
 
 Simply download and include with a script tag. Spirit will be registered as a global variable.
-CDN: [https://cdn.rawgit.com/spirit/spirit/dist/spirit.min.js](https://cdn.rawgit.com/spirit/spirit/es6-rewrite/dist/spirit.min.js)
 
-#### NPM / Yarn
+- CDN (rawgit): [https://cdn.rawgit.com/spirit/spirit/master/dist/spirit.min.js](https://cdn.rawgit.com/spirit/spirit/master/dist/spirit.min.js)
+- CDN (npmcdn): [https://unpkg.com/spiritjs/dist/spirit.min.js](https://unpkg.com/spiritjs/dist/spirit.min.js)
+
+#### NPM
 
 ```
 npm install spiritjs
@@ -99,9 +101,8 @@ create(data).construct()
 
 #### Bower
 
-```
-bower install spiritjs
-```
+Not yet supported, working on it. 
+Who uses bower anyway ;)
 
 **AMD Module Loaders**
 
