@@ -1,0 +1,6 @@
+examples/
+node_modules/
+.idea/
+lib/
+.DS_Store
+dist/spirit.js.map
