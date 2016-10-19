@@ -1,5 +1,8 @@
 language: node_js
 
+install:
+  - npm install --ignore-scripts
+
 node_js:
   - "4"
   - "6"
