@@ -21,6 +21,7 @@
     "test": "NODE_ENV=test mocha --require babel-register --require ./test/bootstrap.js",
     "test:watch": "NODE_ENV=test mocha -w --require babel-register --require ./test/bootstrap.js",
     "preversion": "npm test && npm run lint",
+    "version": "npm run build:umd && npm run build:umd:min && git add -A dist",
     "postversion": "git push && git push --tags",
     "prepublish": "npm test && npm run lint && npm run build",
     "publish:beta": "npm publish --tag beta"
