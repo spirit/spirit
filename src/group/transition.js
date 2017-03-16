@@ -267,7 +267,7 @@ class Transition extends EventEmitter {
  * @returns Transition
  */
 Transition.fromObject = function(obj) {
-  if (!obj || typeof obj !== 'object' || obj instanceof Array) {
+  if (Object.prototype.toString.call(obj) !== '[object Object]') {
     throw new Error('Object is invalid.')
   }
 

@@ -23,7 +23,7 @@ class Params extends List {
    * @param {Array|object} params
    */
   constructor(params = []) {
-    if (!Array.isArray(params) && params instanceof Object) {
+    if (Object.prototype.toString.call(params) === '[object Object]') {
       params = convert.objectToArray(params)
     }
 
@@ -71,7 +71,7 @@ class Params extends List {
    * @returns {*}
    */
   add(p) {
-    if (p instanceof Object && !(p instanceof Param) && !Array.isArray(p) && Object.keys(p).length > 1) {
+    if (Object.prototype.toString.call(p) === '[object Object]' && !(p instanceof Param) && Object.keys(p).length > 1) {
       p = convert.objectToArray(p)
     }
 

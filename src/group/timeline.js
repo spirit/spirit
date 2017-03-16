@@ -65,7 +65,7 @@ class Timeline {
 }
 
 Timeline.fromObject = function(obj) {
-  if (!obj || typeof obj !== 'object' || obj instanceof Array) {
+  if (Object.prototype.toString.call(obj) !== '[object Object]') {
     throw new Error('Object is invalid.')
   }
 
