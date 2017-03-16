@@ -1,34 +1,36 @@
 # Spirit
 
-[![npm version](https://badge.fury.io/js/spiritjs.svg)](https://badge.fury.io/js/spiritjs) 
- [![Build Status](https://travis-ci.org/spirit/spirit.svg?branch=master)](https://travis-ci.org/spirit/spirit)
+Spirit is the animation tool for the web. 
 
 ![](https://spiritapp.io/spirit.jpg)
 
-[The animation tool for the web](https://spiritapp.io)
+[![npm version](https://badge.fury.io/js/spiritjs.svg)](https://badge.fury.io/js/spiritjs) 
+ [![Build Status](https://travis-ci.org/spirit/spirit.svg?branch=master)](https://travis-ci.org/spirit/spirit)
 
-Manage your animations in realtime!
-
-## API
+## Spirit Runtime - API
 
 #### Setup
-Spirit uses [GSAP](https://greensock.com/gsap) tween and timeline for animation playback.
-By default it fetch GSAP from CDN.
 
-```js
+Spirit uses [GSAP](https://greensock.com/gsap) tween and timeline for animation playback.
+By default it fetches GSAP from CDN.
+
+If you already have GSAP installed, you can pass it to Spirit:
+
+```javascript
 /**
-* @param {object} gsap engines { tween, timeline }
+* @param {Object} GSAP { tween, timeline }
 */
 spirit.setup({
-  tween: TweenMax,
+  tween:    TweenMax,
   timeline: TimelineMax
 })
 ```
 
 #### Config
-Change auto inject url for cdn.
+
+Change auto inject url for cdn. Default: `https://cdnjs.cloudflare.com/ajax/libs/gsap/latest/TweenMax.min.js`
  
- ```js
+ ```javascript
  spirit.config.gsap.autoInjectUrl = 'https://cdn.somewhere.com/TweenMax.min.js'
  ```
 
@@ -36,10 +38,10 @@ Change auto inject url for cdn.
 
 Create groups based on animation data
 
-```js
+```javascript
 /**
-* @param {object} data animation data (created with Spirit app)
-* @param {Element} element bind groups to element (default document.body)
+* @param   {Object}    data     animation data (created with Spirit app)
+* @param   {Element}   element  bind groups to element (default document.body)
 * @returns {spirit.Groups}
 */
 spirit.create(data, element)
@@ -47,12 +49,12 @@ spirit.create(data, element)
 
 #### Load groups
 
-Load groups based on animation data.
+Load groups based on animation data. Use `XMLHttpRequest` to fetch the json data and parse groups.
  
- ```js
+ ```javascript
  /**
- * @param {string} url load animation data (created with Spirit app)
- * @param {Element} element bind groups to element (default document.body)
+ * @param   {String}  url     load animation data (created with Spirit app)
+ * @param   {Element} element bind groups to element (default document.body)
  * @returns {Promise}
  */
  spirit.load(url, element)
@@ -62,12 +64,12 @@ Load groups based on animation data.
 
 ```html
 <div class="container">
-  ...
+  <!-- html used for animation -->
 </div>
 ```
 
-```js
-// load animation and bind to element
+```javascript
+// load animation and bind to container element
 const groups = await spirit.load('./animation.json', document.querySelector('.container'))
 
 // play jump
@@ -77,6 +79,8 @@ groups.get('jump').construct().then(tl => tl.play())
 groups.get('wave').construct().then(tl => tl.play())
 
 ```
+
+As you can have multiple animation groups, you'll need to construct the GSAP timelime before you use it.
 
 ## Install
 
@@ -93,17 +97,20 @@ Simply download and include with a script tag. Spirit will be registered as a gl
 npm install spiritjs
 ```
 
-```js
-import { create } from 'spiritjs'
+or 
 
-create(data).construct()
+```
+yarn add spiritjs
 ```
 
-#### Bower
+And use it:
 
-Not yet supported, working on it. 
-Who uses bower anyway ;)
+```javascript
+import spirit from 'spiritjs'
 
-**AMD Module Loaders**
+const groups = await spirit.create(data).construct()
 
-The standalone downloads or versions installed via Bower are wrapped with UMD so they can be used directly as an AMD module.
+// play all animations
+groups.forEach( ({ tl }) => tl.play() )
+
+```
