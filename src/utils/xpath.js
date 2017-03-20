@@ -1,4 +1,21 @@
 /**
+ * XPath Utilities
+ * @type {object}
+ */
+export const util = {
+
+  /**
+   * Is current element part of an SVG element
+   *
+   * @param   {HTMLElement} element
+   * @returns {boolean}
+   */
+  isSVG: function(element) {
+    return element instanceof window.SVGElement
+  }
+}
+
+/**
  * Get DOM representation for an element.
  *
  * @param {HTMLElement} element
