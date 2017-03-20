@@ -7,9 +7,50 @@ import EvalMap from './evalmap'
  */
 class Timeline {
 
+  /**
+   * Timeline type.
+   * Can be "dom" or "object"
+   *
+   * @type {string}
+   */
   type = 'dom'
+
+  /**
+   * Object to apply transforms on.
+   * If type is "dom" it refers to a HTMLElement else a plain javascript object
+   *
+   * @type {HTMLElement|Object}
+   */
   transformObject = null
+
+  /**
+   * Defined label representing this timeline node.
+   *
+   * @type {string|null}
+   */
   label = null
+
+  /**
+   * XPath of element, normalized by group element.
+   * Only relevant if type is "dom"
+   *
+   * @type {string|null}
+   */
+  path = null
+
+  /**
+   * Identifier to select element. Override the path for resolving transformObject.
+   * By default the id is set on element attribute [data-spirit-id].
+   *
+   * @type {string|null}
+   */
+  id = null
+
+  /**
+   * Transitions for this timeline.
+   *
+   * @type {Transitions}
+   */
   transitions = null
 
   /**
@@ -18,9 +59,11 @@ class Timeline {
    * @param {string} type default = dom
    * @param {HTMLElement|Object} transformObject
    * @param {Array|Transitions} transitions
+   * @param {string|null} path
+   * @param {string|null} id
    * @param {string|null} label
    */
-  constructor(type = 'dom', transformObject = null, transitions = new Transitions(), label = null) {
+  constructor(type = 'dom', transformObject = null, transitions = new Transitions(), path = null, id = null, label = null) {
     if (!(transitions instanceof Transitions)) {
       transitions = new Transitions(transitions)
     }
@@ -29,12 +72,24 @@ class Timeline {
       type,
       transformObject,
       transitions,
-      label
+      label,
+      path,
+      id
     })
 
     if (type === 'dom') {
       if (!transformObject || context.isBrowser() && !(transformObject instanceof window.Element)) {
         throw new Error('transformObject needs to be an element.')
+      }
+
+      if (!id && !path) {
+        throw new Error('path is not defined')
+      }
+    }
+
+    if (type === 'object') {
+      if (!transformObject) {
+        throw new Error('transformObject needs to be an object')
       }
     }
 
@@ -46,7 +101,8 @@ class Timeline {
       type: this.type,
       transformObject: this.transformObject,
       transitions: this.transitions.toArray(),
-      label: this.label
+      label: this.label,
+      path: this.path
     }
 
     Object.keys(obj).forEach(key => {
@@ -82,7 +138,14 @@ Timeline.fromObject = function(obj) {
     ...convert.arrayToObject(args)
   }
 
-  return new Timeline(args.type, args.transformObject, args.transitions, args.label || undefined)
+  return new Timeline(
+    args.type,
+    args.transformObject,
+    args.transitions,
+    args.path || undefined,
+    args.id || undefined,
+    args.label || undefined
+  )
 }
 
 export default Timeline
