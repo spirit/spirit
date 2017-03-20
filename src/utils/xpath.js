@@ -73,6 +73,6 @@ export function getElement(expression, nodeContext = null) {
     nodeContext = document.body
   }
 
-  const evaluated = document.evaluate(expression, nodeContext, null, window.XPathResult.ANY_TYPE)
+  const evaluated = document.evaluate(expression, nodeContext, null, window.XPathResult.ANY_TYPE, null)
   return evaluated.iterateNext()
 }

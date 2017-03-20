@@ -24,6 +24,14 @@ const gsapConfig = { ...config.gsap }
 
 describe('utils', () => {
 
+  before(() => {
+    sinon.stub(xpath.util, 'isSVG', element => ['SVG', 'G', 'RECT'].includes(element.nodeName))
+  })
+
+  after(() => {
+    xpath.util.isSVG.restore()
+  })
+
   it('should has window context', () => {
     expect(context.isBrowser()).to.be.ok
   })
@@ -507,6 +515,34 @@ describe('utils', () => {
       it('should get null', () => {
         expect(xpath.getExpression('div[3]', container)).to.equal(null)
         expect(xpath.getExpression('div[3]/div[2]/span[1]', container)).to.equal(null)
+      })
+
+      describe('svg', () => {
+        let svg
+
+        beforeEach(() => {
+          // add svg element with nested rect
+          svg = document.createElement('svg')
+
+          let g    = document.createElement('g'),
+              rect = document.createElement('rect')
+
+          g.appendChild(rect)
+          svg.appendChild(g)
+          container.querySelector('.entry').appendChild(svg)
+        })
+
+        it('should get xpath string relative to html', () => {
+          expect(xpath.getExpression(svg.querySelector('rect'))).to.equal(
+            `/html[1]/body[1]/div[1]/div[1]/div[1]/*[local-name()='svg'][1]/*[local-name()='g'][1]/*[local-name()='rect'][1]`
+          )
+        })
+
+        it('should get xpath relative to parent element', () => {
+          expect(xpath.getExpression(svg.querySelector('rect'), container)).to.equal(
+            `div[1]/div[1]/*[local-name()='svg'][1]/*[local-name()='g'][1]/*[local-name()='rect'][1]`
+          )
+        })
       })
 
     })
