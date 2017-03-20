@@ -18,8 +18,8 @@ export const util = {
 /**
  * Get DOM representation for an element.
  *
- * @param {HTMLElement} element
- * @param {null|undefined|HTMLElement} nodeContext
+ * @param   {HTMLElement} element
+ * @param   {null|undefined|HTMLElement} nodeContext
  * @returns {string|null}
  */
 export function getExpression(element, nodeContext = null) {
@@ -46,6 +46,10 @@ export function getExpression(element, nodeContext = null) {
 
     let tagName = element.nodeName.toLowerCase()
     let pathIndex = `[${index + 1}]`
+
+    if (util.isSVG(element)) {
+      tagName = `*[local-name()='${tagName}']`
+    }
 
     paths.unshift(tagName + pathIndex)
     element = element.parentNode
