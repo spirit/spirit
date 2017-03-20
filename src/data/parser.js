@@ -105,10 +105,14 @@ export function create(data, element = undefined) {
     }
 
     g.timelines.forEach(tl => {
+      const transformObject = getTransformObject(element, tl)
+
       d.timelines.push({
-        transformObject: getTransformObject(element, tl),
+        transformObject,
         transitions: tl.transitions,
-        label: getLabel(tl)
+        label: getLabel(tl),
+        path: xpath.getExpression(transformObject, element),
+        id: tl.id
       })
     })
 

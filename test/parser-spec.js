@@ -101,8 +101,10 @@ describe('parser', () => {
 
         let groups = create(group)
 
-        expect(groups.get('ghost-animation').timelines.at(0))
-          .to.have.property('transformObject', post1)
+        const tl = groups.get('ghost-animation').timelines.at(0)
+
+        expect(tl).to.have.property('transformObject', post1)
+        expect(tl).to.have.property('id', 'my-post-animation')
 
         expect(groups.get('ghost-animation').timelines.get(post1))
           .to.be.an.instanceOf(Timeline)
@@ -111,8 +113,11 @@ describe('parser', () => {
       it('should resolve element by path expression', () => {
         group.timelines = [timeline(null, 'div[2]/div[1]/div[1]/span[2]')]
 
-        expect(create(group).get('ghost-animation').timelines.at(0))
-          .to.have.property('transformObject', post2.querySelector('.post-args'))
+        const tl = create(group).get('ghost-animation').timelines.at(0)
+
+        expect(tl).to.have.property('transformObject', post2.querySelector('.post-args'))
+        expect(tl).to.have.property('path', 'div[2]/div[1]/div[1]/span[2]')
+        expect(tl).to.have.property('id', null)
       })
 
     })
