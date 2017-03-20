@@ -35,7 +35,7 @@ class Transitions extends List {
    * Create transitions
    * @param {Array} transitions
    */
-  constructor(transitions) {
+  constructor(transitions = []) {
     super(transitions, Transition, [0])
   }
 

@@ -52,9 +52,9 @@ describe('group', () => {
         name: 'my-group',
         fps: 25,
         timelines: [
-          { transformObject: divA, transitions: [{ frame: 0, params: { x: 0, y: 0 } }] },
-          { transformObject: divB, transitions: [{ frame: 100, params: { x: 100, y: 200 } }] },
-          { transformObject: divC, transitions: [{ frame: 200, params: { x: 400, y: 400 }, ease: 'custom' }] },
+          { transformObject: divA, path: 'div[0]', transitions: [{ frame: 0, params: { x: 0, y: 0 } }] },
+          { transformObject: divB, path: 'div[1]', transitions: [{ frame: 100, params: { x: 100, y: 200 } }] },
+          { transformObject: divC, path: 'div[2]', transitions: [{ frame: 200, params: { x: 400, y: 400 }, ease: 'custom' }] },
         ]
       })
 
@@ -63,16 +63,19 @@ describe('group', () => {
         {
           type: 'dom',
           transformObject: divA,
+          path: 'div[0]',
           transitions: [{ frame: 0, params: { x: 0, y: 0 }, ease: 'Linear.easeNone' }]
         },
         {
           type: 'dom',
           transformObject: divB,
+          path: 'div[1]',
           transitions: [{ frame: 100, params: { x: 100, y: 200 }, ease: 'Linear.easeNone' }]
         },
         {
           type: 'dom',
           transformObject: divC,
+          path: 'div[2]',
           transitions: [{ frame: 200, params: { x: 400, y: 400 }, ease: 'custom' }]
         },
       ])
@@ -98,7 +101,7 @@ describe('group', () => {
         name: 'ghost',
         fps: 25,
         timelines: [
-          { transformObject: divA, transitions: [{ frame: 10, params: { x: 100, y: 100 } }] }
+          { transformObject: divA, path: 'div[0]', transitions: [{ frame: 10, params: { x: 100, y: 100 } }] }
         ]
       })
       expect(g).to.be.an.instanceOf(Group)
@@ -110,6 +113,7 @@ describe('group', () => {
           {
             type: 'dom',
             transformObject: divA,
+            path: 'div[0]',
             transitions: [{ frame: 10, params: { x: 100, y: 100 }, ease: 'Linear.easeNone' }]
           }
         ]
@@ -123,9 +127,9 @@ describe('group', () => {
         name: 'monkey-business',
         fps: 10,
         timelines: [
-          { label: 'monkey', transformObject: divA },
-          { label: 'eyes', transformObject: divB, transitions: [{ frame: 0 }] },
-          { label: 'mouth', transformObject: divC }
+          { label: 'monkey', transformObject: divA, path: 'div[0]' },
+          { label: 'eyes', transformObject: divB, path: 'div[1]', transitions: [{ frame: 0 }] },
+          { label: 'mouth', transformObject: divC, path: 'div[2]' }
         ]
       })
 
@@ -137,18 +141,21 @@ describe('group', () => {
             type: 'dom',
             label: 'monkey',
             transformObject: divA,
+            path: 'div[0]',
             transitions: []
           },
           {
             type: 'dom',
             label: 'eyes',
             transformObject: divB,
+            path: 'div[1]',
             transitions: [{ frame: 0, params: {}, ease: 'Linear.easeNone' }]
           },
           {
             type: 'dom',
             label: 'mouth',
             transformObject: divC,
+            path: 'div[2]',
             transitions: []
           }
         ]
@@ -186,7 +193,7 @@ describe('group', () => {
       })
 
       it('should fail when can not construct timeline', async() => {
-        group.timelines = [{ transformObject: divA }]
+        group.timelines = [{ transformObject: divA, path: 'div[0]' }]
         group.timelines.get(divA).transformObject = null // needs to be set, silently fails
         const tl = await resolvePromise(group.construct())
         expect(tl).to.be.an('error').to.match(/Could not construct timeline/)
@@ -199,6 +206,7 @@ describe('group', () => {
       beforeEach(() => {
         const tlA = {
           transformObject: divA,
+          path: 'div[0]',
           transitions: [
             { frame: 0, params: { x: 0, y: 0 } },
             { frame: 100, params: { x: 1000 } },
@@ -208,6 +216,7 @@ describe('group', () => {
 
         const tlB = {
           transformObject: divB,
+          path: 'div[1]',
           transitions: [
             { frame: 250, params: { scale: 1.5 } }
           ]
@@ -215,6 +224,7 @@ describe('group', () => {
 
         const tlC = {
           transformObject: divC,
+          path: 'div[2]',
           transitions: [
             { frame: 50, params: { skewX: 300 } },
             { frame: 150, params: { rotateZ: 360 } },
@@ -257,6 +267,7 @@ describe('group', () => {
       group = new Group({ name: 'group' })
       group.timelines = [{
         transformObject: divA,
+        path: 'div[0]',
         transitions: [
           { frame: 0, params: { x: 0 } },
           { frame: 120, params: { x: 1000 } }

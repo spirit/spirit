@@ -8,6 +8,7 @@ import { EventEmitter } from 'events'
  * @type {object}
  */
 export const groupDefaults = {
+  name: undefined,
   fps: 30,
   timelines: new Timelines()
 }
@@ -56,7 +57,7 @@ class Group extends EventEmitter {
    */
   set timelines(timelines) {
     if (!(timelines instanceof Timelines)) {
-      timelines = new Timelines(timelines)
+      timelines = new Timelines(Array.from(timelines))
     }
     this._timelines = timelines
   }
