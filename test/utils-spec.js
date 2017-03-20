@@ -186,7 +186,7 @@ describe('utils', () => {
       })
 
       it('should fail if gsap timeline is not set', () => {
-        expect(() => gsap.generateTimeline(new Timeline('dom', div))).to.throw(/GSAP not set/)
+        expect(() => gsap.generateTimeline(new Timeline('dom', div, [], 'div[0]'))).to.throw(/GSAP not set/)
       })
 
       it('should fail if provided timeline is not of type "dom"', () => {
@@ -208,7 +208,7 @@ describe('utils', () => {
               { frame: 0, params: { x: 100, y: 100, rotateX: 300 } },
               { frame: 100, params: { rotateX: 500 } },
               { frame: 200, params: { x: 1000 } }
-            ])
+            ], 'div[0]')
           )
         })
 

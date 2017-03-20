@@ -12,6 +12,7 @@ export const simpleGroups = [
       {
         label: 'head',
         transformObject: divA,
+        path: 'div[0]',
         transitions: [
           { frame: 0, ease: 'Strong.easeOut', params: [{ x: 0 }, { y: 0 }] },
           { frame: 100, params: { x: 300, y: 1000 } }
@@ -20,6 +21,7 @@ export const simpleGroups = [
       {
         label: 'body',
         transformObject: divB,
+        path: 'div[1]',
         transitions: [
           { frame: 100, params: { scale: 2 } }
         ]
@@ -33,6 +35,7 @@ export const simpleGroups = [
       {
         label: 'outline',
         transformObject: divC,
+        path: 'div[2]',
         transitions: [
           { frame: 0, params: { scale: 0 } },
           { frame: 250, params: { scale: 1 }, ease: 'Elastic.easeOut' }
@@ -41,6 +44,7 @@ export const simpleGroups = [
       {
         label: 'eyes',
         transformObject: divD,
+        path: 'div[3]',
         transitions: [
           { frame: 200, params: { scaleY: 1 } },
           { frame: 201, params: { scaleY: 0.1 } },
@@ -50,6 +54,7 @@ export const simpleGroups = [
       {
         label: 'shadow',
         transformObject: divE,
+        path: 'div[4]',
         transitions: [
           { frame: 0, params: { y: 0 } },
           { frame: 50, params: { y: 100 } },

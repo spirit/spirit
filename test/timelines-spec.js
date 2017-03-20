@@ -11,9 +11,9 @@ describe('timelines', () => {
 
   beforeEach(() => {
     timelines = new Timelines([
-      new Timeline('dom', divA),
-      new Timeline('dom', divB),
-      new Timeline('dom', divC)
+      new Timeline('dom', divA, [], 'div[0]'),
+      new Timeline('dom', divB, [], 'div[1]'),
+      new Timeline('dom', divC, [], 'div[2]')
     ])
   })
 
