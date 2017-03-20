@@ -7,16 +7,6 @@ describe('timelines', () => {
   const divB = document.createElement('div')
   const divC = document.createElement('div')
 
-  let timelines
-
-  beforeEach(() => {
-    timelines = new Timelines([
-      new Timeline('dom', divA, [], 'div[0]'),
-      new Timeline('dom', divB, [], 'div[1]'),
-      new Timeline('dom', divC, [], 'div[2]')
-    ])
-  })
-
   describe('parse', () => {
 
     it('should have empty timelines', () => {
@@ -24,6 +14,12 @@ describe('timelines', () => {
     })
 
     it('should parse array of timelines by object', () => {
+      const timelines = new Timelines([
+        { type: 'dom', transformObject: divA, path: 'div[0]' },
+        { type: 'dom', transformObject: divB, path: 'div[1]' },
+        { type: 'dom', transformObject: divC, path: 'div[2]' }
+      ])
+
       expect(timelines).to.have.lengthOf(3)
       timelines.each(tl => expect(tl).to.be.an.instanceOf(Timeline))
 
@@ -33,6 +29,12 @@ describe('timelines', () => {
     })
 
     it('should parse array of timelines by instances', () => {
+      const timelines = new Timelines([
+        new Timeline('dom', divA, [], 'div[0]'),
+        new Timeline('dom', divB, [], 'div[1]'),
+        new Timeline('dom', divC, [], 'div[2]')
+      ])
+
       expect(timelines).to.have.lengthOf(3)
       timelines.each(tl => expect(tl).to.be.an.instanceOf(Timeline))
 
@@ -46,6 +48,11 @@ describe('timelines', () => {
   describe('#get', () => {
 
     it('should get the timeline by transformObject', () => {
+      const timelines = new Timelines([
+        new Timeline('dom', divA, [], 'div[0]'),
+        new Timeline('dom', divB, [], 'div[1]'),
+        new Timeline('dom', divC, [], 'div[2]')
+      ])
       expect(timelines.get(divA)).to.equal(timelines.at(0))
       expect(timelines.get(divB)).to.equal(timelines.at(1))
       expect(timelines.get(divC)).to.equal(timelines.at(2))
