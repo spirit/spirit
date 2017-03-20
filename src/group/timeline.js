@@ -133,7 +133,7 @@ Timeline.fromObject = function(obj) {
 
   let args = convert.objectToArray(obj).filter(arg => arg !== undefined)
   args = {
-    type: 'dom',
+    type: args.type || 'dom',
     transitions: [],
     ...convert.arrayToObject(args)
   }
