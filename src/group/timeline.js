@@ -102,7 +102,8 @@ class Timeline {
       transformObject: this.transformObject,
       transitions: this.transitions.toArray(),
       label: this.label,
-      path: this.path
+      path: this.path,
+      id: this.id
     }
 
     Object.keys(obj).forEach(key => {
