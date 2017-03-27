@@ -5,7 +5,8 @@ Spirit is the animation tool for the web.
 ![](https://spiritapp.io/spirit.jpg)
 
 [![npm version](https://badge.fury.io/js/spiritjs.svg)](https://badge.fury.io/js/spiritjs) 
- [![Build Status](https://travis-ci.org/spirit/spirit.svg?branch=master)](https://travis-ci.org/spirit/spirit)
+[![Build Status](https://travis-ci.org/spirit/spirit.svg?branch=master)](https://travis-ci.org/spirit/spirit)
+[![Greensock Compatibility](https://img.shields.io/badge/gsap-v1.18.0-brightgreen.svg)](https://greensock.com/gsap)
 
 ## Spirit Runtime - API
 
