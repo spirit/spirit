@@ -6,57 +6,15 @@ import { debug } from './utils'
 
 const version = require('../package.json').version
 
-import {
-  Group,
-  Groups,
-  EvalMap,
-  Param,
-  Params,
-  Timeline,
-  Timelines,
-  Transition,
-  Transitions
-} from './group'
-
+export * from './group'
 export {
   version,
   config,
   setup,
-  load,
   create,
-  groups,
-  Group,
-  Groups,
-  EvalMap,
-  Param,
-  Params,
-  Timeline,
-  Timelines,
-  Transition,
-  Transitions
+  load,
+  groups
 }
-
-function Spirit() {
-  Object.assign(this, {
-    version,
-    config,
-    setup,
-    load,
-    create,
-    groups,
-    Group,
-    Groups,
-    EvalMap,
-    Param,
-    Params,
-    Timeline,
-    Timelines,
-    Transition,
-    Transitions
-  })
-}
-
-export default new Spirit()
 
 if (debug) {
   console.warn('You are running the development build of Spirit.')
