@@ -6,20 +6,26 @@ import config from './config'
  *
  * @param {object} conf
  */
-export default async function setup(conf) {
-  let timeline, tween
+export default function setup(conf) {
+  return new Promise((resolve, reject) => {
 
-  if (is.isObject(conf)) {
-    if (typeof conf.timeline === 'function' && typeof conf.tween === 'function') {
-      timeline = conf.timeline
-      tween = conf.tween
+    let timeline, tween
+
+    if (is.isObject(conf)) {
+      if (typeof conf.timeline === 'function' && typeof conf.tween === 'function') {
+        timeline = conf.timeline
+        tween = conf.tween
+      }
     }
-  }
 
-  if (!tween || !timeline) {
-    return await gsap.ensure()
-  }
-
-  config.gsap.tween = tween
-  config.gsap.timeline = timeline
+    if (!tween || !timeline) {
+      gsap.ensure()
+        .then(resolve)
+        .catch(reject)
+    } else {
+      config.gsap.tween = tween
+      config.gsap.timeline = timeline
+      resolve()
+    }
+  })
 }

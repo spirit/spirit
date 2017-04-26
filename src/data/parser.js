@@ -133,10 +133,10 @@ export function create(data, element = undefined) {
  * @param   {HTMLElement} element
  * @returns {Promise}
  */
-export async function load(url, element = undefined) {
+export function load(url, element = undefined) {
   if (!context.isBrowser()) {
-    throw new Error('Invalid context: spirit.load() can only be executed in browser.')
+    return Promise.reject(new Error('Invalid context: spirit.load() can only be executed in browser.'))
   }
 
-  return await jsonloader(url).then(data => create(data, element))
+  return jsonloader(url).then(data => create(data, element))
 }
