@@ -41,9 +41,6 @@
   "bugs": {
     "url": "https://github.com/spirit/spirit/issues"
   },
-  "engines": {
-    "node": "6.x.x"
-  },
   "devDependencies": {
     "babel-cli": "6.16.0",
     "babel-core": "6.17.0",
