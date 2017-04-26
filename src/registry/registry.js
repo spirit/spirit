@@ -10,6 +10,7 @@ class Registry extends List {
 
   /**
    * Add unique group
+   *
    * @param {Group} group
    */
   add(group) {
@@ -31,7 +32,8 @@ class Registry extends List {
 
   /**
    * Get group by name
-   * @param {string} name
+   *
+   * @param   {string} name
    * @returns {Group}
    */
   get(name) {
@@ -40,6 +42,7 @@ class Registry extends List {
 
   /**
    * Get all group names from registry
+   *
    * @returns {Array}
    */
   groupNames() {

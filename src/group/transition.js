@@ -1,6 +1,6 @@
 import { EventEmitter } from 'events'
 import Params from './params'
-import { events } from '../utils'
+import { events, is } from '../utils'
 
 /**
  * Frame transition.
@@ -27,9 +27,10 @@ class Transition extends EventEmitter {
 
   /**
    * Create Transition.
-   * @param {number} frame
+   *
+   * @param {number}              frame
    * @param {Array|Params|object} params
-   * @param {string|function} ease
+   * @param {string|function}     ease
    */
   constructor(frame, params = new Params(), ease = 'Linear.easeNone') {
     super()
@@ -58,6 +59,7 @@ class Transition extends EventEmitter {
 
   /**
    * Get current frame
+   *
    * @returns {number}
    */
   get frame() {
@@ -66,6 +68,7 @@ class Transition extends EventEmitter {
 
   /**
    * Set frame
+   *
    * @param {number} f
    * @fires Transition#change
    * @fires Transition#change:frame
@@ -111,6 +114,7 @@ class Transition extends EventEmitter {
 
   /**
    * Get ease
+   *
    * @returns {string|function}
    */
   get ease() {
@@ -119,6 +123,7 @@ class Transition extends EventEmitter {
 
   /**
    * Set ease
+   *
    * @param {string|function} e
    * @fires Transition#change:ease
    */
@@ -161,7 +166,8 @@ class Transition extends EventEmitter {
 
   /**
    * Get the params
-   * @returns Params
+   *
+   * @returns {Params}
    */
   get params() {
     return this._params
@@ -169,6 +175,7 @@ class Transition extends EventEmitter {
 
   /**
    * Set params
+   *
    * @param {Params} p
    * @fires Transition#change:params
    */
@@ -240,6 +247,7 @@ class Transition extends EventEmitter {
 
   /**
    * Convert this transition to object
+   *
    * @returns {object}
    */
   toObject(paramsAsArray = false) {
@@ -262,12 +270,13 @@ class Transition extends EventEmitter {
 
 /**
  * Parse Transition from object
- * @param {object} obj {ease:string|function, frame:number, params:array|object}
+ *
+ * @param   {object} obj {ease:string|function, frame:number, params:array|object}
  * @example {frame: 12, ease: 'Linear.easeNone', params: {x: 100, y: 309}}
- * @returns Transition
+ * @returns {Transition}
  */
 Transition.fromObject = function(obj) {
-  if (Object.prototype.toString.call(obj) !== '[object Object]') {
+  if (!is.isObject(obj)) {
     throw new Error('Object is invalid.')
   }
 

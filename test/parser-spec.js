@@ -1,5 +1,5 @@
 import { create, load } from '../src/data/parser'
-import { context, xpath } from '../src/utils'
+import { context, is } from '../src/utils'
 import { cache, req } from '../src/utils/jsonloader'
 import { Timeline, Groups } from '../src/group'
 import { timeline, jsonGhost } from './fixtures/group/groups-data'
@@ -10,11 +10,11 @@ describe('parser', () => {
   let sandbox
 
   before(() => {
-    sinon.stub(xpath.util, 'isSVG', element => ['SVG', 'G', 'RECT'].includes(element.nodeName))
+    sinon.stub(is, 'isSVG', element => ['SVG', 'G', 'RECT'].includes(element.nodeName))
   })
 
   after(() => {
-    xpath.util.isSVG.restore()
+    is.isSVG.restore()
   })
 
   beforeEach(() => {

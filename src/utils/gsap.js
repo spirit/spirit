@@ -6,6 +6,7 @@ import debug from './debug'
 
 /**
  * Check on gsap presence
+ *
  * @returns {boolean}
  */
 export function has() {
@@ -15,6 +16,7 @@ export function has() {
 /**
  * Ensure gsap is loaded
  * Auto inject gsap if configured
+ *
  * @returns {Promise}
  */
 export function ensure() {
@@ -73,7 +75,8 @@ export function ensure() {
 
 /**
  * Construct tween object from params
- * @param {Params|object} params
+ *
+ * @param   {Params|object} params
  * @returns {object}
  */
 export function constructTweenParams(params) {
@@ -102,6 +105,7 @@ export function constructTweenParams(params) {
 
 /**
  * Generate timeline from data
+ *
  * @param {Timeline} tl
  */
 export function generateTimeline(tl) {

@@ -1,6 +1,7 @@
 /**
  * Convert object to array
- * @param {object} obj
+ *
+ * @param   {object} obj
  * @returns {Array}
  */
 export function objectToArray(obj) {
@@ -12,7 +13,8 @@ export function objectToArray(obj) {
 
 /**
  * Convert array to object
- * @param {Array} arr
+ *
+ * @param   {Array} arr
  * @returns {object}
  */
 export function arrayToObject(arr) {

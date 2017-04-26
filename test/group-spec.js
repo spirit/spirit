@@ -1,5 +1,5 @@
 import config from '../src/config/config'
-import { gsap } from '../src/utils'
+import setup from '../src/config/setup'
 import { Group, Timelines } from '../src/group'
 import { groupDefaults } from '../src/group/group'
 
@@ -176,34 +176,34 @@ describe('group', () => {
       config.gsap = { ...configGsap }
     })
 
-    describe('ensure gsap', () => {
+    describe('no gsap', () => {
 
-      it('should ensure gsap before construct animation', async() => {
-        const spy = sandbox.spy(gsap, 'ensure')
-        const result = await resolvePromise(group.construct())
-
-        expect(spy.called).to.be.true
-        expect(result).not.to.be.an('error')
+      it('should throw no gsap found', () => {
+        expect(() => group.construct()).to.throw(/GSAP cannot be found/)
       })
 
-      it('should fail when gsap can not be loaded', async() => {
-        config.gsap.autoInject = false
-        const result = await resolvePromise(group.construct())
-        expect(result).to.be.an('error').to.match(/GSAP not found/)
+      it('should not throw gsap not found', async () => {
+        await setup()
+        expect(() => group.construct()).to.not.throw(/GSAP cannot be found/)
       })
 
-      it('should fail when can not construct timeline', async() => {
+      it('should fail when cannot construct timeline', async () => {
+        await setup()
+
         group.timelines = [{ transformObject: divA, path: 'div[0]' }]
         group.timelines.get(divA).transformObject = null // needs to be set, silently fails
-        const tl = await resolvePromise(group.construct())
-        expect(tl).to.be.an('error').to.match(/Could not construct timeline/)
+
+        expect(() => group.construct()).to.throw(/transformObject is not an Element/)
       })
 
     })
 
     describe('modify timeline', () => {
 
-      beforeEach(() => {
+      beforeEach(async () => {
+
+        await setup()
+
         const tlA = {
           transformObject: divA,
           path: 'div[0]',
@@ -234,21 +234,21 @@ describe('group', () => {
         group.timelines = [tlA, tlB, tlC]
       })
 
-      it('should create a valid gsap timeline', async() => {
-        const tl = await group.construct()
+      it('should create a valid gsap timeline', async () => {
+        const tl = group.construct()
         expect(tl).to.be.an.instanceOf(config.gsap.timeline)
         expect(group.timeline).to.equal(tl)
         expect(tl.duration()).to.equal(250)
       })
 
-      it('should kill and clear existing timeline', async() => {
-        await group.construct()
+      it('should kill and clear existing timeline', async () => {
+        group.construct()
         group.timelines.get(divA).transitions.get(100).params.get('x').value = 500
 
         const spyKill = sandbox.spy(group.timeline, 'kill')
         const spyClear = sandbox.spy(group.timeline, 'clear')
 
-        await group.construct()
+        group.construct()
 
         expect(spyKill.calledOnce).to.be.true
         expect(spyClear.calledOnce).to.be.true
@@ -262,7 +262,9 @@ describe('group', () => {
 
     let group
 
-    beforeEach(() => {
+    beforeEach(async () => {
+      await setup()
+
       config.gsap.autoInjectUrl = 'test/fixtures/gsap.js'
       group = new Group({ name: 'group' })
       group.timelines = [{
@@ -280,15 +282,15 @@ describe('group', () => {
     })
 
     it('should match fps with timeScale on construct', async () => {
-      const tl = await group.construct()
+      const tl = group.construct()
 
       expect(group.fps).to.equal(30)
       expect(tl.timeScale()).to.equal(0.5)
       expect(tl.endTime() - tl.startTime()).to.equal(240)
     })
 
-    it ('should update timescale on fps change', async() => {
-      const tl = await group.construct()
+    it('should update timescale on fps change', async () => {
+      const tl = group.construct()
       expect(tl.timeScale()).to.equal(0.5)
 
       group.fps = 60

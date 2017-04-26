@@ -1,4 +1,5 @@
 import { EventEmitter } from 'events'
+import { is } from '../utils'
 
 /**
  * Param
@@ -39,6 +40,7 @@ class Param extends EventEmitter {
 
   /**
    * Get current property
+   *
    * @returns {string}
    */
   get prop() {
@@ -47,6 +49,7 @@ class Param extends EventEmitter {
 
   /**
    * Set property
+   *
    * @param {string} val
    * @fires Param#change
    * @fires Param#change:prop
@@ -85,12 +88,14 @@ class Param extends EventEmitter {
 
     /**
      * Param event.
+     *
      * @event Param#change
      */
     const evtChange = ['change', evt]
 
     /**
      * Param event.
+     *
      * @event Param#change:prop
      */
     const evtChangeProp = ['change:prop', evt, val]
@@ -106,6 +111,7 @@ class Param extends EventEmitter {
 
   /**
    * Get current value.
+   *
    * @returns {*}
    */
   get value() {
@@ -138,6 +144,7 @@ class Param extends EventEmitter {
 
   /**
    * Set current value
+   *
    * @param {*} val
    * @fires Param#change
    * @fires Param#change:value
@@ -172,12 +179,14 @@ class Param extends EventEmitter {
 
     /**
      * Param event.
+     *
      * @event Param#change
      */
     const evtChange = ['change', evt]
 
     /**
      * Param event.
+     *
      * @event Param#change:value
      */
     const evtChangeValue = ['change:value', evt, val]
@@ -193,6 +202,7 @@ class Param extends EventEmitter {
 
   /**
    * Get the list where this param is attached to
+   *
    * @returns {List}
    */
   get list() {
@@ -201,6 +211,7 @@ class Param extends EventEmitter {
 
   /**
    * Export param to a plain object
+   *
    * @returns {object}
    */
   toObject() {
@@ -209,6 +220,7 @@ class Param extends EventEmitter {
 
   /**
    * Check if this param is a CSS Transform
+   *
    * @returns {boolean}
    */
   isCSSTransform() {
@@ -222,6 +234,7 @@ class Param extends EventEmitter {
 
   /**
    * Check if current param has an evaluable value
+   *
    * @returns {boolean}
    */
   isEval() {
@@ -231,12 +244,13 @@ class Param extends EventEmitter {
 
 /**
  * Parse Param from object
- * @param {object} obj "{prop: value}"
+ *
+ * @param   {object} obj "{prop: value}"
  * @example {x: 120}
  * @returns {Param}
  */
 Param.fromObject = function(obj) {
-  if (Object.prototype.toString.call(obj) !== '[object Object]') {
+  if (!is.isObject(obj)) {
     throw new Error('Object is invalid.')
   }
 

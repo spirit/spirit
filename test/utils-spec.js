@@ -12,7 +12,8 @@ import {
   autobind,
   events,
   convert,
-  xpath
+  xpath,
+  is
 } from '../src/utils'
 
 import {
@@ -25,11 +26,11 @@ const gsapConfig = { ...config.gsap }
 describe('utils', () => {
 
   before(() => {
-    sinon.stub(xpath.util, 'isSVG', element => ['SVG', 'G', 'RECT'].includes(element.nodeName))
+    sinon.stub(is, 'isSVG', element => ['SVG', 'G', 'RECT'].includes(element.nodeName))
   })
 
   after(() => {
-    xpath.util.isSVG.restore()
+    is.isSVG.restore()
   })
 
   it('should has window context', () => {

@@ -1,10 +1,11 @@
 import config from '../config/config'
-import { gsap } from '../utils'
+import { gsap, debug } from '../utils'
 import Timelines from './timelines'
 import { EventEmitter } from 'events'
 
 /**
  * Group defaults
+ *
  * @type {object}
  */
 export const groupDefaults = {
@@ -24,13 +25,14 @@ class Group extends EventEmitter {
 
   /**
    * Gsap timeline
-   * @type {null|config.gsap.timeline}
+   * @type {null|TimelineLite|TimelineMax}
    */
   timeline = null
 
   /**
    * Create a group instance.
-   * @param props
+   *
+   * @param {object} props
    */
   constructor(props = {}) {
     super()
@@ -45,6 +47,7 @@ class Group extends EventEmitter {
 
   /**
    * Get timelines
+   *
    * @returns {Timelines}
    */
   get timelines() {
@@ -53,6 +56,7 @@ class Group extends EventEmitter {
 
   /**
    * Set timelines
+   *
    * @param {Timelines} timelines
    */
   set timelines(timelines) {
@@ -64,6 +68,7 @@ class Group extends EventEmitter {
 
   /**
    * Get current fps
+   *
    * @returns {number}
    */
   get fps() {
@@ -72,6 +77,7 @@ class Group extends EventEmitter {
 
   /**
    * Set fps
+   *
    * @param {number} fps
    */
   set fps(fps) {
@@ -87,6 +93,7 @@ class Group extends EventEmitter {
 
   /**
    * Get name
+   *
    * @returns {string}
    */
   get name() {
@@ -95,6 +102,7 @@ class Group extends EventEmitter {
 
   /**
    * Set name
+   *
    * @param {string} name
    */
   set name(name) {
@@ -106,6 +114,7 @@ class Group extends EventEmitter {
 
   /**
    * Convert group to object
+   *
    * @returns {object}
    */
   toObject() {
@@ -122,55 +131,72 @@ class Group extends EventEmitter {
 
   /**
    * Construct gsap timeline
-   * @returns {Promise}
+   *
+   * @returns {TimelineMax|TimelineLite}
    */
   construct() {
-    return new Promise((resolve, reject) => {
-      const doConstruct = () => {
-        try {
-          // initiate an empty gsap timeline
-          if (this.timeline && this.timeline instanceof config.gsap.timeline) {
-            this.timeline.kill()
-            this.timeline.clear()
-          } else {
-            this.timeline = new config.gsap.timeline({  // eslint-disable-line new-cap
-              useFrames: true,
-              paused: true
-            })
-            this.timeline.autoRemoveChildren = false
-          }
+    try {
 
-          // create a valid gsap timeline out of timelines
-          this.timelines.list.filter(tl => tl.type === 'dom').forEach(tl => {
-            const el = tl.transformObject
-
-            if (!(el instanceof window.Element)) {
-              throw new Error('transformObject is not an Element')
-            }
-
-            // kill existing tweens
-            config.gsap.tween.killTweensOf(el)
-            delete el._gsTransform
-            delete el._gsTweenID
-            el.setAttribute('style', '')
-
-            // stack timelines to group timeline
-            this.timeline.add(gsap.generateTimeline(tl).play(), 0)
-          })
-
-          // update timescale based on fps
-          this.timeline.timeScale(this.fps / 60)
-
-          resolve(this.timeline)
-        } catch (err) {
-          reject(new Error(`Could not construct timeline: ${err.message}`))
+      if (!config.gsap.timeline || !config.gsap.tween) {
+        if (debug) {
+          console.warn(`
+            Trying to construct group ${this.name}, but GSAP cannot be found.
+            
+            Did you forgot to call spirit.setup() ?
+            
+            spirit.setup() usage:
+            
+                // auto inject gsap from cdn:
+                spirit.setup()
+                
+                // or provide gsap instances manually:
+                spirit.setup({
+                  tween:    TweenMax,
+                  timeline: TimelineMax
+                })
+          `)
         }
+        throw new Error('GSAP cannot be found')
       }
 
-      gsap.ensure()
-        .then(doConstruct)
-        .catch(reject)
-    })
+      // initiate an empty gsap timeline
+      if (this.timeline && this.timeline instanceof config.gsap.timeline) {
+        this.timeline.kill()
+        this.timeline.clear()
+      } else {
+        this.timeline = new config.gsap.timeline({  // eslint-disable-line new-cap
+          useFrames: true,
+          paused: true
+        })
+        this.timeline.autoRemoveChildren = false
+      }
+
+      // create a valid gsap timeline out of timelines
+      this.timelines.list.filter(tl => tl.type === 'dom').forEach(tl => {
+        const el = tl.transformObject
+
+        if (!(el instanceof window.Element)) {
+          throw new Error('transformObject is not an Element')
+        }
+
+        // kill existing tweens
+        config.gsap.tween.killTweensOf(el)
+        delete el._gsTransform
+        delete el._gsTweenID
+        el.setAttribute('style', '')
+
+        // stack timelines to group timeline
+        this.timeline.add(gsap.generateTimeline(tl).play(), 0)
+      })
+
+      // update timescale based on fps
+      this.timeline.timeScale(this.fps / 60)
+
+    } catch (err) {
+      throw new Error(`Could not construct timeline: ${err.message}`)
+    }
+
+    return this.timeline
   }
 
 }

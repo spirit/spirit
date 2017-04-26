@@ -33,6 +33,7 @@ class Transitions extends List {
 
   /**
    * Create transitions
+   *
    * @param {Array} transitions
    */
   constructor(transitions = []) {
@@ -41,6 +42,7 @@ class Transitions extends List {
 
   /**
    * Get a transition by frame
+   *
    * @param {number} frame
    */
   get(frame) {
@@ -49,7 +51,8 @@ class Transitions extends List {
 
   /**
    * Does have a transition with frame
-   * @param {number} frame
+   *
+   * @param   {number} frame
    * @returns {boolean}
    */
   haveFrame(frame) {
@@ -58,6 +61,7 @@ class Transitions extends List {
 
   /**
    * Get mappings for these transitions
+   *
    * @returns {Array}
    */
   get mappings() {
@@ -66,6 +70,7 @@ class Transitions extends List {
 
   /**
    * Set mappings for these transitions
+   *
    * @param {Array} mappings
    */
   set mappings(mappings) {
@@ -75,7 +80,8 @@ class Transitions extends List {
 
   /**
    * Apply mappings to child transition
-   * @param {*|Array} tr
+   *
+   * @param   {*|Array} tr
    * @returns {*}
    */
   add(tr) {
@@ -91,6 +97,7 @@ class Transitions extends List {
 
   /**
    * Remove mappings from transition on removal
+   *
    * @param {*|Array} transition
    */
   remove(tr) {

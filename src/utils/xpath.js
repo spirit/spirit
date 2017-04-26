@@ -1,25 +1,10 @@
-/**
- * XPath Utilities
- * @type {object}
- */
-export const util = {
-
-  /**
-   * Is current element part of an SVG element
-   *
-   * @param   {HTMLElement} element
-   * @returns {boolean}
-   */
-  isSVG: function(element) {
-    return element instanceof window.SVGElement
-  }
-}
+import { isSVG } from './is'
 
 /**
  * Get DOM representation for an element.
  *
- * @param   {HTMLElement} element
- * @param   {null|undefined|HTMLElement} nodeContext
+ * @param   {HTMLElement}                 element
+ * @param   {null|undefined|HTMLElement}  nodeContext
  * @returns {string|null}
  */
 export function getExpression(element, nodeContext = null) {
@@ -47,7 +32,7 @@ export function getExpression(element, nodeContext = null) {
     let tagName = element.nodeName.toLowerCase()
     let pathIndex = `[${index + 1}]`
 
-    if (util.isSVG(element)) {
+    if (isSVG(element)) {
       tagName = `*[local-name()='${tagName}']`
     }
 
@@ -64,7 +49,7 @@ export function getExpression(element, nodeContext = null) {
 /**
  * Get an element from expression
  *
- * @param {string} expression
+ * @param {string}      expression
  * @param {HTMLElement} nodeContext
  * @returns {HTMLElement|null}
  */
