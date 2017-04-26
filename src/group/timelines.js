@@ -5,6 +5,7 @@ class Timelines extends List {
 
   /**
    * Create timelines instance.
+   *
    * @param {Array} timelines
    */
   constructor(timelines = []) {
@@ -13,7 +14,8 @@ class Timelines extends List {
 
   /**
    * Get timeline by transformObject
-   * @param {HTMLElement|object} transformObject
+   *
+   * @param   {HTMLElement|object} transformObject
    * @returns {Timeline}
    */
   get(transformObject) {

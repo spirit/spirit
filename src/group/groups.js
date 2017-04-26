@@ -8,6 +8,7 @@ class Groups extends List {
 
   /**
    * Create a groups instance.
+   *
    * @param {HTMLElement} rootEl define the animation root
    * @param {Array} data
    */
@@ -25,7 +26,8 @@ class Groups extends List {
 
   /**
    * Add group to list and global registry
-   * @param {Array|*} group
+   *
+   * @param   {Array|*} group
    * @returns {Array|*}
    */
   add(group) {
@@ -40,7 +42,8 @@ class Groups extends List {
 
   /**
    * Remove group from list and global registry
-   * @param {Array|*} group
+   *
+   * @param   {Array|*} group
    * @returns {Array|*}
    */
   remove(group) {

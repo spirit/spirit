@@ -16,9 +16,10 @@ class List extends EventEmitter {
   _linkedList = false
 
   /**
-   * Create List.
-   * @param {Array} items
-   * @param {*} model
+   * Create List
+   *
+   * @param {Array}           items
+   * @param {*}               model
    * @param {Array|undefined} defaultModelArgs
    */
   constructor(items = [], model = null, defaultModelArgs = undefined) {
@@ -71,6 +72,7 @@ class List extends EventEmitter {
 
   /**
    * Get list to allow duplicates
+   *
    * @returns {boolean|object}
    */
   get duplicates() {
@@ -79,7 +81,9 @@ class List extends EventEmitter {
 
   /**
    * Set list to allow duplicates
+   *
    * @param {boolean|object} dup
+   *
    * When dup is an object it can check on a property
    * @example { prop: 'id' }
    */
@@ -122,6 +126,7 @@ class List extends EventEmitter {
 
   /**
    * Get the sort type of this list
+   *
    * @returns {boolean|string}
    */
   get sortOn() {
@@ -130,6 +135,7 @@ class List extends EventEmitter {
 
   /**
    * Set the sort type of this list
+   *
    * @param {boolean|string} sortType
    */
   set sortOn(sortType) {
@@ -156,6 +162,7 @@ class List extends EventEmitter {
 
   /**
    * Is current list linked?
+   *
    * @returns {boolean}
    */
   get linkedList() {
@@ -164,6 +171,7 @@ class List extends EventEmitter {
 
   /**
    * Set current list as a linked list
+   *
    * @param {boolean} linked
    */
   set linkedList(linked) {
@@ -190,6 +198,7 @@ class List extends EventEmitter {
 
   /**
    * Get the list
+   *
    * @returns {Array}
    */
   get list() {
@@ -198,6 +207,7 @@ class List extends EventEmitter {
 
   /**
    * Reset the list
+   *
    * @param {Array} l
    * @fires List#change:list
    */
@@ -223,6 +233,7 @@ class List extends EventEmitter {
 
   /**
    * Get the length of list
+   *
    * @returns {Number}
    */
   get length() {
@@ -231,7 +242,8 @@ class List extends EventEmitter {
 
   /**
    * Get the value at index
-   * @param {number} index
+   *
+   * @param   {number} index
    * @returns {*}
    */
   at(index) {
@@ -244,8 +256,9 @@ class List extends EventEmitter {
 
   /**
    * Add item to list
-   * @param {*|Array} item
-   * @fires List#add
+   *
+   * @param   {*|Array} item
+   * @fires   List#add
    * @returns {*}
    */
   add(item) {
@@ -305,6 +318,7 @@ class List extends EventEmitter {
 
   /**
    * Remove item from list
+   *
    * @fires List#remove
    * @param {*|Array} item
    */
@@ -376,6 +390,7 @@ class List extends EventEmitter {
 
   /**
    * Walk over each item
+   *
    * @returns {*}
    */
   each(cb) {
@@ -384,6 +399,7 @@ class List extends EventEmitter {
 
   /**
    * Get an object representation of this list
+   *
    * @returns {Array}
    */
   toArray() {

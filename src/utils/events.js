@@ -2,8 +2,9 @@ import { EventEmitter } from 'events'
 
 /**
  * Bubble events.
- * @param {string} evt
- * @param {*} scope event emitter
+ *
+ * @param   {string}  evt
+ * @param   {*}       scope event emitter
  * @returns {function}
  */
 export function bubbleEvent(evt, scope) {
@@ -19,14 +20,15 @@ export function bubbleEvent(evt, scope) {
 /**
  * Create an event object for model.
  *
- * @param {*} model model class
- * @param {*} obj model instance
- * @param {string} prop change property
- * @param prevVal the previous value
- * @param nextVal the next value
- * @returns {Object} event object.
+ * @param   {*}       model model class
+ * @param   {*}       obj model instance
+ * @param   {string}  prop change property
+ * @param   {*}       prevVal the previous value
+ * @param   {*}       nextVal the next value
+ * @returns {Object}  event object.
  */
 export function createEventObjectForModel(model, obj, prop, prevVal, nextVal) {
+
   /**
    * Event object.
    *
@@ -50,7 +52,8 @@ export function createEventObjectForModel(model, obj, prop, prevVal, nextVal) {
 
 /**
  * Clean up events.
- * @param {*} emitter
+ *
+ * @param {*}     emitter
  * @param {Array} events fallback for older node implementations
  */
 export function clearEvents(emitter, events = []) {

@@ -1,8 +1,9 @@
 import { isBrowser } from './context'
 
 /**
- * Load script into web page context.
- * @param {string} src script source
+ * Load script into web page context
+ * .
+ * @param   {string} src script source
  * @returns {Promise}
  */
 export default function loadScript(src) {

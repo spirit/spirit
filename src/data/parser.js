@@ -3,8 +3,9 @@ import { Groups, Group } from '../group'
 
 /**
  * Get transform object from container
- * @param {HTMLElement} container
- * @param {object} tl
+ *
+ * @param   {HTMLElement} container
+ * @param   {object}      tl
  * @returns {HTMLElement|object}
  */
 function getTransformObject(container, tl) {
@@ -55,7 +56,8 @@ function getTransformObject(container, tl) {
 
 /**
  * Get label for timeline to parse
- * @param {object} tl
+ *
+ * @param   {object} tl
  * @returns {string}
  */
 function getLabel(tl) {
@@ -73,8 +75,9 @@ function getLabel(tl) {
 
 /**
  * Parse groups
- * @param {object|Array} data to import
- * @param {HTMLElement} element root element
+ *
+ * @param   {object|Array}  data    animation data
+ * @param   {HTMLElement}   element root element for animation groups
  * @returns Groups
  */
 export function create(data, element = undefined) {
@@ -125,8 +128,9 @@ export function create(data, element = undefined) {
 
 /**
  * Load data and apply it to element
- * @param {string} url
- * @param {HTMLElement} element
+ *
+ * @param   {string}      url
+ * @param   {HTMLElement} element
  * @returns {Promise}
  */
 export function load(url, element = undefined) {

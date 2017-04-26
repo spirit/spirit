@@ -4,11 +4,13 @@ import { convert } from '../utils'
 
 /**
  * List of params.
+ *
  * @fires Params#change:list
  * @fires Params#add
  * @fires Params#remove
  *
  * Bubble events from items
+ *
  * @fires Params#change
  * @fires Params#change:prop
  * @fires Params#change:value
@@ -20,6 +22,7 @@ class Params extends List {
 
   /**
    * Create params.
+   *
    * @param {Array|object} params
    */
   constructor(params = []) {
@@ -32,6 +35,7 @@ class Params extends List {
 
   /**
    * Get mappings for these transitions
+   *
    * @returns {Array}
    */
   get mappings() {
@@ -40,6 +44,7 @@ class Params extends List {
 
   /**
    * Set mappings for these transitions
+   *
    * @param {Array} mappings
    */
   set mappings(mappings) {
@@ -49,7 +54,8 @@ class Params extends List {
 
   /**
    * Get param by prop
-   * @param {string} prop
+   *
+   * @param   {string} prop
    * @returns {Param}
    */
   get(prop) {
@@ -58,7 +64,8 @@ class Params extends List {
 
   /**
    * Contains param with prop
-   * @param {string} prop
+   *
+   * @param   {string} prop
    * @returns {boolean}
    */
   haveProp(prop) {
@@ -67,7 +74,8 @@ class Params extends List {
 
   /**
    * Add param
-   * @param {*|Array} p
+   *
+   * @param   {*|Array} p
    * @returns {*}
    */
   add(p) {
@@ -87,6 +95,7 @@ class Params extends List {
 
   /**
    * Remove param
+   *
    * @param {*|Array} p
    */
   remove(p) {
@@ -102,6 +111,7 @@ class Params extends List {
 
   /**
    * Convert params to an object
+   *
    * @returns {object}
    */
   toObject() {

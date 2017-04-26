@@ -5,6 +5,7 @@ import { EventEmitter } from 'events'
 
 /**
  * Group defaults
+ *
  * @type {object}
  */
 export const groupDefaults = {
@@ -24,13 +25,14 @@ class Group extends EventEmitter {
 
   /**
    * Gsap timeline
-   * @type {null|config.gsap.timeline}
+   * @type {null|TimelineLite|TimelineMax}
    */
   timeline = null
 
   /**
    * Create a group instance.
-   * @param props
+   *
+   * @param {object} props
    */
   constructor(props = {}) {
     super()
@@ -45,6 +47,7 @@ class Group extends EventEmitter {
 
   /**
    * Get timelines
+   *
    * @returns {Timelines}
    */
   get timelines() {
@@ -53,6 +56,7 @@ class Group extends EventEmitter {
 
   /**
    * Set timelines
+   *
    * @param {Timelines} timelines
    */
   set timelines(timelines) {
@@ -64,6 +68,7 @@ class Group extends EventEmitter {
 
   /**
    * Get current fps
+   *
    * @returns {number}
    */
   get fps() {
@@ -72,6 +77,7 @@ class Group extends EventEmitter {
 
   /**
    * Set fps
+   *
    * @param {number} fps
    */
   set fps(fps) {
@@ -87,6 +93,7 @@ class Group extends EventEmitter {
 
   /**
    * Get name
+   *
    * @returns {string}
    */
   get name() {
@@ -95,6 +102,7 @@ class Group extends EventEmitter {
 
   /**
    * Set name
+   *
    * @param {string} name
    */
   set name(name) {
@@ -106,6 +114,7 @@ class Group extends EventEmitter {
 
   /**
    * Convert group to object
+   *
    * @returns {object}
    */
   toObject() {

@@ -1,5 +1,6 @@
 /**
  * XPath Utilities
+ *
  * @type {object}
  */
 export const util = {
@@ -18,8 +19,8 @@ export const util = {
 /**
  * Get DOM representation for an element.
  *
- * @param   {HTMLElement} element
- * @param   {null|undefined|HTMLElement} nodeContext
+ * @param   {HTMLElement}                 element
+ * @param   {null|undefined|HTMLElement}  nodeContext
  * @returns {string|null}
  */
 export function getExpression(element, nodeContext = null) {
@@ -64,7 +65,7 @@ export function getExpression(element, nodeContext = null) {
 /**
  * Get an element from expression
  *
- * @param {string} expression
+ * @param {string}      expression
  * @param {HTMLElement} nodeContext
  * @returns {HTMLElement|null}
  */

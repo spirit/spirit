@@ -2,6 +2,7 @@ import config from './config'
 
 /**
  * Setup gsap tween and timeline
+ *
  * @param {object} gsap {tween: Tween(Max/Lite), timeline: Timeline(Max/Lite)}
  */
 export default function setup(gsap) {

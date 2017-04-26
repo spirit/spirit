@@ -6,7 +6,8 @@ export let cache = {}
 /**
  * JSON Loader.
  * Optimize requests by caching results based on url.
- * @param {string} url
+ *
+ * @param   {string} url
  * @returns {Promise}
  */
 export default function(url) {
