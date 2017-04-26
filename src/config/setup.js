@@ -1,4 +1,4 @@
-import { gsap, debug, is } from '../utils'
+import { gsap, is } from '../utils'
 import config from './config'
 
 /**
@@ -8,7 +8,6 @@ import config from './config'
  */
 export default function setup(conf) {
   return new Promise((resolve, reject) => {
-
     let timeline, tween
 
     if (is.isObject(conf)) {

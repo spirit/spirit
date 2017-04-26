@@ -136,7 +136,6 @@ class Group extends EventEmitter {
    */
   construct() {
     try {
-
       if (!config.gsap.timeline || !config.gsap.tween) {
         if (debug) {
           console.warn(`
@@ -191,11 +190,9 @@ class Group extends EventEmitter {
 
       // update timescale based on fps
       this.timeline.timeScale(this.fps / 60)
-
     } catch (err) {
       throw new Error(`Could not construct timeline: ${err.message}`)
     }
-
     return this.timeline
   }
 

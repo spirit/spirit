@@ -28,7 +28,6 @@ export function bubbleEvent(evt, scope) {
  * @returns {Object}  event object.
  */
 export function createEventObjectForModel(model, obj, prop, prevVal, nextVal) {
-
   /**
    * Event object.
    *
