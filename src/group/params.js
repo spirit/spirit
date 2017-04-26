@@ -1,6 +1,6 @@
 import List from '../list/list'
 import Param from './param'
-import { convert } from '../utils'
+import { convert, is } from '../utils'
 
 /**
  * List of params.
@@ -26,7 +26,7 @@ class Params extends List {
    * @param {Array|object} params
    */
   constructor(params = []) {
-    if (Object.prototype.toString.call(params) === '[object Object]') {
+    if (is.isObject(params)) {
       params = convert.objectToArray(params)
     }
 
@@ -79,7 +79,7 @@ class Params extends List {
    * @returns {*}
    */
   add(p) {
-    if (Object.prototype.toString.call(p) === '[object Object]' && !(p instanceof Param) && Object.keys(p).length > 1) {
+    if (is.isObject(p) && !(p instanceof Param) && Object.keys(p).length > 1) {
       p = convert.objectToArray(p)
     }
 

@@ -1,4 +1,5 @@
 import { EventEmitter } from 'events'
+import { is } from '../utils'
 
 /**
  * Param
@@ -249,7 +250,7 @@ class Param extends EventEmitter {
  * @returns {Param}
  */
 Param.fromObject = function(obj) {
-  if (Object.prototype.toString.call(obj) !== '[object Object]') {
+  if (!is.isObject(obj)) {
     throw new Error('Object is invalid.')
   }
 

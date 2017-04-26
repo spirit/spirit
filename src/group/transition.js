@@ -1,6 +1,6 @@
 import { EventEmitter } from 'events'
 import Params from './params'
-import { events } from '../utils'
+import { events, is } from '../utils'
 
 /**
  * Frame transition.
@@ -276,7 +276,7 @@ class Transition extends EventEmitter {
  * @returns {Transition}
  */
 Transition.fromObject = function(obj) {
-  if (Object.prototype.toString.call(obj) !== '[object Object]') {
+  if (!is.isObject(obj)) {
     throw new Error('Object is invalid.')
   }
 

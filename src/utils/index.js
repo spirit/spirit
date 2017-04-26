@@ -3,6 +3,7 @@ import * as gsap from './gsap'
 import * as events from './events'
 import * as convert from './convert'
 import * as xpath from './xpath'
+import * as is from './is'
 import loadscript from './loadscript'
 import jsonloader from './jsonloader'
 import autobind from './autobind'
@@ -17,5 +18,6 @@ export {
   autobind,
   events,
   convert,
-  xpath
+  xpath,
+  is
 }

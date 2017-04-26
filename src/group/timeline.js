@@ -1,5 +1,5 @@
 import Transitions from './transitions'
-import { context, convert } from '../utils'
+import { context, convert, is } from '../utils'
 import EvalMap from './evalmap'
 
 /**
@@ -122,7 +122,7 @@ class Timeline {
 }
 
 Timeline.fromObject = function(obj) {
-  if (Object.prototype.toString.call(obj) !== '[object Object]') {
+  if (!is.isObject(obj)) {
     throw new Error('Object is invalid.')
   }
 

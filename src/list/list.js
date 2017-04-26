@@ -1,4 +1,5 @@
 import { EventEmitter } from 'events'
+import { is } from '../utils'
 
 /**
  * List
@@ -52,7 +53,7 @@ class List extends EventEmitter {
           }
           list.push(item)
         } else {
-          if (Object.prototype.toString.call(item) === '[object Object]' && typeof model.fromObject === 'function') {
+          if (is.isObject(item) && typeof model.fromObject === 'function') {
             const itemFromModel = model.fromObject(item)
             itemFromModel._list = this
             if (itemFromModel.setupBubbleEvents && typeof itemFromModel.setupBubbleEvents === 'function') {
@@ -110,7 +111,7 @@ class List extends EventEmitter {
     }
 
     // check based on object property
-    if (Object.prototype.toString.call(dup) === '[object Object]' && dup.hasOwnProperty('prop')) {
+    if (is.isObject(dup) && dup.hasOwnProperty('prop')) {
       uniq = this.list
         .map(item => ({ count: 1, prop: item[dup.prop] }))
         .reduce((a, b) => {
@@ -186,7 +187,7 @@ class List extends EventEmitter {
   linkItems() {
     if (this._linkedList) {
       for (let i = 0; i < this._list.length; i++) {
-        if (Object.prototype.toString.call(this._list[i]) === '[object Object]') {
+        if (is.isObject(this._list[i])) {
           this._list[i]._prev = (i > 0) ? this._list[i - 1] : null
           this._list[i]._next = (i < this._list.length - 1) ? this._list[i + 1] : null
         } else {
@@ -274,7 +275,7 @@ class List extends EventEmitter {
           if (newItem.setupBubbleEvents && typeof newItem.setupBubbleEvents === 'function') {
             newItem.setupBubbleEvents()
           }
-        } else if (Object.prototype.toString.call(i) === '[object Object]' && typeof this._model.fromObject === 'function') {
+        } else if (is.isObject(i) && typeof this._model.fromObject === 'function') {
           newItem = this._model.fromObject(i)
           newItem._list = this
           if (newItem.setupBubbleEvents && typeof newItem.setupBubbleEvents === 'function') {
@@ -335,7 +336,7 @@ class List extends EventEmitter {
             ins._list = null
           }
 
-          if (Object.prototype.toString.call(ins) === '[object Object]') {
+          if (is.isObject(ins)) {
             if ('_prev' in ins) {
               delete ins._prev
             }
@@ -408,7 +409,7 @@ class List extends EventEmitter {
       : this.list
 
     return l.reduce((a, b) => {
-      if (Object.prototype.toString.call(b) === '[object Object]') {
+      if (is.isObject(b)) {
         const obj = { ...b }
         delete obj._prev
         delete obj._next
