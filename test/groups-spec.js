@@ -1,10 +1,19 @@
 import config from '../src/config/config'
 import { Groups, Group }from '../src/group'
+import setup from '../src/config/setup'
 import { simpleGroups } from './fixtures/group/groups'
 
 const configGsap = { ...config.gsap }
 
-  describe('groups', () => {
+describe('groups', () => {
+
+  before(async() => {
+    await setup()
+  })
+
+  after(async() => {
+    config.gsap = { ...configGsap }
+  })
 
   it('should create empty groups with default body as root element', () => {
     const groups = new Groups()
@@ -35,14 +44,12 @@ const configGsap = { ...config.gsap }
       expect(groups.list.map(group => group.name)).to.deep.equal(['puppet', 'ghost'])
     })
 
-    it('should get correct durations', async() => {
+    it('should get correct durations', async () => {
       config.gsap.autoInjectUrl = 'test/fixtures/gsap.js'
 
       const groups = new Groups(document.body, simpleGroups)
-      await groups.construct()
+      groups.construct()
       expect(groups.list.map(group => group.timeline.duration())).to.deep.equal([100, 250])
-
-      config.gsap = { ...configGsap }
     })
 
   })

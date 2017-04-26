@@ -1,19 +1,25 @@
+import { gsap, debug, is } from '../utils'
 import config from './config'
 
 /**
- * Setup gsap tween and timeline
+ * Setup Spirit GSAP
  *
- * @param {object} gsap {tween: Tween(Max/Lite), timeline: Timeline(Max/Lite)}
+ * @param {object} conf
  */
-export default function setup(gsap) {
-  if (!(typeof gsap === 'object')) {
-    throw new Error('Unable to setup gsap. Invalid type. Provide an object {tween, timeline}.')
+export default async function setup(conf) {
+  let timeline, tween
+
+  if (is.isObject(conf)) {
+    if (typeof conf.timeline === 'function' && typeof conf.tween === 'function') {
+      timeline = conf.timeline
+      tween = conf.tween
+    }
   }
 
-  if (!('tween' in gsap) || !('timeline' in gsap)) {
-    throw new Error('Unable to setup gsap. Invalid object. Provide an object {tween, timeline}')
+  if (!tween || !timeline) {
+    return await gsap.ensure()
   }
 
-  config.gsap.tween = gsap.tween
-  config.gsap.timeline = gsap.timeline
+  config.gsap.tween = tween
+  config.gsap.timeline = timeline
 }

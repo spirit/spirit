@@ -1,5 +1,5 @@
 import { EventEmitter } from 'events'
-import { is } from '../utils'
+import * as is from '../utils/is'
 
 /**
  * List
