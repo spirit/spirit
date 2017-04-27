@@ -160,6 +160,7 @@ class Group extends EventEmitter {
 
       // initiate an empty gsap timeline
       if (this.timeline && this.timeline instanceof config.gsap.timeline) {
+        this.timeline.stop()
         this.timeline.kill()
         this.timeline.clear()
       } else {
