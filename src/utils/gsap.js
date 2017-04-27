@@ -1,7 +1,6 @@
 import config from '../config/config'
 import loadScript from './loadscript'
 import Timeline from '../group/timeline'
-import Params from '../group/params'
 import debug from './debug'
 
 /**
