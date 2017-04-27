@@ -74,33 +74,23 @@ export function ensure() {
 }
 
 /**
- * Construct tween object from params
+ * Get previous frame for param on transition
  *
- * @param   {Params|object} params
- * @returns {object}
+ * @param   {Transition}  transition
+ * @param   {Param}       param
+ * @returns {number}
  */
-export function constructTweenParams(params) {
-  if (!(params instanceof Params)) {
-    params = new Params(params)
+export function getPreviousFrame(transition, param) {
+  let tr = transition
+  let result
+
+  while (tr && !result) {
+    tr = tr._prev
+    if (tr && tr.params.get(param.prop)) {
+      result = tr
+    }
   }
-
-  const table = {
-    'rotateX': { prop: 'rotationX', value: '+={value}deg' },
-    'rotateY': { prop: 'rotationY', value: '+={value}deg' },
-    'rotateZ': { prop: 'rotationZ', value: '+={value}deg' },
-    'skewX': { prop: 'skewX', value: '{value}deg' },
-    'skewY': { prop: 'skewY', value: '{value}deg' }
-  }
-
-  let result = {}
-
-  params.each(param => {
-    table.hasOwnProperty(param.prop)
-      ? result[table[param.prop].prop] = table[param.prop].value.replace('{value}', param.value)
-      : result[param.prop] = param.value
-  })
-
-  return result
+  return result ? result.frame : 0
 }
 
 /**
@@ -127,13 +117,13 @@ export function generateTimeline(tl) {
   })
 
   tl.transitions.each(tr => {
-    const frame = tr._prev ? tr.frame - tr._prev.frame : tr.frame
-    const prevFrame = tr._prev ? tr._prev.frame : 0
-    const params = { ...constructTweenParams(tr.params), ease: tr.ease }
+    tr.params.each(param => {
+      const start = getPreviousFrame(tr, param)
+      const duration = tr.frame - start
+      const params = { ...param.toObject(), ease: tr.ease }
 
-    if (Object.keys(params).length > 0) {
-      timeline.add(config.gsap.tween.to(tl.transformObject, frame, params).play(), prevFrame)
-    }
+      timeline.to(tl.transformObject, duration, params, start)
+    })
   })
 
   return timeline

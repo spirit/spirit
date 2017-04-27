@@ -1,5 +1,4 @@
 import config from '../src/config/config'
-import Params from '../src/group/params'
 import Timeline from '../src/group/timeline'
 
 import { post } from './fixtures/group/dom'
@@ -165,21 +164,25 @@ describe('utils', () => {
 
     })
 
-    describe('construct tween object from params', () => {
+    describe('getPreviousFrame', () => {
 
-      it('should create tween object from Params instance', () => {
-        const constructed = gsap.constructTweenParams(new Params({ x: 100, y: 200 }))
-        expect(constructed).to.deep.equal({ x: 100, y: 200 })
-      })
+      const div = document.createElement('div')
 
-      it('should create tween object from an object', () => {
-        const constructed = gsap.constructTweenParams({ x: 100, y: 200 })
-        expect(constructed).to.deep.equal({ x: 100, y: 200 })
-      })
+      it('should retrieve a previous property on frame', () => {
+        const timeline = new Timeline('dom', div, [
+          { frame: 0, params: { x: 0 } },
+          { frame: 10, params: { y: 10 } },
+          { frame: 20, params: { x: 100 } },
+          { frame: 30, params: { y: 300 } },
+          { frame: 50, params: { x: 1000, y: 1000 } }
+        ], 'div[0]')
 
-      it('should create tween object with modified values', () => {
-        const constructed = gsap.constructTweenParams({ x: 100, y: 200, rotateZ: 400 })
-        expect(constructed).to.deep.equal({ x: 100, y: 200, rotationZ: '+=400deg' })
+        expect(gsap.getPreviousFrame(timeline.transitions.get(20), { prop: 'x' })).to.equal(0)
+        expect(gsap.getPreviousFrame(timeline.transitions.get(50), { prop: 'x' })).to.equal(20)
+        expect(gsap.getPreviousFrame(timeline.transitions.get(10), { prop: 'y' })).to.equal(0)
+        expect(gsap.getPreviousFrame(timeline.transitions.get(30), { prop: 'y' })).to.equal(10)
+        expect(gsap.getPreviousFrame(timeline.transitions.get(50), { prop: 'y' })).to.equal(30)
+        expect(gsap.getPreviousFrame(timeline.transitions.get(50), { prop: 'z' })).to.equal(0)
       })
 
     })
@@ -214,21 +217,23 @@ describe('utils', () => {
 
           timeline = gsap.generateTimeline(
             new Timeline('dom', div, [
-              { frame: 0, params: { x: 100, y: 100, rotateX: 300 } },
-              { frame: 100, params: { rotateX: 500 } },
-              { frame: 200, params: { x: 1000 } }
+              { frame: 0, params: { x: 100, y: 100, rotationX: 300 } },
+              { frame: 100, params: { rotationX: 500 } },
+              { frame: 200, params: { x: 1000 } },
+              { frame: 300, params: { rotationX: -300 } }
             ], 'div[0]')
           )
         })
 
         it('should have _gsTransform and _gsTweenID added to div', () => {
+          timeline.progress(0.5)
           expect(div._gsTransform).to.be.an('object')
           expect(div._gsTweenID).to.be.an('string')
         })
 
         it('should have a gsap timeline with correct duration', () => {
           expect(timeline).to.be.an.instanceOf(config.gsap.timeline)
-          expect(timeline.duration()).to.equal(200)
+          expect(timeline.duration()).to.equal(300)
         })
 
         it('should use frames and is paused', () => {
@@ -239,7 +244,7 @@ describe('utils', () => {
         describe('children', () => {
 
           it('should have children', () => {
-            expect(timeline.getChildren()).to.have.lengthOf(3)
+            expect(timeline.getChildren()).to.have.lengthOf(6)
           })
 
           it('should have parent timeline', () => {
@@ -249,19 +254,22 @@ describe('utils', () => {
 
           it('should have correct transitions', () => {
             const children = timeline.getChildren()
-            expect(children[0].vars).to.deep.equal({
-              css: { x: 100, y: 100, rotationX: '+=300deg' },
-              ease: 'Linear.easeNone'
-            })
-            expect(children[1].vars).to.deep.equal({ rotationX: '+=500deg', ease: 'Linear.easeNone' })
-            expect(children[2].vars).to.deep.equal({ x: 1000, ease: 'Linear.easeNone' })
+            expect(children[0].vars).to.deep.equal({ x: 100, ease: 'Linear.easeNone', immediateRender: false })
+            expect(children[1].vars).to.deep.equal({ y: 100, ease: 'Linear.easeNone', immediateRender: false })
+            expect(children[2].vars).to.deep.equal({ rotationX: 300, ease: 'Linear.easeNone', immediateRender: false })
+            expect(children[3].vars).to.deep.equal({ rotationX: 500, ease: 'Linear.easeNone' })
+            expect(children[4].vars).to.deep.equal({ x: 1000, ease: 'Linear.easeNone' })
+            expect(children[5].vars).to.deep.equal({ rotationX: -300, ease: 'Linear.easeNone' })
           })
 
           it('should have the correct offset', () => {
             const children = timeline.getChildren()
             expect(children[0].startTime()).to.equal(0)
             expect(children[1].startTime()).to.equal(0)
-            expect(children[2].startTime()).to.equal(100)
+            expect(children[2].startTime()).to.equal(0)
+            expect(children[3].startTime()).to.equal(0)
+            expect(children[4].startTime()).to.equal(0)
+            expect(children[5].startTime()).to.equal(100)
           })
 
         })
