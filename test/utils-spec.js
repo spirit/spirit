@@ -358,99 +358,161 @@ describe('utils', () => {
 
   describe('emitter', () => {
 
-    it('should throw error if class is not an instance of event emitter', async () => {
-      expect(() => {
-        class A {
-          @emitter.emitChange()
-          emit(val) {}
+    describe('for class', () => {
+      it('should have added property for emitting', () => {
+        @emitter.emitChange('label')
+        class A extends EventEmitter {
         }
-      }).to.throw(/can only be applied to event emitters/)
+        const ins = new A()
+
+        expect(ins).to.have.property('_label')
+        expect(ins).to.have.property('label')
+      })
+
+      it('should add getters and setters with defaults', async () => {
+        @emitter.emitChange('label', 'untitled')
+        @emitter.emitChange('song')
+        class Album extends EventEmitter {
+        }
+
+        const album = new Album()
+        expect(album).to.have.property('label', 'untitled')
+        expect(album).to.have.property('song', null)
+
+        const spy = sinon.spy()
+        const spyLabel = sinon.spy()
+        const spySong = sinon.spy()
+
+        album.on('change', spy)
+        album.on('change:label', spyLabel)
+        album.on('change:song', spySong)
+
+        album.label = 'Summer'
+
+        album.song = 'Hot'
+        album.song = 'Cold'
+        album.song = 'Warm'
+
+        album.label = 'Winter'
+
+        expect(album).to.have.property('label', 'Winter')
+        expect(album).to.have.property('song', 'Warm')
+
+        expect(spy.callCount).to.equal(5)
+        expect(spy.getCall(0).args[0].changed).to.deep.equal({ type: 'label', from: 'untitled', to: 'Summer' })
+        expect(spy.getCall(1).args[0].changed).to.deep.equal({ type: 'song', from: null, to: 'Hot' })
+        expect(spy.getCall(2).args[0].changed).to.deep.equal({ type: 'song', from: 'Hot', to: 'Cold' })
+        expect(spy.getCall(3).args[0].changed).to.deep.equal({ type: 'song', from: 'Cold', to: 'Warm' })
+        expect(spy.getCall(4).args[0].changed).to.deep.equal({ type: 'label', from: 'Summer', to: 'Winter' })
+
+        expect(spyLabel.callCount).to.equal(2)
+        expect(spyLabel.getCall(0).args[0].changed).to.deep.equal({ type: 'label', from: 'untitled', to: 'Summer' })
+        expect(spyLabel.getCall(1).args[0].changed).to.deep.equal({ type: 'label', from: 'Summer', to: 'Winter' })
+
+        expect(spySong.callCount).to.equal(3)
+        expect(spySong.getCall(0).args[0].changed).to.deep.equal({ type: 'song', from: null, to: 'Hot' })
+        expect(spySong.getCall(1).args[0].changed).to.deep.equal({ type: 'song', from: 'Hot', to: 'Cold' })
+        expect(spySong.getCall(2).args[0].changed).to.deep.equal({ type: 'song', from: 'Cold', to: 'Warm' })
+      })
     })
 
-    describe('valid emitter', () => {
-      let ins, cb
+    describe('for setter', () => {
 
-      class A extends EventEmitter {
-        _item = 123
-
-        get item() { return this._item }
-
-        @emitter.emitChange()
-        set item(val) { this._item = val }
-      }
-
-      beforeEach(async () => {
-        ins = new A()
-        cb = sinon.spy()
-
-        ins.on('change', cb)
+      it('should throw error if class is not an instance of event emitter', () => {
+        expect(() => {
+          class A {
+            @emitter.emitChange()
+            emit(val) {}
+          }
+        }).to.throw(/can only be applied to event emitters/)
       })
 
-      afterEach(async () => {
-        ins.removeListener('change', cb)
-      })
+      describe('valid emitter', () => {
+        let ins, cb
 
-      it('should not emit change if value is same', async () => {
-        expect(cb.callCount).to.equal(0)
-        ins.item = 123
-        expect(cb.callCount).to.equal(0)
-      })
+        class A extends EventEmitter {
+          _item = 123
 
-      it('should emit change if value is changed', async () => {
-        expect(cb.callCount).to.equal(0)
-        ins.item = 456
-        expect(cb.callCount).to.equal(1)
+          get item() { return this._item }
 
-        const args = cb.firstCall.args[0]
-        expect(args).to.have.property('previous').to.deep.equal({ item: 123 })
-        expect(args).to.have.property('current').to.deep.equal({ item: 456 })
-        expect(args).to.have.property('changed').to.deep.equal({ type: 'item', from: 123, to: 456 })
-      })
-
-      it('should use toObject() if defined', async () => {
-        ins.toObject = function() {
-          return { item: 'to-' + this.item }
+          @emitter.emitChange()
+          set item(val) { this._item = val }
         }
 
-        expect(cb.callCount).to.equal(0)
-        ins.item = 456
-        expect(cb.callCount).to.equal(1)
+        beforeEach(async () => {
+          ins = new A()
+          cb = sinon.spy()
 
-        const args = cb.firstCall.args[0]
-        expect(args).to.have.property('previous').to.deep.equal({ item: 'to-123' })
-        expect(args).to.have.property('current').to.deep.equal({ item: 'to-456' })
-        expect(args).to.have.property('changed').to.deep.equal({ type: 'item', from: 123, to: 456 })
-      })
+          ins.on('change', cb)
+        })
 
-      describe('_list', () => {
+        afterEach(async () => {
+          ins.removeListener('change', cb)
+        })
 
-        it('should emit if is event emitter', async () => {
-          class B extends EventEmitter {}
-          ins._list = new B()
+        it('should not emit change if value is same', () => {
+          expect(cb.callCount).to.equal(0)
+          ins.item = 123
+          expect(cb.callCount).to.equal(0)
+        })
 
-          const spy = sinon.spy()
-          ins._list.on('change:item', spy)
-
-          expect(spy.callCount).to.equal(0)
+        it('should emit change if value is changed', () => {
+          expect(cb.callCount).to.equal(0)
           ins.item = 456
-          expect(spy.callCount).to.equal(1)
+          expect(cb.callCount).to.equal(1)
 
-          const args = spy.firstCall.args[0]
+          const args = cb.firstCall.args[0]
           expect(args).to.have.property('previous').to.deep.equal({ item: 123 })
           expect(args).to.have.property('current').to.deep.equal({ item: 456 })
           expect(args).to.have.property('changed').to.deep.equal({ type: 'item', from: 123, to: 456 })
         })
 
-        it('should not emit if is not event emitter', async () => {
-          ins._list = { on: () => {} }
+        it('should use toObject() if defined', () => {
+          ins.toObject = function() {
+            return { item: 'to-' + this.item }
+          }
 
-          const spy = sinon.spy()
-          ins._list.on('change:item', spy)
-
-          expect(spy.callCount).to.equal(0)
+          expect(cb.callCount).to.equal(0)
           ins.item = 456
-          expect(spy.callCount).to.equal(0)
+          expect(cb.callCount).to.equal(1)
+
+          const args = cb.firstCall.args[0]
+          expect(args).to.have.property('previous').to.deep.equal({ item: 'to-123' })
+          expect(args).to.have.property('current').to.deep.equal({ item: 'to-456' })
+          expect(args).to.have.property('changed').to.deep.equal({ type: 'item', from: 123, to: 456 })
         })
+
+        describe('_list', () => {
+
+          it('should emit if is event emitter', () => {
+            class B extends EventEmitter {}
+            ins._list = new B()
+
+            const spy = sinon.spy()
+            ins._list.on('change:item', spy)
+
+            expect(spy.callCount).to.equal(0)
+            ins.item = 456
+            expect(spy.callCount).to.equal(1)
+
+            const args = spy.firstCall.args[0]
+            expect(args).to.have.property('previous').to.deep.equal({ item: 123 })
+            expect(args).to.have.property('current').to.deep.equal({ item: 456 })
+            expect(args).to.have.property('changed').to.deep.equal({ type: 'item', from: 123, to: 456 })
+          })
+
+          it('should not emit if is not event emitter', () => {
+            ins._list = { on: () => {} }
+
+            const spy = sinon.spy()
+            ins._list.on('change:item', spy)
+
+            expect(spy.callCount).to.equal(0)
+            ins.item = 456
+            expect(spy.callCount).to.equal(0)
+          })
+        })
+
       })
 
     })
