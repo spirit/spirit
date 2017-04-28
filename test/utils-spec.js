@@ -1,5 +1,6 @@
 import config from '../src/config/config'
 import Timeline from '../src/group/timeline'
+import { EventEmitter } from 'events'
 
 import { post } from './fixtures/group/dom'
 
@@ -12,7 +13,8 @@ import {
   events,
   convert,
   xpath,
-  is
+  is,
+  emitter
 } from '../src/utils'
 
 import {
@@ -38,7 +40,7 @@ describe('utils', () => {
 
   describe('loadscript', () => {
 
-    it('should reject when context is not browser', async() => {
+    it('should reject when context is not browser', async () => {
       sinon.stub(context, 'isBrowser').returns(false)
 
       const err = await resolvePromise(loadscript('anything.js'))
@@ -47,12 +49,12 @@ describe('utils', () => {
       context.isBrowser.restore()
     })
 
-    it('should reject invalid request', async() => {
+    it('should reject invalid request', async () => {
       const err = await resolvePromise(loadscript('invalid.js'))
       expect(err).to.be.an('error').match(/Could not load/)
     })
 
-    it('should load script into window', async() => {
+    it('should load script into window', async () => {
       expect(window.someGlobal).to.be.undefined
       await loadscript('test/fixtures/loadscript.js')
       expect(window.someGlobal).to.be.a('function')
@@ -76,7 +78,7 @@ describe('utils', () => {
       sandbox.restore()
     })
 
-    it('should reject when context is not browser', async() => {
+    it('should reject when context is not browser', async () => {
       sinon.stub(context, 'isBrowser').returns(false)
 
       const err = await resolvePromise(jsonloader('file.json'))
@@ -85,17 +87,17 @@ describe('utils', () => {
       context.isBrowser.restore()
     })
 
-    it('should retrieve from cache', async() => {
+    it('should retrieve from cache', async () => {
       jsonloaderCache['temp.json'] = { foo: 'bar' }
       expect(await jsonloader('temp.json')).to.deep.equal({ foo: 'bar' })
     })
 
-    it('should serve from queued request', async() => {
+    it('should serve from queued request', async () => {
       jsonloaderReq['temp.json'] = new Promise((resolve) => resolve({ foo: 'bar' }))
       expect(await jsonloader('temp.json')).to.deep.equal({ foo: 'bar' })
     })
 
-    it('should reject as invalid request', async() => {
+    it('should reject as invalid request', async () => {
       stubXhr(sandbox, {
         open: () => {
           throw new Error('Invalid')
@@ -106,12 +108,12 @@ describe('utils', () => {
       expect(err).to.be.an('error').match(/Could not open request/)
     })
 
-    it('should resolve json', async() => {
+    it('should resolve json', async () => {
       stubXhr(sandbox, { responseText: `{"foo": "bar"}` })
       expect(await jsonloader('test.json')).to.deep.equal({ foo: 'bar' })
     })
 
-    it('should reject invalid json', async() => {
+    it('should reject invalid json', async () => {
       stubXhr(sandbox, { responseText: `{foo": "bar"}` })
 
       const err = await resolvePromise(jsonloader('invalid-json.json'))
@@ -136,7 +138,7 @@ describe('utils', () => {
         expect(gsap.has()).to.be.false
       })
 
-      it('should ensure gsap', async() => {
+      it('should ensure gsap', async () => {
         config.gsap.autoInjectUrl = 'test/fixtures/gsap.js'
 
         expect(gsap.has()).to.be.false
@@ -148,14 +150,14 @@ describe('utils', () => {
         expect(gsap.has()).to.be.true
       })
 
-      it('should resolve if already has gsap', async() => {
+      it('should resolve if already has gsap', async () => {
         config.gsap.tween = function() {}
         config.gsap.timeline = function() {}
         await gsap.ensure()
         expect(gsap.has()).to.be.true
       })
 
-      it('should reject ensure() when autoInject is false', async() => {
+      it('should reject ensure() when autoInject is false', async () => {
         config.gsap.autoInject = false
 
         const err = await resolvePromise(gsap.ensure())
@@ -211,7 +213,7 @@ describe('utils', () => {
 
         let timeline
 
-        beforeEach(async() => {
+        beforeEach(async () => {
           config.gsap.autoInjectUrl = 'test/fixtures/gsap.js'
           await gsap.ensure()
 
@@ -350,6 +352,107 @@ describe('utils', () => {
       }
 
       new B()
+    })
+
+  })
+
+  describe('emitter', () => {
+
+    it('should throw error if class is not an instance of event emitter', async () => {
+      expect(() => {
+        class A {
+          @emitter.emitChange()
+          emit(val) {}
+        }
+      }).to.throw(/can only be applied to event emitters/)
+    })
+
+    describe('valid emitter', () => {
+      let ins, cb
+
+      class A extends EventEmitter {
+        _item = 123
+
+        get item() { return this._item }
+
+        @emitter.emitChange()
+        set item(val) { this._item = val }
+      }
+
+      beforeEach(async () => {
+        ins = new A()
+        cb = sinon.spy()
+
+        ins.on('change', cb)
+      })
+
+      afterEach(async () => {
+        ins.removeListener('change', cb)
+      })
+
+      it('should not emit change if value is same', async () => {
+        expect(cb.callCount).to.equal(0)
+        ins.item = 123
+        expect(cb.callCount).to.equal(0)
+      })
+
+      it('should emit change if value is changed', async () => {
+        expect(cb.callCount).to.equal(0)
+        ins.item = 456
+        expect(cb.callCount).to.equal(1)
+
+        const args = cb.firstCall.args[0]
+        expect(args).to.have.property('previous').to.deep.equal({ item: 123 })
+        expect(args).to.have.property('current').to.deep.equal({ item: 456 })
+        expect(args).to.have.property('changed').to.deep.equal({ type: 'item', from: 123, to: 456 })
+      })
+
+      it('should use toObject() if defined', async () => {
+        ins.toObject = function() {
+          return { item: 'to-' + this.item }
+        }
+
+        expect(cb.callCount).to.equal(0)
+        ins.item = 456
+        expect(cb.callCount).to.equal(1)
+
+        const args = cb.firstCall.args[0]
+        expect(args).to.have.property('previous').to.deep.equal({ item: 'to-123' })
+        expect(args).to.have.property('current').to.deep.equal({ item: 'to-456' })
+        expect(args).to.have.property('changed').to.deep.equal({ type: 'item', from: 123, to: 456 })
+      })
+
+      describe('_list', () => {
+
+        it('should emit if is event emitter', async () => {
+          class B extends EventEmitter {}
+          ins._list = new B()
+
+          const spy = sinon.spy()
+          ins._list.on('change:item', spy)
+
+          expect(spy.callCount).to.equal(0)
+          ins.item = 456
+          expect(spy.callCount).to.equal(1)
+
+          const args = spy.firstCall.args[0]
+          expect(args).to.have.property('previous').to.deep.equal({ item: 123 })
+          expect(args).to.have.property('current').to.deep.equal({ item: 456 })
+          expect(args).to.have.property('changed').to.deep.equal({ type: 'item', from: 123, to: 456 })
+        })
+
+        it('should not emit if is not event emitter', async () => {
+          ins._list = { on: () => {} }
+
+          const spy = sinon.spy()
+          ins._list.on('change:item', spy)
+
+          expect(spy.callCount).to.equal(0)
+          ins.item = 456
+          expect(spy.callCount).to.equal(0)
+        })
+      })
+
     })
 
   })
