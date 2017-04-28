@@ -1,5 +1,6 @@
 import { EventEmitter } from 'events'
 import { is } from '../utils'
+import { emitChange } from '../utils/emitter'
 
 /**
  * Param
@@ -56,57 +57,12 @@ class Param extends EventEmitter {
    * @fires List#change
    * #fires List#change:prop
    */
+  @emitChange()
   set prop(val) {
     if (typeof val !== 'string') {
       throw new Error('Property needs to be a string')
     }
-
-    if (val === this._prop) {
-      return
-    }
-
-    /**
-     * Event object.
-     *
-     * @type {object}
-     * @property {object} prevModel - param before change
-     * @property {object} model - param after change
-     * @property {object} changed - {type, from, to}
-     */
-    const evt = {
-      prevModel: Param.fromObject(this.toObject()),
-      model: Param.fromObject({ [val]: this.value }),
-      changed: {
-        type: 'prop',
-        from: this._prop,
-        to: val
-      }
-    }
-
-    // update property
     this._prop = val
-
-    /**
-     * Param event.
-     *
-     * @event Param#change
-     */
-    const evtChange = ['change', evt]
-
-    /**
-     * Param event.
-     *
-     * @event Param#change:prop
-     */
-    const evtChangeProp = ['change:prop', evt, val]
-
-    this.emit(...evtChange)
-    this.emit(...evtChangeProp)
-
-    if (this._list) {
-      this._list.emit(...evtChange)
-      this._list.emit(...evtChangeProp)
-    }
   }
 
   /**
@@ -151,53 +107,9 @@ class Param extends EventEmitter {
    * @fires List#change
    * @fires List#change:value
    */
+  @emitChange()
   set value(val) {
-    if (val === this._value) {
-      return
-    }
-
-    /**
-     * Event object.
-     *
-     * @type {object}
-     * @property {object} prevModel - param before change
-     * @property {object} model - param after change
-     * @property {object} changed - {type, from, to}
-     */
-    const evt = {
-      prevModel: Param.fromObject(this.toObject()),
-      model: Param.fromObject({ [this.prop]: val }),
-      changed: {
-        type: 'value',
-        from: this._value,
-        to: val
-      }
-    }
-
-    // set value
     this._value = val
-
-    /**
-     * Param event.
-     *
-     * @event Param#change
-     */
-    const evtChange = ['change', evt]
-
-    /**
-     * Param event.
-     *
-     * @event Param#change:value
-     */
-    const evtChangeValue = ['change:value', evt, val]
-
-    this.emit(...evtChange)
-    this.emit(...evtChangeValue)
-
-    if (this._list) {
-      this._list.emit(...evtChange)
-      this._list.emit(...evtChangeValue)
-    }
   }
 
   /**

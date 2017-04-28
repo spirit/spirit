@@ -204,13 +204,13 @@ describe('param', () => {
       param.prop = 'z'
 
       expect(spy.getCall(0).args[1]).to.equal('y')
-      expect(spy.getCall(0).args[0].prevModel.toObject()).to.deep.equal({ x: '120' })
-      expect(spy.getCall(0).args[0].model.toObject()).to.deep.equal({ y: '120' })
+      expect(spy.getCall(0).args[0].previous).to.deep.equal({ x: '120' })
+      expect(spy.getCall(0).args[0].current).to.deep.equal({ y: '120' })
       expect(spy.getCall(0).args[0].changed).to.deep.equal({ type: 'prop', from: 'x', to: 'y' })
 
       expect(spy.getCall(1).args[1]).to.equal('z')
-      expect(spy.getCall(1).args[0].prevModel.toObject()).to.deep.equal({ y: '120' })
-      expect(spy.getCall(1).args[0].model.toObject()).to.deep.equal({ z: '120' })
+      expect(spy.getCall(1).args[0].previous).to.deep.equal({ y: '120' })
+      expect(spy.getCall(1).args[0].current).to.deep.equal({ z: '120' })
       expect(spy.getCall(1).args[0].changed).to.deep.equal({ type: 'prop', from: 'y', to: 'z' })
     })
 
@@ -237,8 +237,8 @@ describe('param', () => {
       param.value = 101
 
       expect(spy.getCall(0).args[1]).to.equal(100)
-      expect(spy.getCall(0).args[0].prevModel.toObject()).to.deep.equal({ x: '120' })
-      expect(spy.getCall(0).args[0].model.toObject()).to.deep.equal({ x: 100 })
+      expect(spy.getCall(0).args[0].previous).to.deep.equal({ x: '120' })
+      expect(spy.getCall(0).args[0].current).to.deep.equal({ x: 100 })
       expect(spy.getCall(0).args[0].changed).to.deep.equal({
         type: 'value',
         from: '120',
@@ -246,8 +246,8 @@ describe('param', () => {
       })
 
       expect(spy.getCall(1).args[1]).to.equal(101)
-      expect(spy.getCall(1).args[0].prevModel.toObject()).to.deep.equal({ x: 100 })
-      expect(spy.getCall(1).args[0].model.toObject()).to.deep.equal({ x: 101 })
+      expect(spy.getCall(1).args[0].previous).to.deep.equal({ x: 100 })
+      expect(spy.getCall(1).args[0].current).to.deep.equal({ x: 101 })
       expect(spy.getCall(1).args[0].changed).to.deep.equal({
         type: 'value',
         from: 100,

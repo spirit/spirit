@@ -1,6 +1,7 @@
 import { EventEmitter } from 'events'
 import Params from './params'
 import { events, is } from '../utils'
+import { emitChange } from '../utils/emitter'
 
 /**
  * Frame transition.
@@ -75,41 +76,12 @@ class Transition extends EventEmitter {
    * @fires List#change
    * @fires List#change:frame
    */
+  @emitChange()
   set frame(f) {
     if (isNaN(f)) {
       throw new Error('Frame should be a number')
     }
-
-    if (f === this._frame) {
-      return
-    }
-
-    const evt = events.createEventObjectForModel(Transition, this.toObject(), 'frame', this._frame, f)
     this._frame = f
-
-    /**
-     * Transition event.
-     *
-     * @event Transition#change
-     * @type {Array}
-     */
-    const evtChange = ['change', evt]
-
-    /**
-     * Transition event.
-     *
-     * @event Transition#change:frame
-     * @type {Array}
-     */
-    const evtChangeFrame = ['change:frame', evt, f]
-
-    this.emit(...evtChange)
-    this.emit(...evtChangeFrame)
-
-    if (this._list) {
-      this._list.emit(...evtChange)
-      this._list.emit(...evtChangeFrame)
-    }
   }
 
   /**
@@ -127,41 +99,12 @@ class Transition extends EventEmitter {
    * @param {string|function} e
    * @fires Transition#change:ease
    */
+  @emitChange()
   set ease(e) {
     if (typeof e !== 'string' && typeof e !== 'function') {
       throw new Error('Ease should be a string or function')
     }
-
-    if (e === this._ease) {
-      return
-    }
-
-    const evt = events.createEventObjectForModel(Transition, this.toObject(), 'ease', this._ease, e)
     this._ease = e
-
-    /**
-     * Transition event.
-     *
-     * @event Transition#change
-     * @type {Array}
-     */
-    const evtChange = ['change', evt]
-
-    /**
-     * Transition event.
-     *
-     * @event Transition#change:frame
-     * @type {Array}
-     */
-    const evtChangeEase = ['change:ease', evt, e]
-
-    this.emit(...evtChange)
-    this.emit(...evtChangeEase)
-
-    if (this._list) {
-      this._list.emit(...evtChange)
-      this._list.emit(...evtChangeEase)
-    }
   }
 
   /**
@@ -179,21 +122,13 @@ class Transition extends EventEmitter {
    * @param {Params} p
    * @fires Transition#change:params
    */
+  @emitChange()
   set params(p) {
     if (!(p instanceof Params)) {
       p = new Params(p)
     }
 
     const mappings = this.params.mappings
-
-    const evt = events.createEventObjectForModel(
-      Transition,
-      this.toObject(),
-      'params',
-      this._params.toArray(),
-      p.toArray()
-    )
-
     events.clearEvents(this._params, Params.Events)
 
     this._params.clear()
@@ -201,30 +136,6 @@ class Transition extends EventEmitter {
     this._params.mappings = mappings
 
     this.setupBubbleEvents()
-
-    /**
-     * Transition event.
-     *
-     * @event Transition#change
-     * @type {Array}
-     */
-    const evtChange = ['change', evt]
-
-    /**
-     * Transition event.
-     *
-     * @event Transition#change:params
-     * @type {Array}
-     */
-    const evtChangeParams = ['change:params', evt, p]
-
-    this.emit(...evtChange)
-    this.emit(...evtChangeParams)
-
-    if (this._list) {
-      this._list.emit(...evtChange)
-      this._list.emit(...evtChangeParams)
-    }
   }
 
   setupBubbleEvents() {

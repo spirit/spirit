@@ -287,10 +287,7 @@ describe('transitions', () => {
     it('should change params of a transition', () => {
       trs.on('change:params', spy)
       trs.at(0).params = { x: 1, y: 2 }
-      expect(spy.getCall(0).args[1].toArray()).to.deep.equal([
-        { x: 1 },
-        { y: 2 }
-      ])
+      expect(spy.getCall(0).args[1]).to.deep.equal({ x: 1, y: 2 })
     })
 
     it('should change a param of a transition', () => {
@@ -346,6 +343,7 @@ describe('transitions', () => {
         from: 'Linear.easeNone',
         to: 'Quint.easeInOut'
       })
+
       expect(spy.getCall(2).args[0].changed).to.deep.equal({ type: 'params', from: [], to: [] })
     })
   })
