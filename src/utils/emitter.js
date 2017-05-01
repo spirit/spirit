@@ -23,8 +23,17 @@
  *
  * @example on class:
  *
- *    @emitChange('label', 'untitled')
  *    @emitChange('album')
+ *    @emitChange('label', 'untitled', [
+ *      {
+ *        validator: v => /\d+/.test(v),
+ *        message: 'Not a number'
+ *      },
+ *      {
+ *        validator = v => typeof v === 'string',
+ *        message: 'Must be a string'
+ *      }
+ *    ])
  *
  *    class Song {
  *
@@ -109,9 +118,11 @@ const setter = function(target, key, descriptor) {
 /**
  * Decorator
  *
- * @param prop
+ * @param {string}  prop          (apply on classes)
+ * @param {*}       defaultValue  (optional, default=null)
+ * @param {Array}   validators
  */
-export function emitChange(prop, defaultValue = null, validator = () => true) {
+export function emitChange(prop, defaultValue = null, validators = []) {
   if (prop) {
     // bind as class
     return function(target) {
@@ -129,9 +140,17 @@ export function emitChange(prop, defaultValue = null, validator = () => true) {
             return this[`_${prop}`]
           },
           set(val) {
-            if (!validator(val)) {
-              throw new Error(`${prop} is invalid. ${val}:${typeof val}`)
+            const errors = validators.reduce((res, v) => {
+              if (!v.validator(val)) {
+                res.push(v.message)
+              }
+              return res
+            }, [])
+
+            if (errors.length > 0) {
+              throw new Error(`${errors[0]}`)
             }
+
             this[`_${prop}`] = val
           }
         }
