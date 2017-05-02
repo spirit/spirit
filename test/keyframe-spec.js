@@ -20,6 +20,11 @@ describe('keyframe', () => {
     expect(() => new Keyframe('1s', 10)).to.throw(/Time must be a number/)
   })
 
+  it('should have evaluable value', () => {
+    expect(new Keyframe(0, '{ hello() }').isEval()).to.be.true
+    expect(new Keyframe(0, '+=123').isEval()).to.be.false
+  })
+
   describe('from object', () => {
 
     it('should fail on parse invalid object', () => {

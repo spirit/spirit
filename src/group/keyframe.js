@@ -3,22 +3,36 @@ import { is } from '../utils'
 import { emitChange } from '../utils/emitter'
 
 /**
+ * -------------------------------------------
  * Single keyframe.
  *
  * @example
  *
- *   { '0.1s': { value: 10, ease: 'Linear.easeNone' } }
+ *    {
+ *      "0.1s": { value: 10, ease: "Linear.easeNone" }
+ *    }
+ *
+ * -------------------------------------------
  */
 
-@emitChange('time', null, [
-  {
-    validator: val => typeof val === 'number',
-    message: 'Time must be a number'
-  }
-])
+@emitChange('time', null, [{ validator: val => typeof val === 'number', message: 'Time must be a number' }])
 @emitChange('value', null)
 @emitChange('ease', null)
 
+  /**
+   * Keyframe.
+   * Containing time, value and ease.
+   *
+   * @fires Keyframe#change
+   * @fires Keyframe#change:time
+   * @fires Keyframe#change:value
+   * @fires Keyframe#change:ease
+   *
+   * @fires List#change
+   * @fires List#change:time
+   * @fires List#change:value
+   * @fires List#change:ease
+   */
 class Keyframe extends EventEmitter {
 
   /**
@@ -56,6 +70,15 @@ class Keyframe extends EventEmitter {
   }
 
   /**
+   * Check if current keyframe has an evaluable value
+   *
+   * @returns {boolean}
+   */
+  isEval() {
+    return /{(.*?)}/.test(this._value)
+  }
+
+  /**
    * Convert to readable object
    *
    * @returns {object} { "0.2s": { value: 10, ease: "Linear.easeNone" }}
@@ -73,7 +96,8 @@ class Keyframe extends EventEmitter {
 /**
  * Create keyframe instance from object
  *
- * @param   {object} obj { "0.2s": { value: 10, ease: "Linear.easeNone" }}
+ * @example { "0.2s": { value: 10, ease: "Linear.easeNone" }}
+ * @param   {object} obj
  * @returns {Keyframe}
  */
 Keyframe.fromObject = function(obj) {
