@@ -4,14 +4,29 @@ import { convert, is } from '../utils'
 
 class Keyframes extends List {
 
-  duplicates = { prop: 'prop' }
+  duplicates = { prop: 'time' }
+  sortOn = 'time'
+  linkedList = true
 
   constructor(keyframes = []) {
     if (is.isObject(keyframes)) {
       keyframes = convert.objectToArray(keyframes)
     }
+    super(keyframes, Keyframe, [0, 0])
+  }
 
-    super(keyframes, Keyframe)
+  /**
+   * Add keyframe
+   *
+   * @param {*|Array} k
+   * @returns {*}
+   */
+  add(k) {
+    if (is.isObject(k) && !(k instanceof Keyframe) && Object.keys(k).length > 1) {
+      k = convert.objectToArray(k)
+    }
+
+    return super.add(k)
   }
 
   /**
@@ -21,8 +36,10 @@ class Keyframes extends List {
    * @returns {Keyframe}
    */
   get(time) {
+    const t = parseFloat(time)
+
     // get keyframe at time
-    return null
+    return this._list.find(p => p.time === t)
   }
 
   /**

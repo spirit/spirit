@@ -12,12 +12,8 @@ import { emitChange } from '../utils/emitter'
 
 @emitChange('time', null, [
   {
-    validator: val => typeof val === 'string',
-    message: 'Time must be a string'
-  },
-  {
-    validator: val => /^(?:\d+|\d+(?::|\.)\d+)(?:s|ms)$/.test(val),
-    message: 'Time signature invalid'
+    validator: val => typeof val === 'number',
+    message: 'Time must be a number'
   }
 ])
 @emitChange('value', null)
@@ -28,11 +24,11 @@ class Keyframe extends EventEmitter {
   /**
    * Keyframe.
    *
-   * @param {string}  time    position on timeline
+   * @param {string}  time    position (in seconds) on timeline
    * @param {*}       value   value assigned
    * @param {string}  ease    easing value (optional)
    */
-  constructor(time, value, ease) {
+  constructor(time, value, ease = null) {
     super()
     this.setMaxListeners(Infinity)
 
@@ -42,13 +38,31 @@ class Keyframe extends EventEmitter {
   }
 
   /**
+   * Get next keyframe (linked list)
+   *
+   * @returns {Keyframe|null}
+   */
+  next() {
+    return this._next
+  }
+
+  /**
+   * Get previous keyframe (linked list)
+   *
+   * @returns {Keyframe|null}
+   */
+  prev() {
+    return this._prev
+  }
+
+  /**
    * Convert to readable object
    *
-   * @returns {object}
+   * @returns {object} { "0.2s": { value: 10, ease: "Linear.easeNone" }}
    */
   toObject() {
     return {
-      [this.time]: {
+      [`${this.time}s`]: {
         value: this.value,
         ease: this.ease
       }
@@ -73,11 +87,17 @@ Keyframe.fromObject = function(obj) {
     throw new Error('Object is invalid')
   }
 
-  const time = keys[0]
+  let time = keys[0]
   const { value, ease } = obj[time]
 
-  if (value === undefined) {
-    throw new Error('Object is invalid')
+  time = parseFloat(time)
+
+  if (isNaN(time)) {
+    throw new Error('Object is invalid. Invalid time object { `1s`: ... }')
+  }
+
+  if (value === undefined || value === null) {
+    throw new Error('Object is invalid. No value found: {value}')
   }
 
   return new Keyframe(time, value, ease)
