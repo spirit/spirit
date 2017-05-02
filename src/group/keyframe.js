@@ -12,6 +12,16 @@ import { emitChange } from '../utils/emitter'
  *      "0.1s": { value: 10, ease: "Linear.easeNone" }
  *    }
  *
+ * @fires Keyframe#change
+ * @fires Keyframe#change:time
+ * @fires Keyframe#change:value
+ * @fires Keyframe#change:ease
+ *
+ * @fires List#change
+ * @fires List#change:time
+ * @fires List#change:value
+ * @fires List#change:ease
+ *
  * -------------------------------------------
  */
 
@@ -19,20 +29,6 @@ import { emitChange } from '../utils/emitter'
 @emitChange('value', null)
 @emitChange('ease', null)
 
-  /**
-   * Keyframe.
-   * Containing time, value and ease.
-   *
-   * @fires Keyframe#change
-   * @fires Keyframe#change:time
-   * @fires Keyframe#change:value
-   * @fires Keyframe#change:ease
-   *
-   * @fires List#change
-   * @fires List#change:time
-   * @fires List#change:value
-   * @fires List#change:ease
-   */
 class Keyframe extends EventEmitter {
 
   /**
