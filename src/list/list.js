@@ -159,6 +159,11 @@ class List extends EventEmitter {
     if (typeof so === 'string') {
       this._list = this._list.sort((a, b) => a[so] - b[so])
     }
+
+    // sort on function
+    if (typeof so === 'function') {
+      this._list = this._list.sort(so)
+    }
   }
 
   /**
