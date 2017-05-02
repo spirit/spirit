@@ -41,6 +41,7 @@
  */
 
 import { EventEmitter } from 'events'
+import List from '../list/list'
 import { isFunction } from './is'
 
 /**
@@ -84,6 +85,16 @@ const setter = function(target, key, descriptor) {
 
       // call class setter method
       fn.call(this, val)
+
+      // is a duplicate on list?
+      if (this._list instanceof List && this._list._duplicates !== true) {
+        try {
+          this._list.checkOnDuplicates()
+        } catch (err) {
+          fn.call(this, prev)
+          throw err
+        }
+      }
 
       // only emit changes
       if (prev === val) {

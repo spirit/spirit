@@ -1,5 +1,6 @@
 import config from '../src/config/config'
 import Timeline from '../src/group/timeline'
+import List from '../src/list/list'
 import { EventEmitter } from 'events'
 
 import { post } from './fixtures/group/dom'
@@ -413,6 +414,36 @@ describe('utils', () => {
         expect(spySong.getCall(0).args[0].changed).to.deep.equal({ type: 'song', from: null, to: 'Hot' })
         expect(spySong.getCall(1).args[0].changed).to.deep.equal({ type: 'song', from: 'Hot', to: 'Cold' })
         expect(spySong.getCall(2).args[0].changed).to.deep.equal({ type: 'song', from: 'Cold', to: 'Warm' })
+      })
+
+      it('should fail if has duplicates', () => {
+        @emitter.emitChange('label')
+        class Item extends EventEmitter {
+
+          constructor(label) {
+            super()
+            this.label = label
+          }
+
+          toObject() {
+            return { 'label': this.label }
+          }
+        }
+
+        class Items extends List {
+          duplicates = { prop: 'label' }
+
+          constructor() {
+            super([], Item)
+          }
+        }
+
+        const items = new Items()
+        items.add(new Item('foo'))
+        items.add(new Item('bar'))
+
+        const item = items.at(0)
+        expect(() => item.label = 'bar').to.throw(/List has duplicates/)
       })
     })
 
