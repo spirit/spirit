@@ -52,4 +52,14 @@ class Keyframes extends List {
   }
 }
 
+Keyframes.events = [
+  'change:list',
+  'add',
+  'remove',
+  'change',
+  'change:time',
+  'change:value',
+  'change:ease'
+]
+
 export default Keyframes

@@ -301,6 +301,38 @@ describe('keyframes', () => {
       expect(spy.withArgs(list).calledOnce).to.be.true
     })
 
+    it('should add keyframe', () => {
+      const spy = sinon.spy()
+      const keyframe = new Keyframe(100, 2000)
+
+      keyframes.on('add', spy)
+      keyframes.add(keyframe)
+      keyframes.add({ '200s': { value: 3000 } })
+
+      expect(spy.callCount).to.equal(2)
+      expect(keyframes).to.have.lengthOf(5)
+      expect(keyframes.toObject()).to.deep.equal({
+        '0s': { value: 100, ease: null },
+        '20s': { value: 400, ease: null },
+        '50s': { value: 1000, ease: null },
+        '100s': { value: 2000, ease: null },
+        '200s': { value: 3000, ease: null }
+      })
+    })
+
+    it('should remove keyframe', () => {
+      const spy = sinon.spy()
+      keyframes.on('remove', spy)
+
+      keyframes.remove(keyframes.at(1))  // remove 20s
+      keyframes.remove(keyframes.at(1))  // remove 50s
+
+      expect(spy.callCount).to.equal(2)
+
+      expect(spy.getCall(0).args[0]).to.have.property('time', 20)
+      expect(spy.getCall(1).args[0]).to.have.property('time', 50)
+    })
+
     it('should emit value change', () => {
       const spyKeyframes = sinon.spy()
       const spyKeyframesValue = sinon.spy()
