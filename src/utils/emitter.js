@@ -131,7 +131,7 @@ const setter = function(target, key, descriptor) {
  *
  * @param {string}  prop          (apply on classes)
  * @param {*}       defaultValue  (optional, default=null)
- * @param {Array}   validators
+ * @param {Array}   validators    (optional)
  */
 export function emitChange(prop, defaultValue = null, validators = []) {
   if (prop) {
