@@ -3,10 +3,10 @@ import Keyframe from '../src/group/keyframe'
 describe('keyframe', () => {
 
   it('should create a keyframe', () => {
-    const kf = new Keyframe(0.2, 10, 'Linear.easeNone')
-    expect(kf).to.have.property('time', 0.2)
-    expect(kf).to.have.property('value', 10)
-    expect(kf).to.have.property('ease', 'Linear.easeNone')
+    const keyframe = new Keyframe(0.2, 10, 'Linear.easeNone')
+    expect(keyframe).to.have.property('time', 0.2)
+    expect(keyframe).to.have.property('value', 10)
+    expect(keyframe).to.have.property('ease', 'Linear.easeNone')
   })
 
   it('should create an object', () => {
@@ -52,6 +52,101 @@ describe('keyframe', () => {
       expect(keyframe).to.have.property('ease', null)
     })
 
+  })
+
+  describe('dispatch events', () => {
+    let keyframe, spy
+
+    beforeEach(() => {
+      keyframe = new Keyframe(0, 0)
+      spy = sinon.spy()
+    })
+
+    it('should dispatch change', () => {
+      keyframe.on('change', spy)
+
+      keyframe.time = 1
+      keyframe.value = 10
+      keyframe.ease = 'Power2.easeOut'
+
+      expect(spy.callCount).to.equal(3)
+
+      expect(spy.getCall(0).args[0]).to.deep.equal({
+        previous: { '0s': { value: 0, ease: null } },
+        current: { '1s': { value: 0, ease: null } },
+        changed: { type: 'time', from: 0, to: 1 }
+      })
+
+      expect(spy.getCall(1).args[0]).to.deep.equal({
+        previous: { '1s': { value: 0, ease: null } },
+        current: { '1s': { value: 10, ease: null } },
+        changed: { type: 'value', from: 0, to: 10 }
+      })
+
+      expect(spy.getCall(2).args[0]).to.deep.equal({
+        previous: { '1s': { value: 10, ease: null } },
+        current: { '1s': { value: 10, ease: 'Power2.easeOut' } },
+        changed: { type: 'ease', from: null, to: 'Power2.easeOut' }
+      })
+    })
+
+    it('should dispatch change:time', () => {
+      keyframe.on('change:time', spy)
+
+      keyframe.time = 10.5
+      keyframe.ease = 'Power2.easeOut'
+      keyframe.value++
+      keyframe.time = 12
+
+      expect(spy.callCount).to.equal(2)
+
+      expect(spy.getCall(0).args[0]).to.deep.equal({
+        previous: { '0s': { value: 0, ease: null } },
+        current: { '10.5s': { value: 0, ease: null } },
+        changed: { type: 'time', from: 0, to: 10.5 }
+      })
+
+      expect(spy.getCall(1).args[0]).to.deep.equal({
+        previous: { '10.5s': { value: 1, ease: 'Power2.easeOut' } },
+        current: { '12s': { value: 1, ease: 'Power2.easeOut' } },
+        changed: { type: 'time', from: 10.5, to: 12 }
+      })
+    })
+
+    it('should dispatch change:value', () => {
+      keyframe.on('change:value', spy)
+
+      keyframe.time = 10.5
+      keyframe.ease = 'Power2.easeOut'
+      keyframe.value++
+      keyframe.time = 12
+
+      expect(spy.callCount).to.equal(1)
+
+      expect(spy.getCall(0).args[0]).to.deep.equal({
+        previous: { '10.5s': { value: 0, ease: 'Power2.easeOut' } },
+        current: { '10.5s': { value: 1, ease: 'Power2.easeOut' } },
+        changed: { type: 'value', from: 0, to: 1 }
+      })
+    })
+
+    it('should dispatch change:ease', () => {
+      keyframe.on('change:ease', spy)
+
+      keyframe.time = 10.5
+      keyframe.ease = 'Power2.easeOut'
+      keyframe.value++
+      keyframe.time = 12
+
+      expect(spy.callCount).to.equal(1)
+
+      expect(spy.getCall(0).args[0]).to.deep.equal({
+        previous: { '10.5s': { value: 0, ease: null } },
+        current: { '10.5s': { value: 0, ease: 'Power2.easeOut' } },
+        changed: { type: 'ease', from: null, to: 'Power2.easeOut' }
+      })
+    })
+    
   })
 
 })

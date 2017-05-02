@@ -123,4 +123,11 @@ Keyframe.fromObject = function(obj) {
   return new Keyframe(time, value, ease)
 }
 
+Keyframe.events = [
+  'change',
+  'change:time',
+  'change:value',
+  'change:ease'
+]
+
 export default Keyframe
