@@ -118,7 +118,7 @@ Prop.fromObject = function(obj) {
   return new Prop(p, obj[p])
 }
 
-Prop.events = [
+Prop.Events = [
   'change',
   'change:name',
   'change:keyframes',

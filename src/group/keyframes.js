@@ -52,7 +52,7 @@ class Keyframes extends List {
   }
 }
 
-Keyframes.events = [
+Keyframes.Events = [
   'change:list',
   'add',
   'remove',
