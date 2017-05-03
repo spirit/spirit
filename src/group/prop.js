@@ -41,6 +41,12 @@ class Prop extends EventEmitter {
   _keyframes = null
   _list = null
 
+  /**
+   * Property.
+   *
+   * @param {string} name
+   * @param {object|Keyframes|Array} keyframes
+   */
   constructor(name, keyframes = new Keyframes()) {
     super()
     this.setMaxListeners(Infinity)
@@ -54,22 +60,47 @@ class Prop extends EventEmitter {
     Object.assign(this, { name, keyframes })
   }
 
+  /**
+   * Get next property (linked list)
+   *
+   * @returns {Prop|null}
+   */
   next() {
     return this._next
   }
 
+  /**
+   * Get previous property (linked list)
+   *
+   * @returns {Prop|null}
+   */
   prev() {
     return this._prev
   }
 
+  /**
+   * Get the list where this prop is added to
+   *
+   * @returns {Props|null}
+   */
   get list() {
     return this._list
   }
 
+  /**
+   * Get keyframes
+   *
+   * @returns {Keyframes|null}
+   */
   get keyframes() {
     return this._keyframes
   }
 
+  /**
+   * Set keyframes
+   *
+   * @param {Keyframes|object|Array} kf
+   */
   @emitChange()
   set keyframes(kf) {
     if (!(kf instanceof Keyframes)) {
@@ -86,6 +117,9 @@ class Prop extends EventEmitter {
     this.setupBubbleEvents()
   }
 
+  /**
+   * Bubble events from keyframes
+   */
   setupBubbleEvents() {
     if (this._keyframes instanceof Keyframes) {
       events.clearEvents(this._keyframes, Keyframes.Events)
@@ -100,11 +134,22 @@ class Prop extends EventEmitter {
     }
   }
 
+  /**
+   * Convert Prop to readable object
+   *
+   * @example { x: { "10.5s": { value: 100, ease: "Power2.easeOut" } } }
+   * @returns {object}
+   */
   toObject() {
     const keyframes = this.keyframes ? this.keyframes.toObject() : {}
     return { [this.name]: keyframes }
   }
 
+  /**
+   * Determine if this property is a CSS transform
+   *
+   * @returns {boolean}
+   */
   isCSSTransform() {
     return [
       'x', 'y', 'z',
@@ -114,8 +159,22 @@ class Prop extends EventEmitter {
     ].includes(this.name)
   }
 
+  /**
+   * Destroy.
+   * Clear events
+   */
+  destroy() {
+    events.clearEvents(this._keyframes, Keyframes.Events)
+    events.clearEvents(this, Prop.Events)
+  }
 }
 
+/**
+ * Create a valid Prop from object
+ *
+ * @param   {object} obj
+ * @returns {Prop}
+ */
 Prop.fromObject = function(obj) {
   if (!is.isObject(obj)) {
     throw new Error('Object is invalid')
@@ -137,6 +196,11 @@ Prop.fromObject = function(obj) {
   return new Prop(p, obj[p])
 }
 
+/**
+ * Prop Events
+ *
+ * @type {Array}
+ */
 Prop.Events = [
   'change',
   'change:name',

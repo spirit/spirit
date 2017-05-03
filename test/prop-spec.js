@@ -2,7 +2,7 @@ import Prop from '../src/group/prop'
 import Keyframes from '../src/group/keyframes'
 import Keyframe from '../src/group/keyframe'
 
-describe.only('property', () => {
+describe('property', () => {
 
   it('should create an empty property', () => {
     const prop = new Prop('x')
