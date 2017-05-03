@@ -101,7 +101,15 @@ const setter = function(target, key, descriptor) {
         return
       }
 
-      const changed = { type: key, from: prev, to: val }
+      const from = prev && isFunction(prev.toObject)
+        ? prev.toObject()
+        : prev
+
+      const to = val && isFunction(val.toObject)
+        ? val.toObject()
+        : val
+
+      const changed = { type: key, from, to }
 
       let current
       try {
