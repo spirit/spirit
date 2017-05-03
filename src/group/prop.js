@@ -40,7 +40,7 @@ import { emitChange } from '../utils/emitter'
 ])
 
 class Prop extends EventEmitter {
-  
+
   _keyframes = null
   _list = null
 
@@ -78,7 +78,29 @@ class Prop extends EventEmitter {
     if (!(kf instanceof Keyframes)) {
       kf = new Keyframes(kf)
     }
+
+    if (this._keyframes) {
+      events.clearEvents(this._keyframes, Keyframes.Events)
+      this._keyframes.clear()
+    }
+
     this._keyframes = kf
+
+    this.setupBubbleEvents()
+  }
+
+  setupBubbleEvents() {
+    if (this._keyframes instanceof Keyframes) {
+      events.clearEvents(this._keyframes, Keyframes.Events)
+
+      this._keyframes.on('change', events.bubbleEvent('change:keyframe', this))
+      this._keyframes.on('change:time', events.bubbleEvent('change:keyframe:time', this))
+      this._keyframes.on('change:value', events.bubbleEvent('change:keyframe:value', this))
+      this._keyframes.on('change:ease', events.bubbleEvent('change:keyframe:ease', this))
+      this._keyframes.on('change:list', events.bubbleEvent('change:keyframe:list', this))
+      this._keyframes.on('add', events.bubbleEvent('add:keyframe', this))
+      this._keyframes.on('remove', events.bubbleEvent('remove:keyframe', this))
+    }
   }
 
   toObject() {
@@ -122,6 +144,7 @@ Prop.Events = [
   'change',
   'change:name',
   'change:keyframes',
+  'change:keyframe',
   'change:keyframe:time',
   'change:keyframe:value',
   'change:keyframe:ease',
