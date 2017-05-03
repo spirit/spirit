@@ -85,7 +85,29 @@ describe.only('property', () => {
           '2s': { value: 200, ease: 'Power3.easeInOut' }
         }
       })
+    })
+  })
 
+  describe('isCSSTransform', () => {
+    it('should not be a a css transform', () => {
+      expect(new Prop('left').isCSSTransform()).to.be.false
+      expect(new Prop('borderTop').isCSSTransform()).to.be.false
+      expect(new Prop('width').isCSSTransform()).to.be.false
+      expect(new Prop('height').isCSSTransform()).to.be.false
+    })
+
+    it('should be a css transform', () => {
+      expect(new Prop('x').isCSSTransform()).to.be.true
+      expect(new Prop('y').isCSSTransform()).to.be.true
+      expect(new Prop('rotation').isCSSTransform()).to.be.true
+      expect(new Prop('rotationZ').isCSSTransform()).to.be.true
+      expect(new Prop('rotationX').isCSSTransform()).to.be.true
+      expect(new Prop('rotationY').isCSSTransform()).to.be.true
+      expect(new Prop('skewX').isCSSTransform()).to.be.true
+      expect(new Prop('skewY').isCSSTransform()).to.be.true
+      expect(new Prop('scale').isCSSTransform()).to.be.true
+      expect(new Prop('scaleX').isCSSTransform()).to.be.true
+      expect(new Prop('scaleY').isCSSTransform()).to.be.true
     })
   })
 
@@ -258,6 +280,103 @@ describe.only('property', () => {
           '2s': { value: 200, ease: null }
         }
       })
+    })
+
+    it('should dispatch keyframe change', () => {
+      const prop = new Prop('rotation', {
+        '0s': { value: 0 },
+        '1s': { value: 100 },
+        '2s': { value: 200 },
+        '3s': { value: 300 }
+      })
+
+      prop.on('change:keyframe', spyA)
+
+      const keyframe = prop.keyframes.get(0)
+
+      keyframe.value++
+      keyframe.value = 10
+
+      keyframe.ease = 'Power2.easeOut'
+      keyframe.time = 0.99
+
+      expect(spyA.callCount).to.equal(4)
+      expect(spyA.getCall(0).args[0])
+        .to.have.property('changed')
+        .to.deep.equal({ type: 'value', from: 0, to: 1 })
+
+      expect(spyA.getCall(1).args[0])
+        .to.have.property('changed')
+        .to.deep.equal({ type: 'value', from: 1, to: 10 })
+
+      expect(spyA.getCall(2).args[0])
+        .to.have.property('changed')
+        .to.deep.equal({ type: 'ease', from: null, to: 'Power2.easeOut' })
+
+      expect(spyA.getCall(3).args[0])
+        .to.have.property('changed')
+        .to.deep.equal({ type: 'time', from: 0, to: 0.99 })
+    })
+
+    it('should dispatch keyframe time change', () => {
+      const prop = new Prop('x', [new Keyframe(0, 0)])
+      prop.on('change:keyframe:time', spyA)
+
+      const keyframe = prop.keyframes.get(0)
+
+      keyframe.time = 10
+
+      expect(spyA.callCount).to.equal(1)
+      expect(spyA.getCall(0).args[0]).to.deep.equal({
+        previous: { '0s': { value: 0, ease: null } },
+        current: { '10s': { value: 0, ease: null } },
+        changed: { type: 'time', from: 0, to: 10 }
+      })
+      expect(prop.toObject()).to.deep.equal({ x: { '10s': { value: 0, ease: null } } })
+    })
+
+    it('should dispatch keyframe value change', () => {
+      const prop = new Prop('x', [new Keyframe(0, 0)])
+      prop.on('change:keyframe:value', spyA)
+
+      prop.keyframes.get(0).value = 10
+
+      expect(spyA.callCount).to.equal(1)
+      expect(spyA.getCall(0).args[0]).to.deep.equal({
+        previous: { '0s': { value: 0, ease: null } },
+        current: { '0s': { value: 10, ease: null } },
+        changed: { type: 'value', from: 0, to: 10 }
+      })
+    })
+
+    it('should dispatch keyframe ease change', () => {
+      const prop = new Prop('x', [new Keyframe(0, 0)])
+      prop.on('change:keyframe:ease', spyA)
+
+      prop.keyframes.get(0).ease = 'Power3.easeOut'
+
+      expect(spyA.callCount).to.equal(1)
+      expect(spyA.getCall(0).args[0]).to.deep.equal({
+        previous: { '0s': { value: 0, ease: null } },
+        current: { '0s': { value: 0, ease: 'Power3.easeOut' } },
+        changed: { type: 'ease', from: null, to: 'Power3.easeOut' }
+      })
+    })
+
+    it('should dispatch keyframe change list', () => {
+      const prop = new Prop('x', [new Keyframe(0, 0)])
+      prop.on('change:keyframes:list', spyA)
+
+      prop.keyframes.list = [
+        new Keyframe(0, 0),
+        new Keyframe(1, 10)
+      ]
+
+      expect(spyA.callCount).to.equal(1)
+      expect(spyA.getCall(0).args[0].map(k => k.toObject())).to.deep.equal([
+        { '0s': { value: 0, ease: null } },
+        { '1s': { value: 10, ease: null } }
+      ])
     })
   })
 

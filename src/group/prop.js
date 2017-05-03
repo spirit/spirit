@@ -20,16 +20,13 @@ import { emitChange } from '../utils/emitter'
  * @fires Prop#change
  * @fires Prop#change:name
  * @fires Prop#change:keyframes
- * @fires Prop#change:keyframes:time
- * @fires Prop#change:keyframes:value
- * @fires Prop#change:keyframes:ease
- *
- * @fires List#change
- * @fires List#change:name
- * @fires List#change:keyframes
- * @fires List#change:keyframes:time
- * @fires List#change:keyframes:value
- * @fires List#change:keyframes:ease
+ * @fires Prop#change:keyframes:list
+ * @fires Prop#change:keyframe
+ * @fires Prop#change:keyframe:time
+ * @fires Prop#change:keyframe:value
+ * @fires Prop#change:keyframe:ease
+ * @fires Prop#add:keyframe
+ * @fires Prop#remove:keyframe
  *
  * -------------------------------------------
  */
@@ -93,11 +90,11 @@ class Prop extends EventEmitter {
     if (this._keyframes instanceof Keyframes) {
       events.clearEvents(this._keyframes, Keyframes.Events)
 
+      this._keyframes.on('change:list', events.bubbleEvent('change:keyframes:list', this))
       this._keyframes.on('change', events.bubbleEvent('change:keyframe', this))
       this._keyframes.on('change:time', events.bubbleEvent('change:keyframe:time', this))
       this._keyframes.on('change:value', events.bubbleEvent('change:keyframe:value', this))
       this._keyframes.on('change:ease', events.bubbleEvent('change:keyframe:ease', this))
-      this._keyframes.on('change:list', events.bubbleEvent('change:keyframe:list', this))
       this._keyframes.on('add', events.bubbleEvent('add:keyframe', this))
       this._keyframes.on('remove', events.bubbleEvent('remove:keyframe', this))
     }
@@ -111,7 +108,7 @@ class Prop extends EventEmitter {
   isCSSTransform() {
     return [
       'x', 'y', 'z',
-      'rotateX', 'rotateY', 'rotateZ',
+      'rotation', 'rotationZ', 'rotationX', 'rotationY',
       'skewX', 'skewY',
       'scale', 'scaleX', 'scaleY'
     ].includes(this.name)
@@ -144,6 +141,7 @@ Prop.Events = [
   'change',
   'change:name',
   'change:keyframes',
+  'change:keyframes:list',
   'change:keyframe',
   'change:keyframe:time',
   'change:keyframe:value',

@@ -34,7 +34,7 @@ class Keyframe extends EventEmitter {
   /**
    * Keyframe.
    *
-   * @param {string}  time    position (in seconds) on timeline
+   * @param {number}  time    position (in seconds) on timeline
    * @param {*}       value   value assigned
    * @param {string}  ease    easing value (optional)
    */
