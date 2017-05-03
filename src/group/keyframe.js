@@ -31,6 +31,8 @@ import { emitChange } from '../utils/emitter'
 
 class Keyframe extends EventEmitter {
 
+  _list = null
+
   /**
    * Keyframe.
    *
@@ -63,6 +65,15 @@ class Keyframe extends EventEmitter {
    */
   prev() {
     return this._prev
+  }
+
+  /**
+   * Get the list where this keyframe is added to
+   *
+   * @returns {Keyframes|null}
+   */
+  get list() {
+    return this._list
   }
 
   /**

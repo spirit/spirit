@@ -39,6 +39,22 @@ describe('keyframes', () => {
       keyframes.list = list
       expect(keyframes.list).equal(list)
     })
+
+    it('should get the parent list from keyframe', () => {
+      const keyframeA = new Keyframe(0, 0)
+      const keyframeB = new Keyframe(1, 100)
+      const keyframeC = new Keyframe(2, 1000)
+
+      expect(keyframeA.list).to.equal(null)
+      expect(keyframeB.list).to.equal(null)
+      expect(keyframeC.list).to.equal(null)
+
+      const keyframes = new Keyframes([keyframeA, keyframeB, keyframeC])
+
+      expect(keyframeA.list).to.equal(keyframes)
+      expect(keyframeB.list).to.equal(keyframes)
+      expect(keyframeC.list).to.equal(keyframes)
+    })
   })
 
   describe('#at', () => {
