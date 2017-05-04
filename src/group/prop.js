@@ -90,7 +90,7 @@ class Prop extends EventEmitter {
   /**
    * Get keyframes
    *
-   * @returns {Keyframes|null}
+   * @returns {Keyframes|object|Array}
    */
   get keyframes() {
     return this._keyframes
@@ -124,13 +124,17 @@ class Prop extends EventEmitter {
     if (this._keyframes instanceof Keyframes) {
       events.clearEvents(this._keyframes, Keyframes.Events)
 
-      this._keyframes.on('change:list', events.bubbleEvent('change:keyframes:list', this))
-      this._keyframes.on('change', events.bubbleEvent('change:keyframe', this))
-      this._keyframes.on('change:time', events.bubbleEvent('change:keyframe:time', this))
-      this._keyframes.on('change:value', events.bubbleEvent('change:keyframe:value', this))
-      this._keyframes.on('change:ease', events.bubbleEvent('change:keyframe:ease', this))
-      this._keyframes.on('add', events.bubbleEvent('add:keyframe', this))
-      this._keyframes.on('remove', events.bubbleEvent('remove:keyframe', this))
+      const evt = (from, to) => {
+        this._keyframes.on(from, events.bubbleEvent(to, this))
+      }
+
+      evt('change:list', 'change:keyframes:list')
+      evt('change', 'change:keyframe')
+      evt('change:time', 'change:keyframe:time')
+      evt('change:value', 'change:keyframe:value')
+      evt('change:ease', 'change:keyframe:ease')
+      evt('add', 'add:keyframe')
+      evt('remove', 'remove:keyframe')
     }
   }
 
@@ -164,7 +168,9 @@ class Prop extends EventEmitter {
    * Clear events
    */
   destroy() {
-    events.clearEvents(this._keyframes, Keyframes.Events)
+    if (this._keyframes) {
+      this._keyframes.destroy()
+    }
     events.clearEvents(this, Prop.Events)
   }
 }

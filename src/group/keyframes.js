@@ -8,6 +8,12 @@ class Keyframes extends List {
   sortOn = 'time'
   linkedList = true
 
+  /**
+   * Create keyframes
+   *
+   * @constructor
+   * @param {Array|object} keyframes
+   */
   constructor(keyframes = []) {
     if (is.isObject(keyframes)) {
       keyframes = convert.objectToArray(keyframes)
