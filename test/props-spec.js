@@ -2,6 +2,7 @@ import Props from '../src/group/props'
 import Prop from '../src/group/prop'
 import Keyframes from '../src/group/keyframes'
 import Keyframe from '../src/group/keyframe'
+import EvalMap from '../src/group/evalmap'
 
 describe('properties', () => {
 
@@ -172,6 +173,63 @@ describe('properties', () => {
       }
 
       expect(res).to.deep.equal(properties.toObject())
+    })
+  })
+
+  describe('mapping', () => {
+    let props,
+        val = {
+          '0s': { value: 0 },
+          '10s': { value: 50 },
+          '20s': { value: 100 }
+        }
+
+    beforeEach(() => {
+      props = new Props({
+        x: val,
+        y: val,
+        z: val
+      })
+
+      props.mappings = [
+        new EvalMap(/foo/, { foo: 'bar' }),
+        new EvalMap(/bar/, { bar: 'foo' })
+      ]
+    })
+
+    it('should apply mappings to existing properties', () => {
+      props.each(prop => {
+        expect(prop.keyframes.mappings).to.deep.equal(props.mappings)
+      })
+    })
+
+    it('should apply mappings for properties to add', () => {
+      expect(props.add(new Prop('scale')))
+        .to.have.deep.property('keyframes.mappings')
+        .to.deep.equal(props.mappings)
+    })
+
+    it('should remove mappings on properties removal', () => {
+      expect(props.remove(props.get('x')))
+        .to.have.deep.property('keyframes.mappings')
+        .to.deep.equal([])
+
+      props.remove([props.get('y'), props.get('z')]).forEach(prop => {
+        expect(prop)
+          .to.have.deep.property('keyframes.mappings')
+          .to.deep.equal([])
+      })
+    })
+
+    it('should reassign mappings for new properties', () => {
+      props.get('x').keyframes = {
+        '0s': { value: 0 },
+        '100s': { value: 0 }
+      }
+
+      expect(props.get('x'))
+        .to.have.deep.property('keyframes.mappings')
+        .to.deep.equal(props.mappings)
     })
   })
 

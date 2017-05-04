@@ -8,7 +8,7 @@ class Props extends List {
   sortOn = (a, b) => b.name < a.name
   linkedList = true
 
-  _mappings = null
+  _mappings = []
 
   /**
    * Create properties
@@ -33,20 +33,6 @@ class Props extends List {
   }
 
   /**
-   * Add properties
-   *
-   * @param {*|Array} k
-   * @returns {*}
-   */
-  add(p) {
-    if (is.isObject(p) && !(p instanceof Prop) && Object.keys(p).length > 1) {
-      p = convert.objectToArray(p)
-    }
-
-    return super.add(p)
-  }
-
-  /**
    * Get mappings for these properties
    *
    * @returns {Array}
@@ -63,6 +49,44 @@ class Props extends List {
   set mappings(mappings) {
     this._mappings = mappings
     this.each(prop => { prop.keyframes.mappings = [...mappings] })
+  }
+
+  /**
+   * Add properties
+   *
+   * @param {*|Array} k
+   * @returns {*}
+   */
+  add(prop) {
+    if (is.isObject(prop) && !(prop instanceof Prop) && Object.keys(prop).length > 1) {
+      prop = convert.objectToArray(prop)
+    }
+
+    const affected = super.add(prop)
+    const exec = (prop) => prop.keyframes.mappings = [...this.mappings]
+
+    Array.isArray(affected)
+      ? affected.forEach(exec)
+      : exec(affected)
+
+    return affected
+  }
+
+  /**
+   * Remove property
+   *
+   * @param {Prop}
+   * @returns {Prop}
+   */
+  remove(prop) {
+    const affected = super.remove(prop)
+    const exec = (prop) => { prop.keyframes.mappings = [] }
+
+    Array.isArray(affected)
+      ? affected.forEach(exec)
+      : exec(affected)
+
+    return affected
   }
 
   /**
