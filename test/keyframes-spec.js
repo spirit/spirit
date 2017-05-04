@@ -1,5 +1,6 @@
 import Keyframes from '../src/group/keyframes'
 import Keyframe from '../src/group/keyframe'
+import EvalMap from '../src/group/evalmap'
 
 describe('keyframes', () => {
 
@@ -289,6 +290,85 @@ describe('keyframes', () => {
       }
 
       expect(res).to.deep.equal(keyframes.toObject())
+    })
+  })
+
+  describe('mappings', () => {
+    let mappings,
+        keyframes
+
+    beforeEach(() => {
+      mappings = [
+        new EvalMap(/foo/, 'this is foo!'),
+        new EvalMap(/bar/, 'this is bar!')
+      ]
+
+      keyframes = new Keyframes({
+        '0s': { value: 0 },
+        '10s': { value: 500 },
+        '20s': { value: 1000 }
+      })
+    })
+
+    it('should have mapping for each keyframe', () => {
+      keyframes.each(keyframe => expect(keyframe).to.have.property('mappings').to.deep.equal([]))
+      keyframes.mappings = mappings
+      keyframes.each(keyframe => expect(keyframe).to.have.property('mappings').to.deep.equal(mappings))
+    })
+
+    it('should have mapping for keyframe to add', () => {
+      keyframes.mappings = mappings
+
+      const added = keyframes.add(new Keyframe(50, 0))
+      expect(added).to.have.property('mappings').to.deep.equal(mappings)
+
+      const multiple = keyframes.add({
+        '100s': { value: 0 },
+        '200s': { value: 2000 }
+      })
+
+      expect(multiple).to.have.lengthOf(2)
+      multiple.forEach(keyframe => expect(keyframe).to.have.property('mappings').to.deep.equal(mappings))
+    })
+
+    it('should clear mapping for param to remove', () => {
+      keyframes.mappings = mappings
+
+      expect(keyframes.remove(keyframes.get('10')))
+        .to.have.property('mappings')
+        .to.deep.equal([])
+
+      keyframes.remove([keyframes.get(0), keyframes.get(20)]).forEach(keyframe => {
+        expect(keyframe).to.have.property('mappings').to.deep.equal([])
+      })
+
+      expect(keyframes.toArray()).to.deep.equal([])
+      expect(keyframes.toObject()).to.deep.equal({})
+      expect(keyframes).to.have.lengthOf(0)
+    })
+
+    it('should evaluate mapping', () => {
+      keyframes.mappings = mappings
+
+      keyframes.add({
+        '30s': { value: '{foo}' },
+        '40s': { value: '{bar}' }
+      })
+
+      expect(keyframes.toObject()).to.deep.equal({
+        '0s': { value: 0, ease: null },
+        '10s': { value: 500, ease: null },
+        '20s': { value: 1000, ease: null },
+        '30s': { value: 'this is foo!', ease: null },
+        '40s': { value: 'this is bar!', ease: null }
+      })
+
+      keyframes.mappings = [
+        ...mappings,
+        new EvalMap(/hello/, name => `hello ${name}`)
+      ]
+
+      expect(keyframes.add(new Keyframe(50, '{hello("there")}'))).to.have.property('value', 'hello there')
     })
   })
 

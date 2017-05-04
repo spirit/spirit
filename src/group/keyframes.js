@@ -26,15 +26,39 @@ class Keyframes extends List {
   /**
    * Add keyframe
    *
-   * @param {*|Array} k
+   * @param {*|Array} keyframe
    * @returns {*}
    */
-  add(k) {
-    if (is.isObject(k) && !(k instanceof Keyframe) && Object.keys(k).length > 1) {
-      k = convert.objectToArray(k)
+  add(keyframe) {
+    if (is.isObject(keyframe) && !(keyframe instanceof Keyframe) && Object.keys(keyframe).length > 1) {
+      keyframe = convert.objectToArray(keyframe)
     }
 
-    return super.add(k)
+    const affected = super.add(keyframe)
+    const exec = (keyframe) => { keyframe.mappings = [...this.mappings] }
+
+    Array.isArray(affected)
+      ? affected.forEach(exec)
+      : exec(affected)
+
+    return affected
+  }
+
+  /**
+   * Remove keyframe
+   *
+   * @param {Keyframe}
+   * @returns {Keyframe}
+   */
+  remove(keyframe) {
+    const affected = super.remove(keyframe)
+    const exec = (keyframe) => { keyframe.mappings = [] }
+
+    Array.isArray(affected)
+      ? affected.forEach(exec)
+      : exec(affected)
+
+    return affected
   }
 
   /**
