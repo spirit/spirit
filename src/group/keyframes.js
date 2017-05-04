@@ -8,6 +8,8 @@ class Keyframes extends List {
   sortOn = 'time'
   linkedList = true
 
+  _mappings = []
+
   /**
    * Create keyframes
    *
@@ -33,6 +35,25 @@ class Keyframes extends List {
     }
 
     return super.add(k)
+  }
+
+  /**
+   * Get mappings for these keyframes
+   *
+   * @returns {Array}
+   */
+  get mappings() {
+    return this._mappings
+  }
+
+  /**
+   * Set mappings for these keyframes
+   *
+   * @param {Array} mappings
+   */
+  set mappings(mappings) {
+    this._mappings = mappings
+    this.each(keyframe => { keyframe.mappings = [...mappings] })
   }
 
   /**

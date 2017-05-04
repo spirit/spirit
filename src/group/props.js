@@ -8,6 +8,8 @@ class Props extends List {
   sortOn = (a, b) => b.name < a.name
   linkedList = true
 
+  _mappings = null
+
   /**
    * Create properties
    *
@@ -42,6 +44,25 @@ class Props extends List {
     }
 
     return super.add(p)
+  }
+
+  /**
+   * Get mappings for these properties
+   *
+   * @returns {Array}
+   */
+  get mappings() {
+    return this._mappings
+  }
+
+  /**
+   * Set mappings for these properties
+   *
+   * @param {Array} mappings
+   */
+  set mappings(mappings) {
+    this._mappings = mappings
+    this.each(prop => { prop.keyframes.mappings = [...mappings] })
   }
 
   /**
