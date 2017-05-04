@@ -26,12 +26,14 @@ import { emitChange } from '../utils/emitter'
  */
 
 @emitChange('time', null, [{ validator: val => typeof val === 'number', message: 'Time must be a number' }])
-@emitChange('value', null)
 @emitChange('ease', null)
 
 class Keyframe extends EventEmitter {
 
   _list = null
+  _value = null
+
+  mappings = []
 
   /**
    * Keyframe.
@@ -65,6 +67,39 @@ class Keyframe extends EventEmitter {
    */
   prev() {
     return this._prev
+  }
+
+  get value() {
+    if (this.isEval()) {
+      // create available mappings for current value
+      const mappings = this.mappings.reduce((result, mapping) => {
+        if (mapping.regex.global) {
+          mapping.regex.lastIndex = 0
+        }
+
+        if (mapping.regex.test(this._value)) {
+          result[mapping.regex] = mapping
+        }
+
+        return result
+      }, {})
+
+      // apply mappings
+      let val = this._value
+
+      for (let mapping in mappings) {
+        val = val.replace(mappings[mapping].regex, `mappings[${mapping}].map`)
+      }
+
+      return eval(val) // eslint-disable-line no-eval
+    }
+
+    return this._value
+  }
+
+  @emitChange()
+  set value(val) {
+    this._value = val
   }
 
   /**

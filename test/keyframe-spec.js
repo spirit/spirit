@@ -1,4 +1,5 @@
 import Keyframe from '../src/group/keyframe'
+import EvalMap from '../src/group/evalmap'
 
 describe('keyframe', () => {
 
@@ -20,9 +21,74 @@ describe('keyframe', () => {
     expect(() => new Keyframe('1s', 10)).to.throw(/Time must be a number/)
   })
 
-  it('should have evaluable value', () => {
-    expect(new Keyframe(0, '{ hello() }').isEval()).to.be.true
-    expect(new Keyframe(0, '+=123').isEval()).to.be.false
+  describe('eval', () => {
+    it('should have evaluable value', () => {
+      expect(new Keyframe(0, '{ hello() }').isEval()).to.be.true
+      expect(new Keyframe(0, '+=123').isEval()).to.be.false
+    })
+  })
+
+  describe('eval mapping', () => {
+    let keyframe
+
+    beforeEach(() => {
+      keyframe = new Keyframe(0, 0)
+    })
+
+    it('should evaluate mapping for number', () => {
+      expect(keyframe).to.have.property('value', 0)
+
+      keyframe.value = '{ test + 5 }'
+      keyframe.mappings = [new EvalMap(/test/g, 3)]
+
+      expect(keyframe).to.have.property('value', 8)
+    })
+
+    it('should evaluate mapping for object', () => {
+      keyframe.value = '{ foo.bar + 10 }'
+      keyframe.mappings = [new EvalMap(/foo/g, { bar: 3 })]
+
+      expect(keyframe).to.have.property('value', 13)
+    })
+
+    it('should evaluate mapping for function', () => {
+      keyframe.value = '{ bar() - 3 }'
+      keyframe.mappings = [new EvalMap(/bar/g, function() { return 5 })]
+      expect(keyframe).to.have.property('value', 2)
+    })
+
+    it('should evaluate multiple mappings', () => {
+      keyframe.value = '{ one() + two() }'
+      keyframe.mappings = [
+        new EvalMap(/one/, function() { return 1 }),
+        new EvalMap(/two/, function() { return 2 })
+      ]
+
+      expect(keyframe).to.have.property('value', 3)
+    })
+
+    it('should fail on invaid evaluation', () => {
+      keyframe.value = '{ one() + two() }'
+      keyframe.mappings = [new EvalMap(/one/, function() { return 1 })]
+
+      expect(() => keyframe.value).to.throw(/two is not defined/)
+    })
+
+    it('should evaluate global (window) function', () => {
+      global.sayHello = name => `Hi there ${name}!`
+
+      keyframe.value = `{ sayHello('amigo') }`
+      expect(keyframe).to.have.property('value', 'Hi there amigo!')
+
+      delete global.sayHello
+    })
+
+    it('should evaluate doubles', () => {
+      keyframe.value = '{ n * n * n }'
+      keyframe.mappings = [new EvalMap(/n/g, 5)]
+
+      expect(keyframe).to.have.property('value', 125)
+    })
   })
 
   describe('from object', () => {
