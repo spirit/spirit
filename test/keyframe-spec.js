@@ -146,7 +146,22 @@ describe('keyframe', () => {
         changed: { type: 'ease', from: null, to: 'Power2.easeOut' }
       })
     })
-    
+
+    it('should destroy listeners', () => {
+      keyframe.on('change', spy)
+      keyframe.time = 12
+
+      keyframe.destroy()
+
+      keyframe.time = 24
+      expect(spy.callCount).to.equal(1)
+      expect(spy.getCall(0).args[0]).to.deep.equal({
+        previous: { '0s': { value: 0, ease: null } },
+        current: { '12s': { value: 0, ease: null } },
+        changed: { type: 'time', from: 0, to: 12 }
+      })
+    })
+
   })
 
 })

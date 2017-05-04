@@ -1,6 +1,6 @@
 import List from '../list/list'
 import Keyframe from './keyframe'
-import { convert, is } from '../utils'
+import { convert, is, events } from '../utils'
 
 class Keyframes extends List {
 
@@ -49,6 +49,14 @@ class Keyframes extends List {
    */
   toObject() {
     return this.list.reduce((obj, keyframe) => ({ ...obj, ...keyframe.toObject() }), {})
+  }
+
+  /**
+   * Destroy events
+   */
+  destroy() {
+    this.each(keyframe => keyframe.destroy())
+    events.clearEvents(this, Keyframes.Events)
   }
 }
 

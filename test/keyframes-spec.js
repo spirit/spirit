@@ -444,6 +444,17 @@ describe('keyframes', () => {
       expectSpy(spyKeyframesEase)
       expectSpy(spyKeyframe)
     })
+
+    it('should destroy keyframes', () => {
+      const spy = sinon.spy()
+      keyframes.on('change', spy)
+      keyframe.time = 100
+
+      keyframes.destroy()
+
+      keyframe.time = 1000
+      expect(spy.callCount).to.equal(1)
+    })
   })
 
 })

@@ -1,5 +1,5 @@
 import { EventEmitter } from 'events'
-import { is } from '../utils'
+import { is, events } from '../utils'
 import { emitChange } from '../utils/emitter'
 
 /**
@@ -98,6 +98,13 @@ class Keyframe extends EventEmitter {
       }
     }
   }
+
+  /**
+   * Destroy events
+   */
+  destroy() {
+    events.clearEvents(this, Keyframe.Events)
+  }
 }
 
 /**
@@ -134,7 +141,7 @@ Keyframe.fromObject = function(obj) {
   return new Keyframe(time, value, ease)
 }
 
-Keyframe.events = [
+Keyframe.Events = [
   'change',
   'change:time',
   'change:value',
