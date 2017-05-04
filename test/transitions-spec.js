@@ -2,7 +2,7 @@ import Transitions from '../src/group/transitions'
 import Transition from '../src/group/transition'
 import EvalMap from '../src/group/evalmap'
 
-describe('transitions', () => {
+describe.skip('transitions', () => {
 
   it('should have empty transitions', () => {
     expect(new Transitions()).to.have.lengthOf(0)
