@@ -99,6 +99,7 @@ class List extends EventEmitter {
   checkOnDuplicates() {
     const dup = this._duplicates
     let uniq = false
+    let isProp = false
 
     // check based on boolean
     if (typeof dup === 'boolean' && dup === false) {
@@ -112,6 +113,8 @@ class List extends EventEmitter {
 
     // check based on object property
     if (is.isObject(dup) && dup.hasOwnProperty('prop')) {
+      isProp = true
+
       uniq = this.list
         .map(item => ({ count: 1, prop: item[dup.prop] }))
         .reduce((a, b) => {
@@ -121,7 +124,17 @@ class List extends EventEmitter {
     }
 
     if (uniq && Object.keys(uniq).filter(a => uniq[a] > 1).length > 0) {
-      throw new Error('List has duplicates')
+      const prop = Object.keys(uniq).find(p => uniq[p] > 1)
+
+      let p = isProp
+        ? `${dup.prop}: ${prop}`
+        : false
+
+      let m = this._model
+        ? `${this.constructor.name} > ${this._model.name} > { ${p} }`
+        : false
+
+      throw new Error(`List has duplicates. ${m}`)
     }
   }
 
