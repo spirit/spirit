@@ -107,12 +107,16 @@ class Prop extends EventEmitter {
       kf = new Keyframes(kf)
     }
 
+    let mappings = []
+
     if (this._keyframes) {
+      mappings = this._keyframes.mappings
       events.clearEvents(this._keyframes, Keyframes.Events)
       this._keyframes.clear()
     }
 
     this._keyframes = kf
+    this._keyframes.mappings = mappings
 
     this.setupBubbleEvents()
   }
