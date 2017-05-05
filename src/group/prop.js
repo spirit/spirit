@@ -57,7 +57,8 @@ class Prop extends EventEmitter {
 
     name = name || null
 
-    Object.assign(this, { name, keyframes })
+    this._name = name
+    this._keyframes = keyframes
   }
 
   /**

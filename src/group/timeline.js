@@ -1,4 +1,4 @@
-import Transitions from './transitions'
+import Props from './props'
 import { context, convert, is } from '../utils'
 import EvalMap from './evalmap'
 
@@ -47,31 +47,31 @@ class Timeline {
   id = null
 
   /**
-   * Transitions for this timeline.
+   * Properties for this timeline.
    *
-   * @type {Transitions}
+   * @type {Props}
    */
-  transitions = null
+  props = null
 
   /**
    * Create new Timeline instance
    *
-   * @param {string} type default = dom
-   * @param {HTMLElement|Object} transformObject
-   * @param {Array|Transitions} transitions
-   * @param {string|null} path
-   * @param {string|null} id
-   * @param {string|null} label
+   * @param {string}              type default = dom
+   * @param {HTMLElement|object}  transformObject
+   * @param {Array|Props|object}  props
+   * @param {string|null}         path
+   * @param {string|null}         id
+   * @param {string|null}         label
    */
-  constructor(type = 'dom', transformObject = null, transitions = new Transitions(), path = null, id = null, label = null) {
-    if (!(transitions instanceof Transitions)) {
-      transitions = new Transitions(transitions)
+  constructor(type = 'dom', transformObject = null, props = new Props(), path = null, id = null, label = null) {
+    if (!(props instanceof Props)) {
+      props = new Props(props)
     }
 
     Object.assign(this, {
       type,
       transformObject,
-      transitions,
+      props,
       label,
       path,
       id
@@ -93,14 +93,14 @@ class Timeline {
       }
     }
 
-    this.transitions.mappings = [new EvalMap(/this/g, transformObject)]
+    this.props.mappings = [new EvalMap(/this/g, transformObject)]
   }
 
   toObject() {
     let obj = {
       type: this.type,
       transformObject: this.transformObject,
-      transitions: this.transitions.toArray(),
+      props: this.props.toObject(),
       label: this.label,
       path: this.path,
       id: this.id
@@ -116,7 +116,9 @@ class Timeline {
   }
 
   destroy() {
-    this.transitions.each(tr => tr.destroy())
+    if (this.props instanceof Props) {
+      this.props.each(tr => tr.destroy())
+    }
   }
 
 }
@@ -135,14 +137,14 @@ Timeline.fromObject = function(obj) {
   let args = convert.objectToArray(obj).filter(arg => arg !== undefined)
   args = {
     type: args.type || 'dom',
-    transitions: [],
+    props: {},
     ...convert.arrayToObject(args)
   }
 
   return new Timeline(
     args.type,
     args.transformObject,
-    args.transitions,
+    args.props,
     args.path || undefined,
     args.id || undefined,
     args.label || undefined
