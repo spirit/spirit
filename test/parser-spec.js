@@ -6,7 +6,6 @@ import { timeline, jsonGhost } from './fixtures/group/groups-data'
 import { post, ghost } from './fixtures/group/dom'
 
 describe('parser', () => {
-
   let sandbox
 
   before(() => {
