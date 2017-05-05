@@ -104,8 +104,8 @@ export function generateTimeline(timeline) {
 
       let props = { [prop.name]: value }
 
-      if (ease) {
-        props.ease = ease
+      props.ease = ease ? ease : 'Linear.easeNone'
+
       if (time === 0) {
         props.immediateRender = true
       }
