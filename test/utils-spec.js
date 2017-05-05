@@ -242,14 +242,12 @@ describe('utils', () => {
           it('should have correct transitions', () => {
             const vars = timeline.getChildren().map(c => c.vars)
 
-            expect(vars[0]).to.deep.equal({ rotationX: 300, immediateRender: false })
+            expect(vars[0]).to.deep.equal({ ease: 'Linear.easeNone', immediateRender: true, css: { rotationX: 300 } })
             expect(vars[1]).to.deep.equal({ rotationX: 500, ease: 'Power3.easeInOut' })
-
-            expect(vars[2]).to.deep.equal({ x: 100, immediateRender: false })
-            expect(vars[3]).to.deep.equal({ x: 1000 })
-
-            expect(vars[4]).to.deep.equal({ y: 100, immediateRender: false })
-            expect(vars[5]).to.deep.equal({ rotationX: -300 })
+            expect(vars[2]).to.deep.equal({ ease: 'Linear.easeNone', immediateRender: true, css: { x: 100 } })
+            expect(vars[3]).to.deep.equal({ x: 1000, ease: 'Linear.easeNone' })
+            expect(vars[4]).to.deep.equal({ immediateRender: true, css: { y: 100 }, ease: 'Linear.easeNone' })
+            expect(vars[5]).to.deep.equal({ rotationX: -300, ease: 'Linear.easeNone' })
           })
 
           it('should have the correct offset (start time)', () => {

@@ -106,6 +106,8 @@ export function generateTimeline(timeline) {
 
       if (ease) {
         props.ease = ease
+      if (time === 0) {
+        props.immediateRender = true
       }
 
       tl.to(timeline.transformObject, duration, props, start)
