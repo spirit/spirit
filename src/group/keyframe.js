@@ -91,7 +91,17 @@ class Keyframe extends EventEmitter {
         val = val.replace(mappings[mapping].regex, `mappings[${mapping}].map`)
       }
 
-      return eval(val) // eslint-disable-line no-eval
+      let res
+
+      try {
+        res = eval(val) // eslint-disable-line no-eval
+      } catch (err) {
+        if (this.mappings.length > 0) {
+          throw err
+        }
+      }
+
+      return res
     }
 
     return this._value

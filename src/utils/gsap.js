@@ -73,32 +73,12 @@ export function ensure() {
 }
 
 /**
- * Get previous frame for param on transition
- *
- * @param   {Transition}  transition
- * @param   {Param}       param
- * @returns {number}
- */
-export function getPreviousFrame(transition, param) {
-  let tr = transition
-  let result
-
-  while (tr && !result) {
-    tr = tr._prev
-    if (tr && tr.params.get(param.prop)) {
-      result = tr
-    }
-  }
-  return result ? result.frame : 0
-}
-
-/**
  * Generate timeline from data
  *
- * @param {Timeline} tl
+ * @param {Timeline} timeline
  */
-export function generateTimeline(tl) {
-  if (!tl || !(tl instanceof Timeline)) {
+export function generateTimeline(timeline) {
+  if (!timeline || !(timeline instanceof Timeline)) {
     throw new Error('Need valid timeline data to generate GSAP timeline from')
   }
 
@@ -106,24 +86,33 @@ export function generateTimeline(tl) {
     throw new Error('GSAP not set. Please make sure GSAP is available.')
   }
 
-  if (tl.type !== 'dom') {
+  if (timeline.type !== 'dom') {
     throw new Error('Timeline invalid. Needs a timeline with type of dom.')
   }
 
-  const timeline = new config.gsap.timeline({ // eslint-disable-line new-cap
-    useFrames: true,
-    paused: true
+  const tl = new config.gsap.timeline({ paused: true }) // eslint-disable-line new-cap
+
+  timeline.props.each(prop => {
+    let keyframe = prop.keyframes.at(0)
+
+    while (keyframe) {
+      const { value, ease, time } = keyframe
+      const prev = keyframe.prev()
+
+      const start = prev ? prev.time : 0
+      const duration = prev ? time - prev.time : time
+
+      let props = { [prop.name]: value }
+
+      if (ease) {
+        props.ease = ease
+      }
+
+      tl.to(timeline.transformObject, duration, props, start)
+
+      keyframe = keyframe.next()
+    }
   })
 
-  tl.transitions.each(tr => {
-    tr.params.each(param => {
-      const start = getPreviousFrame(tr, param)
-      const duration = tr.frame - start
-      const params = { ...param.toObject(), ease: tr.ease }
-
-      timeline.to(tl.transformObject, duration, params, start)
-    })
-  })
-
-  return timeline
+  return tl
 }
