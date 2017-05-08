@@ -8,7 +8,8 @@ import groups from './registry/registry'
 import { create, load } from './data/parser'
 
 if (debug) {
-  console.warn('You are running the development build of Spirit.')
+  console.warn(`You are running the development build of Spirit v${version}.`)
+}
 
 const Spirit = function() {
   this.config = config
