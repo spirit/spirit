@@ -63,7 +63,7 @@ class Props extends List {
     }
 
     const affected = super.add(prop)
-    const exec = (prop) => prop.keyframes.mappings = [...this.mappings]
+    const exec = (prop) => { prop.keyframes.mappings = [...this.mappings] }
 
     Array.isArray(affected)
       ? affected.forEach(exec)

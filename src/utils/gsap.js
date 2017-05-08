@@ -102,9 +102,10 @@ export function generateTimeline(timeline) {
       const start = prev ? prev.time : 0
       const duration = prev ? time - prev.time : time
 
-      let props = { [prop.name]: value }
-
-      props.ease = ease ? ease : 'Linear.easeNone'
+      let props = {
+        [prop.name]: value,
+        ease: ease || 'Linear.easeNone'
+      }
 
       if (time === 0) {
         props.immediateRender = true

@@ -186,7 +186,6 @@ class Group extends EventEmitter {
       // create a valid GSAP timeline out of timelines
       this.timelines.each(timeline => {
         if (timeline.type === 'dom') {
-
           const el = timeline.transformObject
 
           if (!(el instanceof window.Element)) {
