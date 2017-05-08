@@ -1,8 +1,7 @@
-import { debug } from './utils'
+import { debug, context } from './utils'
 
 const version = require('../package.json').version
 
-export * from './group'
 export config from './config/config'
 export setup from './config/setup'
 export groups from './registry/registry'
