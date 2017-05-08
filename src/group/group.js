@@ -72,7 +72,7 @@ class Group extends EventEmitter {
   }
 
   /**
-   * Set fps
+   * Set timeScale
    *
    * @param {number} scale
    */
