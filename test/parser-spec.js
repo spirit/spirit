@@ -2,8 +2,36 @@ import { create, load } from '../src/data/parser'
 import { context, is } from '../src/utils'
 import { cache, req } from '../src/utils/jsonloader'
 import { Timeline, Groups } from '../src/group'
-import { timeline, jsonGhost } from './fixtures/group/groups-data'
 import { post, ghost } from './fixtures/group/dom'
+
+const jsonGhost = JSON.stringify({
+  "VERSION_APP": "0.1.0-10501025",
+  "VERSION_LIB": "1.0.7",
+  "groups": [
+    {
+      "name": "ghost",
+      "timeScale": 1.5,
+      "timelines": [
+        {
+          "path": "svg[1]",
+          "props": {}
+        },
+        {
+          "path": "svg[1]/path[1]",
+          "props": {}
+        },
+        {
+          "id": "eyes",
+          "props": {}
+        },
+        {
+          "path": "svg[1]/path[2]",
+          "props": {}
+        }
+      ],
+    }
+  ]
+})
 
 describe('parser', () => {
   let sandbox
@@ -25,13 +53,12 @@ describe('parser', () => {
   })
 
   describe('create', () => {
-
     let group
 
     beforeEach(() => {
       group = {
         name: 'ghost-animation',
-        fps: 12,
+        timeScale: 1.5,
         timelines: []
       }
     })
@@ -57,31 +84,28 @@ describe('parser', () => {
     })
 
     describe('element not found', () => {
-
       it('should fail to resolve element with id only', () => {
-        group.timelines = [timeline('ghost', null, 'ghost', 2)]
+        group.timelines = [{ id: 'ghost', label: 'logo' }]
         expect(() => create(group)).to.throw(/Cannot find element with \[data-spirit-id="ghost"/)
       })
 
       it('should fail to resolve element with path only', () => {
-        group.timelines = [timeline(null, 'div[1]/h1[1]', 'logo', 3)]
+        group.timelines = [{ path: 'div[1]/h1[1]', logo: 'logo' }]
         expect(() => create(group)).to.throw(/Cannot find element with path expression div\[1]\/h1\[1]/)
       })
 
       it('should fail to resolve element with id and path', () => {
-        group.timelines = [timeline('asd', 'div[2]/p[2]', 'text', 5)]
+        group.timelines = [{ id: 'ghost', path: 'div[2]/p[2]' }]
         expect(() => create(group)).to.throw(/Cannot find element with path expression div\[2]\/p\[2]/)
       })
 
       it('should fail to resolve if id and path are not set', () => {
-        group.timelines = [timeline(null, null, 'legs', 2)]
+        group.timelines = [{ label: 'logo' }]
         expect(() => create(group)).to.throw(/^Cannot find element.$/)
       })
-
     })
 
     describe('element found', () => {
-
       let post1,
           post2,
           post3
@@ -104,33 +128,38 @@ describe('parser', () => {
 
       it('should resolve element by id', () => {
         post1.setAttribute('data-spirit-id', 'my-post-animation')
-        group.timelines = [timeline('my-post-animation', null, 'post', 3)]
+
+        group.timelines = [{
+          id: 'my-post-animation',
+          label: 'post',
+          props: {
+            x: { '0s': { value: 10 }, '5s': { value: 100 } },
+            y: { '0s': { value: 0 }, '5s': { value: 100 } },
+            z: { '0s': { value: 0 }, '5s': { value: 100 } }
+          }
+        }]
 
         let groups = create(group)
+        const timeline = groups.get('ghost-animation').timelines.at(0)
 
-        const tl = groups.get('ghost-animation').timelines.at(0)
-
-        expect(tl).to.have.property('transformObject', post1)
-        expect(tl).to.have.property('id', 'my-post-animation')
+        expect(timeline).to.have.property('transformObject', post1)
+        expect(timeline).to.have.property('id', 'my-post-animation')
 
         expect(groups.get('ghost-animation').timelines.get(post1))
           .to.be.an.instanceOf(Timeline)
       })
 
       it('should resolve element by path expression', () => {
-        group.timelines = [timeline(null, 'div[2]/div[1]/div[1]/span[2]')]
+        group.timelines = [{ path: 'div[2]/div[1]/div[1]/span[2]' }]
+        const timeline = create(group).get('ghost-animation').timelines.at(0)
 
-        const tl = create(group).get('ghost-animation').timelines.at(0)
-
-        expect(tl).to.have.property('transformObject', post2.querySelector('.post-args'))
-        expect(tl).to.have.property('path', 'div[2]/div[1]/div[1]/span[2]')
-        expect(tl).to.have.property('id', null)
+        expect(timeline).to.have.property('transformObject', post2.querySelector('.post-args'))
+        expect(timeline).to.have.property('path', 'div[2]/div[1]/div[1]/span[2]')
+        expect(timeline).to.have.property('id', null)
       })
-
     })
 
     describe('with sub container as root element', () => {
-
       let container
 
       beforeEach(() => {
@@ -156,7 +185,7 @@ describe('parser', () => {
       })
 
       it('should resolve element by id from sub container', () => {
-        group.timelines = [timeline('my-post')]
+        group.timelines = [{ id: 'my-post' }]
 
         const firstPost = container.querySelector('.post:nth-of-type(1)')
         firstPost.setAttribute('data-spirit-id', 'my-post')
@@ -169,7 +198,7 @@ describe('parser', () => {
       })
 
       it('should resolve element by path expression from sub container', () => {
-        group.timelines = [timeline(null, 'div[2]')]
+        group.timelines = [{ path: 'div[2]' }]
 
         const secondPost = container.querySelector('.post:nth-of-type(2)')
         const groups = create(group, container)
@@ -184,20 +213,19 @@ describe('parser', () => {
   })
 
   describe('load', () => {
-
     beforeEach(() => {
       Object.keys(cache).forEach(key => delete cache[key])
       Object.keys(req).forEach(key => delete req[key])
     })
 
-    it('should fail to create in node', async() => {
+    it('should fail to create in node', async () => {
       sandbox.stub(context, 'isBrowser').returns(false)
 
       const result = await resolvePromise(load('animation.json'))
       expect(result).to.be.an('error').to.match(/can only be executed in browser/)
     })
 
-    it('should fail to load json', async() => {
+    it('should fail to load json', async () => {
       stubXhr(sandbox, {
         open: () => {
           throw new Error('Invalid')
@@ -208,7 +236,7 @@ describe('parser', () => {
       expect(result).to.be.an('error').to.match(/Unable to load animation\.json/)
     })
 
-    it('should load json data via jsonloader', async() => {
+    it('should load json data via jsonloader', async () => {
       stubXhr(sandbox, { responseText: jsonGhost })
 
       const url = 'animation.json'
@@ -218,7 +246,7 @@ describe('parser', () => {
       expect(cache[url]).to.deep.equal(JSON.parse(jsonGhost))
     })
 
-    it('should try to create groups from data', async() => {
+    it('should try to create groups from data', async () => {
       stubXhr(sandbox, { responseText: jsonGhost })
 
       const result = await resolvePromise(load('animation.json'))
@@ -234,7 +262,7 @@ describe('parser', () => {
         stubXhr(sandbox, { responseText: jsonGhost })
       })
 
-      it('should parse animation and create valid groups', async() => {
+      it('should parse animation and create valid groups', async () => {
         const groups = await resolvePromise(load('animation.json', gc))
         const timelines = groups.get('ghost').timelines
 
