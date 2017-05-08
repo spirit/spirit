@@ -9,6 +9,8 @@ const banner = `Spirit.js v${version}
 (c) ${new Date().getFullYear()} Patrick Brouwer
 Released under the MIT License.`
 
+const PrepackWebpackPlugin = require('prepack-webpack-plugin').default
+
 const config = {
   devtool: isProd ? 'hidden-source-map' : 'cheap-eval-source-map',
   context: path.join(__dirname, './src'),
@@ -41,6 +43,11 @@ const config = {
 }
 
 if (isProd) {
+
+  config.plugins.unshift(
+    new PrepackWebpackPlugin({})
+  )
+
   config.plugins.push(
     new webpack.optimize.OccurrenceOrderPlugin(),
     new webpack.optimize.DedupePlugin(),

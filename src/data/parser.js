@@ -103,7 +103,7 @@ export function create(data, element = undefined) {
   data.forEach(g => {
     const d = {
       name: g.name,
-      fps: g.fps,
+      timeScale: g.timeScale || 1,
       timelines: []
     }
 
@@ -112,7 +112,7 @@ export function create(data, element = undefined) {
 
       d.timelines.push({
         transformObject,
-        transitions: tl.transitions,
+        props: tl.props,
         label: getLabel(tl),
         path: xpath.getExpression(transformObject, element),
         id: tl.id

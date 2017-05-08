@@ -18,8 +18,8 @@ describe('registry', () => {
 
   it('should have 2 groups', () => {
     create([
-      { name: 'ghost', fps: 30, timelines: [] },
-      { name: 'logo', fps: 30, timelines: [] }
+      { name: 'ghost', timelines: [] },
+      { name: 'logo', timelines: [] }
     ])
 
     expect(registry).to.have.lengthOf(2)
@@ -28,8 +28,8 @@ describe('registry', () => {
 
   it('should get group by name', () => {
     create([
-      { name: 'ghost', fps: 30, timelines: [] },
-      { name: 'logo', fps: 30, timelines: [] }
+      { name: 'ghost', timelines: [] },
+      { name: 'logo', timelines: [] }
     ])
 
     expect(registry.get('ghost')).to.be.an.instanceOf(Group)
@@ -39,29 +39,28 @@ describe('registry', () => {
 
   it('should get registered group names', () => {
     create([
-      { name: 'ghost', fps: 30, timelines: [] },
-      { name: 'logo', fps: 30, timelines: [] }
+      { name: 'ghost', timelines: [] },
+      { name: 'logo', timelines: [] }
     ])
     expect(registry.groupNames()).to.deep.equal(['ghost', 'logo'])
   })
 
   it('should skip existing group', () => {
     create([
-      { name: 'ghost', fps: 30, timelines: [] },
-      { name: 'logo', fps: 30, timelines: [] }
+      { name: 'ghost', timelines: [] },
+      { name: 'logo', timelines: [] }
     ])
 
     const ghost = registry.get('ghost')
     const logo = registry.get('logo')
 
-    const created = create({ name: 'ghost', fps: 30, timelines: [] }).at(0)
+    const created = create({ name: 'ghost', timelines: [] }).at(0)
 
     expect(registry.get('ghost')).to.equal(ghost)
     expect(registry.get('ghost')).not.to.equal(created)
   })
 
   describe('add and remove from groups', () => {
-
     let groups
 
     beforeEach(() => {
@@ -123,18 +122,17 @@ describe('registry', () => {
   })
 
   describe('multi groups', () => {
-
     it('should have mixed groups of multiple creates', () => {
       const a = create([
-        { name: 'a', fps: 20, timelines: [] },
-        { name: 'b', fps: 20, timelines: [] },
-        { name: 'c', fps: 20, timelines: [] },
+        { name: 'a', timeScale: 1.4, timelines: [] },
+        { name: 'b', timeScale: 1.9, timelines: [] },
+        { name: 'c', timeScale: 1.2, timelines: [] },
       ])
 
       const b = create([
-        { name: 'c', fps: 20, timelines: [] },
-        { name: 'd', fps: 20, timelines: [] },
-        { name: 'e', fps: 20, timelines: [] },
+        { name: 'c', timeScale: 1.4, timelines: [] },
+        { name: 'd', timeScale: 1.9, timelines: [] },
+        { name: 'e', timeScale: 1.2, timelines: [] },
       ])
 
       expect(registry.groupNames()).to.deep.equal(['a', 'b', 'c', 'd', 'e'])
@@ -144,7 +142,6 @@ describe('registry', () => {
       expect(registry.get('d')).to.equal(b.get('d'))
       expect(registry.get('e')).to.equal(b.get('e'))
     })
-
   })
 
 })

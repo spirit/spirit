@@ -1,12 +1,10 @@
 import config from '../src/config/config'
 import setup from '../src/config/setup'
 import { Group, Timelines } from '../src/group'
-import { groupDefaults } from '../src/group/group'
 
 const configGsap = { ...config.gsap }
 
 describe('group', () => {
-
   const divA = document.createElement('div')
   const divB = document.createElement('div')
   const divC = document.createElement('div')
@@ -25,9 +23,9 @@ describe('group', () => {
     it('should create an empty group', () => {
       const group = new Group({ name: 'test' })
 
-      expect(group.fps).equal(groupDefaults.fps)
+      expect(group.timeScale).to.equal(1)
       expect(group.name).equal('test')
-      expect(group.timelines).equal(groupDefaults.timelines)
+      expect(group.timelines).to.be.an.instanceOf(Timelines)
     })
 
     it('should fail to create a group without a name', () => {
@@ -50,11 +48,31 @@ describe('group', () => {
     it('should parse group from object', () => {
       const group = new Group({
         name: 'my-group',
-        fps: 25,
         timelines: [
-          { transformObject: divA, path: 'div[0]', transitions: [{ frame: 0, params: { x: 0, y: 0 } }] },
-          { transformObject: divB, path: 'div[1]', transitions: [{ frame: 100, params: { x: 100, y: 200 } }] },
-          { transformObject: divC, path: 'div[2]', transitions: [{ frame: 200, params: { x: 400, y: 400 }, ease: 'custom' }] },
+          {
+            transformObject: divA,
+            path: 'div[0]',
+            props: {
+              x: { '10s': 100, '20s': 400 },
+              y: { '10s': 100, '20s': 400 }
+            }
+          },
+          {
+            transformObject: divB,
+            path: 'div[1]',
+            props: {
+              x: { '0s': 0, '3s': 1000 },
+              y: { '0s': { value: 0, ease: 'Expo.easeOut' } }
+            }
+          },
+          {
+            transformObject: divC,
+            path: 'div[2]',
+            props: {
+              x: { '0s': 0, '20s': 10 },
+              y: { '0s': 0, '20s': 100 }
+            }
+          }
         ]
       })
 
@@ -64,27 +82,36 @@ describe('group', () => {
           type: 'dom',
           transformObject: divA,
           path: 'div[0]',
-          transitions: [{ frame: 0, params: { x: 0, y: 0 }, ease: 'Linear.easeNone' }]
+          props: {
+            x: { '10s': { value: 100, ease: null }, '20s': { value: 400, ease: null } },
+            y: { '10s': { value: 100, ease: null }, '20s': { value: 400, ease: null } }
+          }
         },
         {
           type: 'dom',
           transformObject: divB,
           path: 'div[1]',
-          transitions: [{ frame: 100, params: { x: 100, y: 200 }, ease: 'Linear.easeNone' }]
+          props: {
+            x: { '0s': { value: 0, ease: null }, '3s': { value: 1000, ease: null } },
+            y: { '0s': { value: 0, ease: 'Expo.easeOut' } }
+          }
         },
         {
           type: 'dom',
           transformObject: divC,
           path: 'div[2]',
-          transitions: [{ frame: 200, params: { x: 400, y: 400 }, ease: 'custom' }]
-        },
+          props: {
+            x: { '0s': { value: 0, ease: null }, '20s': { value: 10, ease: null } },
+            y: { '0s': { value: 0, ease: null }, '20s': { value: 100, ease: null } }
+          }
+        }
       ])
     })
 
-    it('should fail set invalid fps', () => {
+    it('should fail set invalid timeScale', () => {
       const group = new Group({ name: 'group' })
-      expect(group.fps).equal(30)
-      expect(() => { group.fps = '12' }).to.throw(/Fps needs to be a number/)
+      expect(group.timeScale).equal(1)
+      expect(() => { group.timeScale = '12' }).to.throw(/timeScale needs to be a number/)
     })
 
     it('should fail set invalid name', () => {
@@ -99,22 +126,31 @@ describe('group', () => {
     it('should return a valid group from object', () => {
       const g = Group.fromObject({
         name: 'ghost',
-        fps: 25,
+        timeScale: 0.5,
         timelines: [
-          { transformObject: divA, path: 'div[0]', transitions: [{ frame: 10, params: { x: 100, y: 100 } }] }
+          {
+            transformObject: divA,
+            path: 'div[0]',
+            props: {
+              x: { '0s': 0, '10s': 100 },
+              y: { '0s': 0, '10s': 100 }
+            }
+          }
         ]
       })
       expect(g).to.be.an.instanceOf(Group)
-
       expect(g.toObject()).to.deep.equal({
+        timeScale: 0.5,
         name: 'ghost',
-        fps: 25,
         timelines: [
           {
             type: 'dom',
             transformObject: divA,
             path: 'div[0]',
-            transitions: [{ frame: 10, params: { x: 100, y: 100 }, ease: 'Linear.easeNone' }]
+            props: {
+              x: { '0s': { value: 0, ease: null }, '10s': { value: 100, ease: null } },
+              y: { '0s': { value: 0, ease: null }, '10s': { value: 100, ease: null } }
+            }
           }
         ]
       })
@@ -125,38 +161,38 @@ describe('group', () => {
     it('should convert group to valid object', () => {
       const group = new Group({
         name: 'monkey-business',
-        fps: 10,
+        timeScale: 5,
         timelines: [
           { label: 'monkey', transformObject: divA, path: 'div[0]' },
-          { label: 'eyes', transformObject: divB, path: 'div[1]', transitions: [{ frame: 0 }] },
+          { label: 'eyes', transformObject: divB, path: 'div[1]', props: { z: { '0s': 0 } } },
           { label: 'mouth', transformObject: divC, path: 'div[2]' }
         ]
       })
 
       expect(group.toObject()).to.deep.equal({
+        timeScale: 5,
         name: 'monkey-business',
-        fps: 10,
         timelines: [
           {
             type: 'dom',
-            label: 'monkey',
             transformObject: divA,
-            path: 'div[0]',
-            transitions: []
+            props: {},
+            label: 'monkey',
+            path: 'div[0]'
           },
           {
             type: 'dom',
-            label: 'eyes',
             transformObject: divB,
-            path: 'div[1]',
-            transitions: [{ frame: 0, params: {}, ease: 'Linear.easeNone' }]
+            props: { z: { '0s': { value: 0, ease: null } } },
+            label: 'eyes',
+            path: 'div[1]'
           },
           {
             type: 'dom',
-            label: 'mouth',
             transformObject: divC,
-            path: 'div[2]',
-            transitions: []
+            props: {},
+            label: 'mouth',
+            path: 'div[2]'
           }
         ]
       })
@@ -201,34 +237,32 @@ describe('group', () => {
     describe('modify timeline', () => {
 
       beforeEach(async () => {
-
         await setup()
 
         const tlA = {
           transformObject: divA,
           path: 'div[0]',
-          transitions: [
-            { frame: 0, params: { x: 0, y: 0 } },
-            { frame: 100, params: { x: 1000 } },
-            { frame: 200, params: { y: 1000 } }
-          ]
+          props: {
+            x: { '0s': 0, '10s': 1000 },
+            y: { '0s': 0, '20s': 1000 }
+          }
         }
 
         const tlB = {
           transformObject: divB,
           path: 'div[1]',
-          transitions: [
-            { frame: 250, params: { scale: 1.5 } }
-          ]
+          props: {
+            scale: { '25s': 1.5 }
+          }
         }
 
         const tlC = {
           transformObject: divC,
           path: 'div[2]',
-          transitions: [
-            { frame: 50, params: { skewX: 300 } },
-            { frame: 150, params: { rotateZ: 360 } },
-          ]
+          props: {
+            skewX: { '5s': 300 },
+            rotation: { '15s': '1turn' }
+          }
         }
 
         group.timelines = [tlA, tlB, tlC]
@@ -238,12 +272,13 @@ describe('group', () => {
         const tl = group.construct()
         expect(tl).to.be.an.instanceOf(config.gsap.timeline)
         expect(group.timeline).to.equal(tl)
-        expect(tl.duration()).to.equal(250)
+        expect(tl.duration()).to.equal(25)
       })
 
       it('should kill and clear existing timeline', async () => {
         group.construct()
-        group.timelines.get(divA).transitions.get(100).params.get('x').value = 500
+
+        expect(group.timelines.get(divA).toObject()).to.have.deep.property('props.x.0s.value', 0)
 
         const spyKill = sandbox.spy(group.timeline, 'kill')
         const spyClear = sandbox.spy(group.timeline, 'clear')
@@ -253,56 +288,198 @@ describe('group', () => {
         expect(spyKill.calledOnce).to.be.true
         expect(spyClear.calledOnce).to.be.true
       })
-
     })
-
   })
 
-  describe('timeline.timeScale with fps', () => {
-
+  describe('timeScale', () => {
     let group
 
     beforeEach(async () => {
+      config.gsap.autoInjectUrl = 'test/fixtures/gsap.js'
       await setup()
 
-      config.gsap.autoInjectUrl = 'test/fixtures/gsap.js'
       group = new Group({ name: 'group' })
-      group.timelines = [{
-        transformObject: divA,
-        path: 'div[0]',
-        transitions: [
-          { frame: 0, params: { x: 0 } },
-          { frame: 120, params: { x: 1000 } }
-        ]
-      }]
+      group.timelines = [
+        {
+          transformObject: divA,
+          path: 'div[0]',
+          props: { x: { '0s': 0, '12s': { value: 1000, ease: 'Linear.easeNone' } } }
+        }
+      ]
     })
 
     afterEach(() => {
       config.gsap = { ...configGsap }
     })
 
-    it('should match fps with timeScale on construct', async () => {
+    it('should update timeScale on timeline', () => {
       const tl = group.construct()
+      const timeScale = 0.25
 
-      expect(group.fps).to.equal(30)
-      expect(tl.timeScale()).to.equal(0.5)
-      expect(tl.endTime() - tl.startTime()).to.equal(240)
-    })
-
-    it('should update timescale on fps change', async () => {
-      const tl = group.construct()
-      expect(tl.timeScale()).to.equal(0.5)
-
-      group.fps = 60
+      expect(group).to.have.property('timeScale', 1)
       expect(tl.timeScale()).to.equal(1)
-      expect(tl.endTime() - tl.startTime()).to.equal(120)
+      expect(tl.duration()).to.equal(12)
+      expect(tl.endTime() - tl.startTime()).to.equal(12)
 
-      group.fps = 12
-      expect(tl.timeScale()).to.equal(0.2)
-      expect(tl.endTime() - tl.startTime()).to.equal(600)
+      group.timeScale = timeScale
+
+      expect(group).to.have.property('timeScale', timeScale)
+      expect(tl.timeScale()).to.equal(timeScale)
+      expect(tl.duration()).to.equal(12)
+      expect(tl.endTime() - tl.startTime()).to.equal(12 / timeScale)
     })
 
+  })
 
+  describe('dipatch events', () => {
+    let group,
+        spy
+
+    before(async () => {
+      config.gsap.autoInjectUrl = 'test/fixtures/gsap.js'
+      await setup()
+    })
+
+    after(() => {
+      config.gsap = { ...configGsap }
+    })
+
+    beforeEach(() => {
+      spy = sinon.spy()
+
+      group = new Group({
+        name: 'dispatch-events',
+        timelines: [
+          {
+            transformObject: divA,
+            path: 'div[0]',
+            props: {}
+          }
+        ]
+      })
+    })
+
+    it('should change name', () => {
+      group.on('change:name', spy)
+      group.name = 'my-animation'
+
+      expect(spy.callCount).to.equal(1)
+      expect(spy.getCall(0).args[0]).to.have.deep.property('changed.type', 'name')
+      expect(spy.getCall(0).args[0]).to.have.deep.property('changed.from', 'dispatch-events')
+      expect(spy.getCall(0).args[0]).to.have.deep.property('changed.to', 'my-animation')
+    })
+
+    it('should change timeScale', () => {
+      group.on('change:timeScale', spy)
+      group.timeScale = 0.4
+
+      expect(spy.callCount).to.equal(1)
+      expect(spy.getCall(0).args[0]).to.have.deep.property('changed.type', 'timeScale')
+      expect(spy.getCall(0).args[0]).to.have.deep.property('changed.from', 1)
+      expect(spy.getCall(0).args[0]).to.have.deep.property('changed.to', 0.4)
+    })
+
+    it('should change timelines', () => {
+      group.on('change:timelines', spy)
+      group.timelines = [{ transformObject: divB, path: 'div[1]', props: {} }]
+
+      expect(spy.callCount).to.equal(1)
+      expect(spy.getCall(0).args[0]).to.have.deep.property('changed.type', 'timelines')
+    })
+
+    it('should change duration', () => {
+      group.timelines.get(divA).props.add({ x: { '50s': 10 } })
+      const tl = group.construct()
+
+      expect(tl.duration()).to.equal(50)
+      expect(tl.timeScale()).to.equal(1)
+
+      group.on('change:duration', spy)
+      group.duration = 5
+
+      expect(tl.duration()).to.equal(50)
+      expect(group.duration).to.equal(50)
+      expect(tl.timeScale()).to.equal(10)
+
+      expect(spy.callCount).to.equal(1)
+      expect(spy.getCall(0).args[0]).to.have.deep.property('changed.type', 'duration')
+      expect(spy.getCall(0).args[0]).to.have.deep.property('changed.from', 50)
+      expect(spy.getCall(0).args[0]).to.have.deep.property('changed.to', 5)
+    })
+
+    it('should construct', () => {
+      group.on('construct', spy)
+
+      const tl = group.construct()
+
+      expect(spy.callCount).to.equal(1)
+      expect(spy.withArgs(tl).callCount).to.equal(1)
+      expect(spy.withArgs(group.timeline).callCount).to.equal(1)
+
+      group.construct()
+      group.construct()
+      group.construct()
+
+      expect(spy.callCount).to.equal(4)
+    })
+  })
+
+  describe('timing', () => {
+    let group
+
+    before(async () => {
+      config.gsap.autoInjectUrl = 'test/fixtures/gsap.js'
+      await setup()
+    })
+
+    after(() => {
+      config.gsap = { ...configGsap }
+    })
+
+    beforeEach(() => {
+      group = new Group({
+        name: 'test',
+        timelines: [
+          {
+            transformObject: divA,
+            path: 'div[0]',
+            props: {
+              x: { '0s': 0, '10s': 1000 },
+              y: { '0s': 100, '10s': 200 }
+            }
+          }
+        ]
+      })
+
+      group.construct()
+    })
+
+    it('should start with x=0', () => {
+      expect(divA).to.have.deep.property('_gsTransform.x', 0)
+      expect(divA).to.have.deep.property('_gsTransform.y', 100)
+    })
+
+    it('should progress linear by default', () => {
+      group.timeline.progress(0.25)
+      expect(divA).to.have.deep.property('_gsTransform.x', 250)
+      expect(divA).to.have.deep.property('_gsTransform.y', 125)
+
+      group.timeline.progress(0.5)
+      expect(divA).to.have.deep.property('_gsTransform.x', 500)
+      expect(divA).to.have.deep.property('_gsTransform.y', 150)
+
+      group.timeline.progress(0.75)
+      expect(divA).to.have.deep.property('_gsTransform.x', 750)
+      expect(divA).to.have.deep.property('_gsTransform.y', 175)
+
+      group.timeline.progress(0.9)
+      expect(divA).to.have.deep.property('_gsTransform.x', 900)
+      expect(divA).to.have.deep.property('_gsTransform.y', 190)
+
+      group.timeline.progress(1)
+      expect(divA).to.have.deep.property('_gsTransform.x', 1000)
+      expect(divA).to.have.deep.property('_gsTransform.y', 200)
+    })
   })
 
 })

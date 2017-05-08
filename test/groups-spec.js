@@ -49,7 +49,7 @@ describe('groups', () => {
 
       const groups = new Groups(document.body, simpleGroups)
       groups.construct()
-      expect(groups.list.map(group => group.timeline.duration())).to.deep.equal([100, 250])
+      expect(groups.list.map(group => group.duration)).to.deep.equal([10, 25])
     })
 
   })

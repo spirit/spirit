@@ -7,59 +7,63 @@ const divE = document.createElement('div')
 export const simpleGroups = [
   {
     name: 'puppet',
-    fps: 20,
     timelines: [
       {
         label: 'head',
         transformObject: divA,
         path: 'div[0]',
-        transitions: [
-          { frame: 0, ease: 'Strong.easeOut', params: [{ x: 0 }, { y: 0 }] },
-          { frame: 100, params: { x: 300, y: 1000 } }
-        ]
+        props: {
+          x: { '0s': { value: 0 }, '10s': { value: 300 } },
+          y: { '0s': { value: 0 }, '10s': { value: 1000 } }
+        }
       },
       {
         label: 'body',
         transformObject: divB,
         path: 'div[1]',
-        transitions: [
-          { frame: 100, params: { scale: 2 } }
-        ]
+        props: {
+          scale: { '10s': { value: 2 } }
+        }
       }
     ]
   },
   {
     name: 'ghost',
-    fps: 5,
     timelines: [
       {
         label: 'outline',
         transformObject: divC,
         path: 'div[2]',
-        transitions: [
-          { frame: 0, params: { scale: 0 } },
-          { frame: 250, params: { scale: 1 }, ease: 'Elastic.easeOut' }
-        ]
+        props: {
+          scale: {
+            '0s': { value: 0 },
+            '25s': { value: 1, ease: 'Elastic.easeOut' }
+          }
+        }
       },
       {
         label: 'eyes',
         transformObject: divD,
         path: 'div[3]',
-        transitions: [
-          { frame: 200, params: { scaleY: 1 } },
-          { frame: 201, params: { scaleY: 0.1 } },
-          { frame: 202, params: { scaleY: 1 } }
-        ]
+        props: {
+          scaleY: {
+            '20s': { value: 1 },
+            '20.1s': { value: 0.1 },
+            '20.2s': { value: 1 }
+          }
+        }
       },
       {
         label: 'shadow',
         transformObject: divE,
         path: 'div[4]',
-        transitions: [
-          { frame: 0, params: { y: 0 } },
-          { frame: 50, params: { y: 100 } },
-          { frame: 150, params: { y: 0 } }
-        ]
+        props: {
+          y: {
+            '0s': { value: 0 },
+            '5s': { value: 100 },
+            '15s': { value: 0 }
+          }
+        }
       }
     ]
   }

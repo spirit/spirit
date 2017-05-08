@@ -1,4 +1,5 @@
 import { EventEmitter } from 'events'
+import List from '../list/list'
 
 /**
  * Bubble events.
@@ -14,6 +15,10 @@ export function bubbleEvent(evt, scope) {
 
   return function() {
     this.emit(evt, ...arguments)
+
+    if (this._list instanceof List) {
+      this._list.emit(evt, ...arguments)
+    }
   }.bind(scope)
 }
 

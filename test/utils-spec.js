@@ -1,5 +1,7 @@
 import config from '../src/config/config'
 import Timeline from '../src/group/timeline'
+import List from '../src/list/list'
+import { EventEmitter } from 'events'
 
 import { post } from './fixtures/group/dom'
 
@@ -12,7 +14,8 @@ import {
   events,
   convert,
   xpath,
-  is
+  is,
+  emitter
 } from '../src/utils'
 
 import {
@@ -38,7 +41,7 @@ describe('utils', () => {
 
   describe('loadscript', () => {
 
-    it('should reject when context is not browser', async() => {
+    it('should reject when context is not browser', async () => {
       sinon.stub(context, 'isBrowser').returns(false)
 
       const err = await resolvePromise(loadscript('anything.js'))
@@ -47,12 +50,12 @@ describe('utils', () => {
       context.isBrowser.restore()
     })
 
-    it('should reject invalid request', async() => {
+    it('should reject invalid request', async () => {
       const err = await resolvePromise(loadscript('invalid.js'))
       expect(err).to.be.an('error').match(/Could not load/)
     })
 
-    it('should load script into window', async() => {
+    it('should load script into window', async () => {
       expect(window.someGlobal).to.be.undefined
       await loadscript('test/fixtures/loadscript.js')
       expect(window.someGlobal).to.be.a('function')
@@ -76,7 +79,7 @@ describe('utils', () => {
       sandbox.restore()
     })
 
-    it('should reject when context is not browser', async() => {
+    it('should reject when context is not browser', async () => {
       sinon.stub(context, 'isBrowser').returns(false)
 
       const err = await resolvePromise(jsonloader('file.json'))
@@ -85,17 +88,17 @@ describe('utils', () => {
       context.isBrowser.restore()
     })
 
-    it('should retrieve from cache', async() => {
+    it('should retrieve from cache', async () => {
       jsonloaderCache['temp.json'] = { foo: 'bar' }
       expect(await jsonloader('temp.json')).to.deep.equal({ foo: 'bar' })
     })
 
-    it('should serve from queued request', async() => {
+    it('should serve from queued request', async () => {
       jsonloaderReq['temp.json'] = new Promise((resolve) => resolve({ foo: 'bar' }))
       expect(await jsonloader('temp.json')).to.deep.equal({ foo: 'bar' })
     })
 
-    it('should reject as invalid request', async() => {
+    it('should reject as invalid request', async () => {
       stubXhr(sandbox, {
         open: () => {
           throw new Error('Invalid')
@@ -106,12 +109,12 @@ describe('utils', () => {
       expect(err).to.be.an('error').match(/Could not open request/)
     })
 
-    it('should resolve json', async() => {
+    it('should resolve json', async () => {
       stubXhr(sandbox, { responseText: `{"foo": "bar"}` })
       expect(await jsonloader('test.json')).to.deep.equal({ foo: 'bar' })
     })
 
-    it('should reject invalid json', async() => {
+    it('should reject invalid json', async () => {
       stubXhr(sandbox, { responseText: `{foo": "bar"}` })
 
       const err = await resolvePromise(jsonloader('invalid-json.json'))
@@ -136,7 +139,7 @@ describe('utils', () => {
         expect(gsap.has()).to.be.false
       })
 
-      it('should ensure gsap', async() => {
+      it('should ensure gsap', async () => {
         config.gsap.autoInjectUrl = 'test/fixtures/gsap.js'
 
         expect(gsap.has()).to.be.false
@@ -148,14 +151,14 @@ describe('utils', () => {
         expect(gsap.has()).to.be.true
       })
 
-      it('should resolve if already has gsap', async() => {
+      it('should resolve if already has gsap', async () => {
         config.gsap.tween = function() {}
         config.gsap.timeline = function() {}
         await gsap.ensure()
         expect(gsap.has()).to.be.true
       })
 
-      it('should reject ensure() when autoInject is false', async() => {
+      it('should reject ensure() when autoInject is false', async () => {
         config.gsap.autoInject = false
 
         const err = await resolvePromise(gsap.ensure())
@@ -164,31 +167,7 @@ describe('utils', () => {
 
     })
 
-    describe('getPreviousFrame', () => {
-
-      const div = document.createElement('div')
-
-      it('should retrieve a previous property on frame', () => {
-        const timeline = new Timeline('dom', div, [
-          { frame: 0, params: { x: 0 } },
-          { frame: 10, params: { y: 10 } },
-          { frame: 20, params: { x: 100 } },
-          { frame: 30, params: { y: 300 } },
-          { frame: 50, params: { x: 1000, y: 1000 } }
-        ], 'div[0]')
-
-        expect(gsap.getPreviousFrame(timeline.transitions.get(20), { prop: 'x' })).to.equal(0)
-        expect(gsap.getPreviousFrame(timeline.transitions.get(50), { prop: 'x' })).to.equal(20)
-        expect(gsap.getPreviousFrame(timeline.transitions.get(10), { prop: 'y' })).to.equal(0)
-        expect(gsap.getPreviousFrame(timeline.transitions.get(30), { prop: 'y' })).to.equal(10)
-        expect(gsap.getPreviousFrame(timeline.transitions.get(50), { prop: 'y' })).to.equal(30)
-        expect(gsap.getPreviousFrame(timeline.transitions.get(50), { prop: 'z' })).to.equal(0)
-      })
-
-    })
-
     describe('generate timeline', () => {
-
       const div = document.createElement('div')
 
       it('should fail on invalid data', () => {
@@ -211,18 +190,26 @@ describe('utils', () => {
 
         let timeline
 
-        beforeEach(async() => {
+        beforeEach(async () => {
           config.gsap.autoInjectUrl = 'test/fixtures/gsap.js'
           await gsap.ensure()
 
-          timeline = gsap.generateTimeline(
-            new Timeline('dom', div, [
-              { frame: 0, params: { x: 100, y: 100, rotationX: 300 } },
-              { frame: 100, params: { rotationX: 500 } },
-              { frame: 200, params: { x: 1000 } },
-              { frame: 300, params: { rotationX: -300 } }
-            ], 'div[0]')
-          )
+          const tl = new Timeline('dom', div, {
+            x: {
+              '0s': { value: 100 },
+              '3.333s': { value: 1000 }
+            },
+            y: {
+              '0s': { value: 100 }
+            },
+            rotationX: {
+              '0s': { value: 300 },
+              '1.666s': { value: 500, ease: 'Power3.easeInOut' },
+              '5s': { value: -300 }
+            }
+          }, 'div[0]')
+
+          timeline = gsap.generateTimeline(tl)
         })
 
         it('should have _gsTransform and _gsTweenID added to div', () => {
@@ -233,12 +220,12 @@ describe('utils', () => {
 
         it('should have a gsap timeline with correct duration', () => {
           expect(timeline).to.be.an.instanceOf(config.gsap.timeline)
-          expect(timeline.duration()).to.equal(300)
+          expect(timeline.duration()).to.equal(5)
         })
 
-        it('should use frames and is paused', () => {
-          expect(timeline.vars).to.deep.equal({ useFrames: true, paused: true })
-          expect(timeline.usesFrames()).to.be.true
+        it('should use time and is paused', () => {
+          expect(timeline.vars).to.deep.equal({ paused: true })
+          expect(timeline.usesFrames()).to.be.false
         })
 
         describe('children', () => {
@@ -253,31 +240,32 @@ describe('utils', () => {
           })
 
           it('should have correct transitions', () => {
-            const children = timeline.getChildren()
-            expect(children[0].vars).to.deep.equal({ x: 100, ease: 'Linear.easeNone', immediateRender: false })
-            expect(children[1].vars).to.deep.equal({ y: 100, ease: 'Linear.easeNone', immediateRender: false })
-            expect(children[2].vars).to.deep.equal({ rotationX: 300, ease: 'Linear.easeNone', immediateRender: false })
-            expect(children[3].vars).to.deep.equal({ rotationX: 500, ease: 'Linear.easeNone' })
-            expect(children[4].vars).to.deep.equal({ x: 1000, ease: 'Linear.easeNone' })
-            expect(children[5].vars).to.deep.equal({ rotationX: -300, ease: 'Linear.easeNone' })
+            const vars = timeline.getChildren().map(c => c.vars)
+
+            expect(vars[0]).to.deep.equal({ ease: 'Linear.easeNone', immediateRender: true, css: { rotationX: 300 } })
+            expect(vars[1]).to.deep.equal({ rotationX: 500, ease: 'Power3.easeInOut' })
+            expect(vars[2]).to.deep.equal({ ease: 'Linear.easeNone', immediateRender: true, css: { x: 100 } })
+            expect(vars[3]).to.deep.equal({ x: 1000, ease: 'Linear.easeNone' })
+            expect(vars[4]).to.deep.equal({ immediateRender: true, css: { y: 100 }, ease: 'Linear.easeNone' })
+            expect(vars[5]).to.deep.equal({ rotationX: -300, ease: 'Linear.easeNone' })
           })
 
-          it('should have the correct offset', () => {
-            const children = timeline.getChildren()
-            expect(children[0].startTime()).to.equal(0)
-            expect(children[1].startTime()).to.equal(0)
-            expect(children[2].startTime()).to.equal(0)
-            expect(children[3].startTime()).to.equal(0)
-            expect(children[4].startTime()).to.equal(0)
-            expect(children[5].startTime()).to.equal(100)
+          it('should have the correct offset (start time)', () => {
+            const time = timeline.getChildren().map(c => c.startTime())
+
+            expect(time[0]).to.equal(0)
+            expect(time[1]).to.equal(0)
+
+            expect(time[2]).to.equal(0)
+            expect(time[3]).to.equal(0)
+
+            expect(time[4]).to.equal(0)
+            expect(time[5]).to.equal(1.666)
           })
 
         })
-
       })
-
     })
-
   })
 
   describe('autobind', () => {
@@ -350,6 +338,199 @@ describe('utils', () => {
       }
 
       new B()
+    })
+
+  })
+
+  describe('emitter', () => {
+
+    describe('for class', () => {
+      it('should have added property for emitting', () => {
+        @emitter.emitChange('label')
+        class A extends EventEmitter {
+        }
+        const ins = new A()
+
+        expect(ins).to.have.property('_label')
+        expect(ins).to.have.property('label')
+      })
+
+      it('should add getters and setters with defaults', async () => {
+        @emitter.emitChange('label', 'untitled')
+        @emitter.emitChange('song')
+        class Album extends EventEmitter {
+        }
+
+        const album = new Album()
+        expect(album).to.have.property('label', 'untitled')
+        expect(album).to.have.property('song', null)
+
+        const spy = sinon.spy()
+        const spyLabel = sinon.spy()
+        const spySong = sinon.spy()
+
+        album.on('change', spy)
+        album.on('change:label', spyLabel)
+        album.on('change:song', spySong)
+
+        album.label = 'Summer'
+
+        album.song = 'Hot'
+        album.song = 'Cold'
+        album.song = 'Warm'
+
+        album.label = 'Winter'
+
+        expect(album).to.have.property('label', 'Winter')
+        expect(album).to.have.property('song', 'Warm')
+
+        expect(spy.callCount).to.equal(5)
+        expect(spy.getCall(0).args[0].changed).to.deep.equal({ type: 'label', from: 'untitled', to: 'Summer' })
+        expect(spy.getCall(1).args[0].changed).to.deep.equal({ type: 'song', from: null, to: 'Hot' })
+        expect(spy.getCall(2).args[0].changed).to.deep.equal({ type: 'song', from: 'Hot', to: 'Cold' })
+        expect(spy.getCall(3).args[0].changed).to.deep.equal({ type: 'song', from: 'Cold', to: 'Warm' })
+        expect(spy.getCall(4).args[0].changed).to.deep.equal({ type: 'label', from: 'Summer', to: 'Winter' })
+
+        expect(spyLabel.callCount).to.equal(2)
+        expect(spyLabel.getCall(0).args[0].changed).to.deep.equal({ type: 'label', from: 'untitled', to: 'Summer' })
+        expect(spyLabel.getCall(1).args[0].changed).to.deep.equal({ type: 'label', from: 'Summer', to: 'Winter' })
+
+        expect(spySong.callCount).to.equal(3)
+        expect(spySong.getCall(0).args[0].changed).to.deep.equal({ type: 'song', from: null, to: 'Hot' })
+        expect(spySong.getCall(1).args[0].changed).to.deep.equal({ type: 'song', from: 'Hot', to: 'Cold' })
+        expect(spySong.getCall(2).args[0].changed).to.deep.equal({ type: 'song', from: 'Cold', to: 'Warm' })
+      })
+
+      it('should fail if has duplicates', () => {
+        @emitter.emitChange('label')
+        class Item extends EventEmitter {
+
+          constructor(label) {
+            super()
+            this.label = label
+          }
+
+          toObject() {
+            return { 'label': this.label }
+          }
+        }
+
+        class Items extends List {
+          duplicates = { prop: 'label' }
+
+          constructor() {
+            super([], Item)
+          }
+        }
+
+        const items = new Items()
+        items.add(new Item('foo'))
+        items.add(new Item('bar'))
+
+        const item = items.at(0)
+        expect(() => item.label = 'bar').to.throw(/List has duplicates/)
+      })
+    })
+
+    describe('for setter', () => {
+
+      it('should throw error if class is not an instance of event emitter', () => {
+        expect(() => {
+          class A {
+            @emitter.emitChange()
+            emit(val) {}
+          }
+        }).to.throw(/can only be applied to event emitters/)
+      })
+
+      describe('valid emitter', () => {
+        let ins, cb
+
+        class A extends EventEmitter {
+          _item = 123
+
+          get item() { return this._item }
+
+          @emitter.emitChange()
+          set item(val) { this._item = val }
+        }
+
+        beforeEach(async () => {
+          ins = new A()
+          cb = sinon.spy()
+
+          ins.on('change', cb)
+        })
+
+        afterEach(async () => {
+          ins.removeListener('change', cb)
+        })
+
+        it('should not emit change if value is same', () => {
+          expect(cb.callCount).to.equal(0)
+          ins.item = 123
+          expect(cb.callCount).to.equal(0)
+        })
+
+        it('should emit change if value is changed', () => {
+          expect(cb.callCount).to.equal(0)
+          ins.item = 456
+          expect(cb.callCount).to.equal(1)
+
+          const args = cb.firstCall.args[0]
+          expect(args).to.have.property('previous').to.deep.equal({ item: 123 })
+          expect(args).to.have.property('current').to.deep.equal({ item: 456 })
+          expect(args).to.have.property('changed').to.deep.equal({ type: 'item', from: 123, to: 456 })
+        })
+
+        it('should use toObject() if defined', () => {
+          ins.toObject = function() {
+            return { item: 'to-' + this.item }
+          }
+
+          expect(cb.callCount).to.equal(0)
+          ins.item = 456
+          expect(cb.callCount).to.equal(1)
+
+          const args = cb.firstCall.args[0]
+          expect(args).to.have.property('previous').to.deep.equal({ item: 'to-123' })
+          expect(args).to.have.property('current').to.deep.equal({ item: 'to-456' })
+          expect(args).to.have.property('changed').to.deep.equal({ type: 'item', from: 123, to: 456 })
+        })
+
+        describe('_list', () => {
+
+          it('should emit if is event emitter', () => {
+            class B extends EventEmitter {}
+            ins._list = new B()
+
+            const spy = sinon.spy()
+            ins._list.on('change:item', spy)
+
+            expect(spy.callCount).to.equal(0)
+            ins.item = 456
+            expect(spy.callCount).to.equal(1)
+
+            const args = spy.firstCall.args[0]
+            expect(args).to.have.property('previous').to.deep.equal({ item: 123 })
+            expect(args).to.have.property('current').to.deep.equal({ item: 456 })
+            expect(args).to.have.property('changed').to.deep.equal({ type: 'item', from: 123, to: 456 })
+          })
+
+          it('should not emit if is not event emitter', () => {
+            ins._list = { on: () => {} }
+
+            const spy = sinon.spy()
+            ins._list.on('change:item', spy)
+
+            expect(spy.callCount).to.equal(0)
+            ins.item = 456
+            expect(spy.callCount).to.equal(0)
+          })
+        })
+
+      })
+
     })
 
   })

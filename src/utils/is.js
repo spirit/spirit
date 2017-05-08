@@ -5,3 +5,7 @@ export function isObject(obj) {
 export function isSVG(element) {
   return element instanceof window.SVGElement
 }
+
+export function isFunction(fn) {
+  return typeof fn === 'function'
+}

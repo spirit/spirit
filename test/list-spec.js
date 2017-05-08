@@ -619,6 +619,26 @@ describe('list', () => {
         { frame: 50 }
       ])
     })
+
+    it('should sort on custom function', () => {
+      const list = new List([
+        { '10s': 10 },
+        { '0.25s': 0.25 },
+        { '1.467s': 1.467 },
+        { '100.2s': 100.2 },
+        { '000.2s': 0.2 }
+      ])
+
+      list.sortOn = (a, b) => parseFloat(Object.keys(a)[0]) - parseFloat(Object.keys(b)[0])
+
+      expect(list.toArray()).to.deep.equal([
+        { '000.2s': 0.2 },
+        { '0.25s': 0.25 },
+        { '1.467s': 1.467 },
+        { '10s': 10 },
+        { '100.2s': 100.2 }
+      ])
+    })
   })
 
   describe('linked list', () => {
