@@ -32,4 +32,7 @@ export {
 const spirit = new Spirit()
 
 module.exports = spirit
+
+if (context.isBrowser() && !window.spirit) {
+  window.spirit = spirit
 }
