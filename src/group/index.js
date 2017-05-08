@@ -1,9 +1,21 @@
-export Group from './group'
-export Groups from './groups'
-export EvalMap from './evalmap'
-export Param from './param'
-export Params from './params'
-export Timeline from './timeline'
-export Timelines from './timelines'
-export Transition from './transition'
-export Transitions from './transitions'
+import EvalMap from './evalmap'
+import Group from './group'
+import Groups from './groups'
+import Keyframe from './keyframe'
+import Keyframes from './keyframes'
+import Prop from './prop'
+import Props from './props'
+import Timeline from './timeline'
+import Timelines from './timelines'
+
+export {
+  EvalMap,
+  Group,
+  Groups,
+  Keyframe,
+  Keyframes,
+  Prop,
+  Props,
+  Timeline,
+  Timelines
+}
