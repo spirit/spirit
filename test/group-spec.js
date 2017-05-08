@@ -53,15 +53,15 @@ describe('group', () => {
             transformObject: divA,
             path: 'div[0]',
             props: {
-              x: { '10s': { value: 100 }, '20s': { value: 400 } },
-              y: { '10s': { value: 100 }, '20s': { value: 400 } }
+              x: { '10s': 100, '20s': 400 },
+              y: { '10s': 100, '20s': 400 }
             }
           },
           {
             transformObject: divB,
             path: 'div[1]',
             props: {
-              x: { '0s': { value: 0 }, '3s': { value: 1000 } },
+              x: { '0s': 0, '3s': 1000 },
               y: { '0s': { value: 0, ease: 'Expo.easeOut' } }
             }
           },
@@ -69,8 +69,8 @@ describe('group', () => {
             transformObject: divC,
             path: 'div[2]',
             props: {
-              x: { '0s': { value: 0 }, '20s': { value: 10 } },
-              y: { '0s': { value: 0 }, '20s': { value: 100 } }
+              x: { '0s': 0, '20s': 10 },
+              y: { '0s': 0, '20s': 100 }
             }
           }
         ]
@@ -132,8 +132,8 @@ describe('group', () => {
             transformObject: divA,
             path: 'div[0]',
             props: {
-              x: { '0s': { value: 0 }, '10s': { value: 100 } },
-              y: { '0s': { value: 0 }, '10s': { value: 100 } }
+              x: { '0s': 0, '10s': 100 },
+              y: { '0s': 0, '10s': 100 }
             }
           }
         ]
@@ -164,7 +164,7 @@ describe('group', () => {
         timeScale: 5,
         timelines: [
           { label: 'monkey', transformObject: divA, path: 'div[0]' },
-          { label: 'eyes', transformObject: divB, path: 'div[1]', props: { z: { '0s': { value: 0 } } } },
+          { label: 'eyes', transformObject: divB, path: 'div[1]', props: { z: { '0s': 0 } } },
           { label: 'mouth', transformObject: divC, path: 'div[2]' }
         ]
       })
@@ -243,8 +243,8 @@ describe('group', () => {
           transformObject: divA,
           path: 'div[0]',
           props: {
-            x: { '0s': { value: 0 }, '10s': { value: 1000 } },
-            y: { '0s': { value: 0 }, '20s': { value: 1000 } }
+            x: { '0s': 0, '10s': 1000 },
+            y: { '0s': 0, '20s': 1000 }
           }
         }
 
@@ -252,7 +252,7 @@ describe('group', () => {
           transformObject: divB,
           path: 'div[1]',
           props: {
-            scale: { '25s': { value: 1.5 } }
+            scale: { '25s': 1.5 }
           }
         }
 
@@ -260,8 +260,8 @@ describe('group', () => {
           transformObject: divC,
           path: 'div[2]',
           props: {
-            skewX: { '5s': { value: 300 } },
-            rotation: { '15s': { value: '1turn' } }
+            skewX: { '5s': 300 },
+            rotation: { '15s': '1turn' }
           }
         }
 
@@ -303,7 +303,7 @@ describe('group', () => {
         {
           transformObject: divA,
           path: 'div[0]',
-          props: { x: { '0s': { value: 0 }, '12s': { value: 1000, ease: 'Linear.easeNone' } } }
+          props: { x: { '0s': 0, '12s': { value: 1000, ease: 'Linear.easeNone' } } }
         }
       ]
     })
@@ -388,7 +388,7 @@ describe('group', () => {
     })
 
     it('should change duration', () => {
-      group.timelines.get(divA).props.add({ x: { '50s': { value: 10 } } })
+      group.timelines.get(divA).props.add({ x: { '50s': 10 } })
       const tl = group.construct()
 
       expect(tl.duration()).to.equal(50)
@@ -444,14 +444,8 @@ describe('group', () => {
             transformObject: divA,
             path: 'div[0]',
             props: {
-              x: {
-                '0s': { value: 0 },
-                '10s': { value: 1000 }
-              },
-              y: {
-                '0s': { value: 100 },
-                '10s': { value: 200 }
-              }
+              x: { '0s': 0, '10s': 1000 },
+              y: { '0s': 100, '10s': 200 }
             }
           }
         ]

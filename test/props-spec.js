@@ -12,14 +12,8 @@ describe('properties', () => {
 
   it('should parse object of properties', () => {
     const properties = new Props({
-      x: {
-        '0s': { value: 10 },
-        '1s': { value: 100 }
-      },
-      y: {
-        '0s': { value: 0 },
-        '10s': { value: 0 }
-      }
+      x: { '0s': 10, '1s': 100 },
+      y: { '0s': 0, '10s': 0 }
     })
 
     expect(properties).to.have.lengthOf(2)
@@ -44,8 +38,8 @@ describe('properties', () => {
 
   it('should parse array of properties', () => {
     const propertiesA = new Props([
-      { 'x': { '0s': { value: 0 }, '1s': { value: 10 } } },
-      { 'y': { '0s': { value: 0 }, '10s': { value: 0 } } }
+      { 'x': { '0s': 0, '1s': 10 } },
+      { 'y': { '0s': 0, '10s': 0 } }
     ])
 
     const propertiesB = new Props([
@@ -70,14 +64,8 @@ describe('properties', () => {
   describe('list', () => {
     it('should get list', () => {
       const properties = new Props({
-        x: {
-          '0s': { value: 10 },
-          '1s': { value: 100 }
-        },
-        y: {
-          '0s': { value: 0 },
-          '10s': { value: 0 }
-        }
+        x: { '0s': 10, '1s': 100 },
+        y: { '0s': 0, '10s': 0 }
       })
 
       expect(properties.list.map(p => p.toObject())).to.deep.equal(properties.toArray())
@@ -121,7 +109,7 @@ describe('properties', () => {
         z: {}
       })
 
-      expect(() => properties.add({ x: { '0s': { value: 10 } } })).to.throw(/List has duplicates/)
+      expect(() => properties.add({ x: { '0s': 10 } })).to.throw(/List has duplicates/)
       expect(() => new Props([
         { x: {} },
         { x: {} }
@@ -179,9 +167,9 @@ describe('properties', () => {
   describe('mapping', () => {
     let props,
         val = {
-          '0s': { value: 0 },
-          '10s': { value: 50 },
-          '20s': { value: 100 }
+          '0s': 0,
+          '10s': 50,
+          '20s': 100
         }
 
     beforeEach(() => {
@@ -223,8 +211,8 @@ describe('properties', () => {
 
     it('should reassign mappings for new properties', () => {
       props.get('x').keyframes = {
-        '0s': { value: 0 },
-        '100s': { value: 0 }
+        '0s': 0,
+        '100s': 0
       }
 
       expect(props.get('x'))
@@ -240,9 +228,9 @@ describe('properties', () => {
 
     it('should return property by index', () => {
       const properties = new Props({
-        z: { '0s': { value: 1000 } },
-        x: { '0s': { value: 10 } },
-        y: { '0s': { value: 100 } }
+        z: { '0s': 1000 },
+        x: { '0s': 10 },
+        y: { '0s': 100 }
       })
 
       expect(properties.at(0)).to.have.property('name', 'x')
@@ -256,9 +244,9 @@ describe('properties', () => {
 
     beforeEach(() => {
       properties = new Props({
-        z: { '0s': { value: 1000 } },
-        x: { '0s': { value: 10 } },
-        y: { '0s': { value: 100 } }
+        z: { '0s': 1000 },
+        x: { '0s': 10 },
+        y: { '0s': 100 }
       })
     })
 
@@ -293,11 +281,11 @@ describe('properties', () => {
 
     it('should add by object(s)', () => {
       properties.add({
-        x: { '1s': { value: 10 }, '2s': { value: 100 } },
-        y: { '0s': { value: 0 }, '1s': { value: 1000 } }
+        x: { '1s': 10, '2s': 100 },
+        y: { '0s': 0, '1s': 1000 }
       })
 
-      properties.add({ z: { '1s': { value: 1000 } } })
+      properties.add({ z: { '1s': 1000 } })
 
       expect(properties.at(0).toObject()).to.deep.equal({
         x: {
@@ -433,9 +421,9 @@ describe('properties', () => {
   describe('#toObject', () => {
     it('should convert a valid object', () => {
       const properties = new Props([
-        new Prop('x', { '1s': { value: 0 }, '2s': { value: 100 } }),
-        new Prop('z', { '1s': { value: 0 }, '2s': { value: 100 } }),
-        new Prop('y', { '1s': { value: 0 }, '2s': { value: 100 } })
+        new Prop('x', { '1s': 0, '2s': 100 }),
+        new Prop('z', { '1s': 0, '2s': 100 }),
+        new Prop('y', { '1s': 0, '2s': 100 })
       ])
 
       const val = {
@@ -450,9 +438,9 @@ describe('properties', () => {
   describe('#toArray', () => {
     it('should convert a valid array', () => {
       const properties = new Props([
-        new Prop('x', { '1s': { value: 0 }, '2s': { value: 100 } }),
-        new Prop('z', { '1s': { value: 0 }, '2s': { value: 100 } }),
-        new Prop('y', { '1s': { value: 0 }, '2s': { value: 100 } })
+        new Prop('x', { '1s': 0, '2s': 100 }),
+        new Prop('z', { '1s': 0, '2s': 100 }),
+        new Prop('y', { '1s': 0, '2s': 100 })
       ])
 
       const val = {
@@ -535,8 +523,8 @@ describe('properties', () => {
       prop = new Prop('x', keyframes)
       properties = new Props([
         prop,
-        new Prop('y', { '0s': { value: 0 }, '1s': { value: 10 }, '2s': { value: 100 } }),
-        new Prop('z', { '0s': { value: 0 }, '1s': { value: 10 }, '2s': { value: 100 } })
+        new Prop('y', { '0s': 0, '1s': 10, '2s': 100 }),
+        new Prop('z', { '0s': 0, '1s': 10, '2s': 100 })
       ])
     })
 
@@ -643,8 +631,8 @@ describe('properties', () => {
       properties.on('change:keyframes', spyKeyframes)
 
       prop.keyframes = new Keyframes({
-        '0s': { value: 0 },
-        '1s': { value: 0 }
+        '0s': 0,
+        '1s': 0
       })
 
       const expectSpy = spy => {

@@ -171,7 +171,12 @@ Keyframe.fromObject = function(obj) {
   }
 
   let time = keys[0]
-  const { value, ease } = obj[time]
+  let { value, ease } = obj[time]
+
+  if (!is.isObject(obj[time]) && (typeof obj[time] === 'string' || typeof obj[time] === 'number')) {
+    value = obj[time]
+    ease = null
+  }
 
   time = parseFloat(time)
 

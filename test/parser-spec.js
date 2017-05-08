@@ -133,9 +133,9 @@ describe('parser', () => {
           id: 'my-post-animation',
           label: 'post',
           props: {
-            x: { '0s': { value: 10 }, '5s': { value: 100 } },
-            y: { '0s': { value: 0 }, '5s': { value: 100 } },
-            z: { '0s': { value: 0 }, '5s': { value: 100 } }
+            x: { '0s': 10, '5s': 100 },
+            y: { '0s': 0, '5s': 100 },
+            z: { '0s': 0, '5s': 100 }
           }
         }]
 

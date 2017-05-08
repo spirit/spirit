@@ -118,6 +118,22 @@ describe('keyframe', () => {
       expect(keyframe).to.have.property('ease', null)
     })
 
+    it('should parse value as string', () => {
+      const keyframe = Keyframe.fromObject({ '1s': 'bottom-left' })
+
+      expect(keyframe).to.have.property('time', 1)
+      expect(keyframe).to.have.property('value', 'bottom-left')
+      expect(keyframe).to.have.property('ease', null)
+    })
+
+    it('should parse value as number', () => {
+      const keyframe = Keyframe.fromObject({ '1s': 20 })
+
+      expect(keyframe).to.have.property('time', 1)
+      expect(keyframe).to.have.property('value', 20)
+      expect(keyframe).to.have.property('ease', null)
+    })
+
   })
 
   describe('dispatch events', () => {
