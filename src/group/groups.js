@@ -17,7 +17,7 @@ class Groups extends List {
   constructor(rootEl = document.body, data = []) {
     super(data, Group, [{ name: 'untitled' }])
 
-    if (!(rootEl instanceof window.HTMLElement)) {
+    if (!(rootEl instanceof window.Element)) {
       throw new Error('No root element provided.')
     }
     this.rootEl = rootEl

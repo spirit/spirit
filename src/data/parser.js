@@ -86,8 +86,8 @@ export function create(data, element = undefined) {
   }
 
   // ensure root element
-  if (!(element instanceof window.HTMLElement)) {
-    element = document.body
+  if (!(element instanceof window.Element)) {
+    element = document.body || document.documentElement
   }
 
   if (!Array.isArray(data) && data['groups'] && Array.isArray(data['groups'])) {
