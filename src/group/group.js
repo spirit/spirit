@@ -207,6 +207,11 @@ class Group extends EventEmitter {
       this.timeline.timeScale(this.timeScale)
       this._duration = this.timeline.duration()
     } catch (err) {
+
+      if (debug) {
+        console.error(err.stack)
+      }
+
       throw new Error(`Could not construct timeline: ${err.message}`)
     }
 
