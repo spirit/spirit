@@ -175,30 +175,18 @@ class Group extends EventEmitter {
 
       // initiate an empty GSAP timeline
       if (this.timeline && this.timeline instanceof config.gsap.timeline) {
-        this.timeline.stop()
-        this.timeline.kill()
-        this.timeline.clear()
+        gsap.killTimeline(this.timeline)
       } else {
         this.timeline = new config.gsap.timeline({ paused: true }) // eslint-disable-line new-cap
-        this.timeline.autoRemoveChildren = false
       }
 
       // create a valid GSAP timeline out of timelines
       this.timelines.each(timeline => {
         if (timeline.type === 'dom') {
           const el = timeline.transformObject
-
           if (!(el instanceof window.Element)) {
             throw new Error('transformObject is not an Element')
           }
-
-          // kill existing tweens
-          config.gsap.tween.killTweensOf(el)
-          delete el._gsTransform
-          delete el._gsTweenID
-          el.setAttribute('style', '')
-
-          // generate new timelines
           this.timeline.add(gsap.generateTimeline(timeline).play(), 0, 'start')
         }
       })
@@ -207,11 +195,9 @@ class Group extends EventEmitter {
       this.timeline.timeScale(this.timeScale)
       this._duration = this.timeline.duration()
     } catch (err) {
-
       if (debug) {
-        console.error(err.stack)
+        console.error(err)
       }
-
       throw new Error(`Could not construct timeline: ${err.message}`)
     }
 
