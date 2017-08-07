@@ -93,6 +93,10 @@ export function generateTimeline(timeline) {
   const tl = new config.gsap.timeline({ paused: true }) // eslint-disable-line new-cap
 
   timeline.props.each(prop => {
+    if (prop.keyframes.length === 0) {
+      return
+    }
+
     let keyframe = prop.keyframes.at(0)
 
     while (keyframe) {
