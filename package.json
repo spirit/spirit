@@ -18,7 +18,7 @@
     "analyse": "webpack src/index.js dist/spirit.js --json > stats.json",
     "analyse:size": "webpack --json | webpack-bundle-size-analyzer",
     "lint": "eslint .",
-    "test": "NODE_ENV=test mocha --require babel-register --require ./test/bootstrap.js",
+    "test": "NODE_ENV=test mocha --require babel-register --require ./test/bootstrap.js --timeout 5000",
     "test:watch": "NODE_ENV=test mocha -w --require babel-register --require ./test/bootstrap.js",
     "preversion": "npm test && npm run lint",
     "version": "npm run build:umd && npm run build:umd:min && git add -A dist",

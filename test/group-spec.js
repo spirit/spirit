@@ -268,14 +268,14 @@ describe('group', () => {
         group.timelines = [tlA, tlB, tlC]
       })
 
-      it('should create a valid gsap timeline', async () => {
+      it('should create a valid gsap timeline', () => {
         const tl = group.construct()
         expect(tl).to.be.an.instanceOf(config.gsap.timeline)
         expect(group.timeline).to.equal(tl)
         expect(tl.duration()).to.equal(25)
       })
 
-      it('should kill and clear existing timeline', async () => {
+      it('should kill and clear existing timeline', () => {
         group.construct()
 
         expect(group.timelines.get(divA).toObject()).to.have.deep.property('props.x.0s.value', 0)
