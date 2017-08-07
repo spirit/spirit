@@ -76,6 +76,7 @@ export function ensure() {
  * Generate timeline from data
  *
  * @param {Timeline} timeline
+ * @returns {TimelineMax|TimelineLite}
  */
 export function generateTimeline(timeline) {
   if (!timeline || !(timeline instanceof Timeline)) {
@@ -122,4 +123,29 @@ export function generateTimeline(timeline) {
   })
 
   return tl
+}
+
+/**
+ * Recursively kill timeline
+ * Reset props on targets
+ *
+ * @param {TimelineMax|TimelineLite} gsapTimeline
+ */
+export function killTimeline(gsapTimeline) {
+  if (gsapTimeline && gsapTimeline instanceof config.gsap.timeline) {
+    const targets = gsapTimeline.getChildren()
+    gsapTimeline.kill()
+
+    for (let i = 0; i < targets.length; i++) {
+      if (targets[i] && targets[i] instanceof config.gsap.timeline) {
+        killTimeline(targets[i])
+        continue
+      }
+
+      if (targets[i].target !== null) {
+        config.gsap.tween.set(targets[i].target, { clearProps: 'all' })
+      }
+    }
+    gsapTimeline.clear()
+  }
 }

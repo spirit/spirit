@@ -266,6 +266,50 @@ describe('utils', () => {
         })
       })
     })
+
+    describe('kill timeline', () => {
+      const div = document.createElement('div')
+
+      beforeEach(async() => {
+        await gsap.ensure()
+      })
+
+      describe('flat timeline', () => {
+        let timeline
+
+        beforeEach(() => {
+          timeline = gsap.generateTimeline(
+            new Timeline('dom', div, {
+              x: { '3.333s': 1000 },
+              y: { '0s': 100 },
+              left: { '0s': -100 }
+            }, 'div[0]')
+          )
+
+          timeline.seek(3.333)
+        })
+
+        it('should have gsTransform values', () => {
+          expect(div).to.have.deep.property('_gsTransform.x', 1000)
+          expect(div).to.have.deep.property('_gsTransform.y', 100)
+        })
+
+        it('should have cleared gsTransform values', () => {
+          gsap.killTimeline(timeline)
+          expect(div).to.not.have.property('_gsTransform')
+        })
+
+        it('should have style attribute', () => {
+          expect(div.style.getPropertyValue('left')).to.equal('-100px')
+        })
+
+        it('should have removed style attribute', () => {
+          gsap.killTimeline(timeline)
+          expect(div.style.getPropertyValue('left')).to.equal('')
+          expect(div.getAttribute('style')).to.equal('')
+        })
+      })
+    })
   })
 
   describe('autobind', () => {
