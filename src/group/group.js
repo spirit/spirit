@@ -149,6 +149,12 @@ class Group extends EventEmitter {
     return { name, timeScale, timelines }
   }
 
+  reset() {
+    if (this.timeline) {
+      gsap.killTimeline(this.timeline)
+    }
+  }
+
   /**
    * Construct gsap timeline
    *
