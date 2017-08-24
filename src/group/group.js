@@ -3,6 +3,7 @@ import { gsap, debug } from '../utils'
 import Timelines from './timelines'
 import { EventEmitter } from 'events'
 import { emitChange } from '../utils/emitter'
+import { TimelineError } from '../utils/errors'
 
 /**
  * Group.
@@ -191,9 +192,13 @@ class Group extends EventEmitter {
         if (timeline.type === 'dom') {
           const el = timeline.transformObject
           if (!(el instanceof window.Element)) {
-            throw new Error('transformObject is not an Element')
+            throw new TimelineError('transformObject is not an Element', el)
           }
-          this.timeline.add(gsap.generateTimeline(timeline).play(), 0, 'start')
+          try {
+            this.timeline.add(gsap.generateTimeline(timeline).play(), 0, 'start')
+          } catch (err) {
+            throw new TimelineError(err.message, el, err.stack)
+          }
         }
       })
 
@@ -201,10 +206,8 @@ class Group extends EventEmitter {
       this.timeline.timeScale(this.timeScale)
       this._duration = this.timeline.duration()
     } catch (err) {
-      if (debug) {
-        console.error(err)
-      }
-      throw new Error(`Could not construct timeline: ${err.message}`)
+      err.message = `Could not construct timeline: ${err.message}`
+      throw err
     }
 
     this.emit('construct', this.timeline)
