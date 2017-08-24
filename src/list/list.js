@@ -413,7 +413,29 @@ class List extends EventEmitter {
    * @returns {*}
    */
   each(cb) {
-    return [...this.list].forEach(cb)
+    let list = [...this.list]
+    let mapped = []
+    let error = false
+
+    for (let i = 0; i < list.length; i++) {
+      let item = list[i]
+
+      try {
+        mapped.push(cb(item, i))
+      } catch (err) {
+        error = err
+      }
+
+      if (error) {
+        break
+      }
+    }
+
+    if (error) {
+      throw error
+    }
+
+    return mapped
   }
 
   /**
