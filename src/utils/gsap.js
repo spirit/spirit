@@ -108,9 +108,30 @@ export function generateTimeline(timeline) {
       const duration = prev ? time - prev.time : time
 
       let props = {
-        [prop.name]: value,
         ease: ease || 'Linear.easeNone'
       }
+
+      let property = { [prop.name]: value }
+
+      // parse dots into recursive object
+      if (/\./.test(prop.name)) {
+        let segments = prop.name.split('.')
+        let last = segments.pop()
+        let obj = {}
+        let o = obj
+
+        while (segments.length > 0) {
+          let segment = segments.shift()
+
+          obj[segment] = {}
+          obj = obj[segment]
+        }
+
+        obj[last] = value
+        property = o
+      }
+
+      props = { ...props, ...property }
 
       if (time === 0) {
         props.immediateRender = true

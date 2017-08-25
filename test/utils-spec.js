@@ -265,6 +265,49 @@ describe('utils', () => {
 
         })
       })
+
+      describe('dot values', () => {
+
+        beforeEach(async () => {
+          config.gsap.autoInjectUrl = 'test/fixtures/gsap.js'
+          await gsap.ensure()
+        })
+
+        it('should construct dot value property', () => {
+          let circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle')
+
+          const tl = new Timeline('dom', circle, {
+            'attr.cx': {
+              '0s': 0,
+              '1s': 100
+            }
+          }, 'circle[0]')
+
+          const timeline = gsap.generateTimeline(tl)
+          const vars = timeline.getChildren().map(c => c.vars)
+
+          expect(vars).to.have.lengthOf(2)
+          expect(vars[0]).to.have.deep.property('attr.cx', 0)
+          expect(vars[1]).to.have.deep.property('attr.cx', 100)
+        })
+
+        it('should construct dot value property into recursive object', () => {
+          const tl = new Timeline('dom', div, {
+            'some.foo.bar': {
+              '1s': 0,
+              '2s': 100
+            }
+          }, 'div[0]')
+
+          const timeline = gsap.generateTimeline(tl)
+          const vars = timeline.getChildren().map(c => c.vars)
+
+          expect(vars).to.have.lengthOf(2)
+          expect(vars[0]).to.have.deep.property('some.foo.bar', 0)
+          expect(vars[1]).to.have.deep.property('some.foo.bar', 100)
+        })
+
+      })
     })
 
     describe('kill timeline', () => {
