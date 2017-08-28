@@ -33,7 +33,7 @@ import { emitChange } from '../utils/emitter'
 
 @emitChange('name', null, [
   { validator: val => typeof val === 'string', message: 'Name must be a string' },
-  { validator: val => !/\d+/.test(val), message: 'Name must be a string' }
+  { validator: val => !/^\d+\.?\d*?$/.test(val), message: 'Name must be a string' }
 ])
 
 class Prop extends EventEmitter {
