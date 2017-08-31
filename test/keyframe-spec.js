@@ -89,6 +89,15 @@ describe('keyframe', () => {
 
       expect(keyframe).to.have.property('value', 125)
     })
+
+    it('should be able to set another value after error is thrown', () => {
+      keyframe.mappings = [new EvalMap(/none/, 123)]
+      keyframe.value = '{ x }'
+
+      expect(() => keyframe.value).to.throw(/x is not defined/)
+      expect(() => { keyframe.value = '{ none }' }).to.not.throw()
+      expect(keyframe).to.have.property('value', 123)
+    })
   })
 
   describe('from object', () => {
