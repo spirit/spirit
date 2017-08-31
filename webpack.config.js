@@ -12,7 +12,7 @@ Released under the MIT License.`
 const PrepackWebpackPlugin = require('prepack-webpack-plugin').default
 
 const config = {
-  devtool: isProd ? 'hidden-source-map' : 'cheap-eval-source-map',
+  devtool: isProd ? 'hidden-source-map' : 'source-map',
   context: path.join(__dirname, './src'),
   entry: 'index',
   output: {
