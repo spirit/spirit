@@ -31,7 +31,10 @@ module.exports = function(wallaby) {
       ))
     },
 
-    setup: function setup() {
+    setup: function setup(wallaby) {
+      const mocha = wallaby.testFramework
+      mocha.timeout(5000)
+
       process.env.NODE_ENV = 'test'
       require('./test/bootstrap')
     }
