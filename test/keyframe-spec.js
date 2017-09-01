@@ -145,6 +145,20 @@ describe('keyframe', () => {
 
   })
 
+  describe('to object', () => {
+
+    it('should convert to object ignoring eval', () => {
+      const keyframe = new Keyframe(0, 0, 'Expo.easeOut')
+      keyframe.mappings = [new EvalMap(/test/, 123)]
+
+      keyframe.value = '{ test + 10 }'
+
+      expect(keyframe.toObject()).to.deep.equal({ '0s': { value: 133, ease: 'Expo.easeOut' } })
+      expect(keyframe.toObject(true)).to.deep.equal({ '0s': { value: '{ test + 10 }', ease: 'Expo.easeOut' } })
+    })
+
+  })
+
   describe('dispatch events', () => {
     let keyframe, spy
 

@@ -433,6 +433,37 @@ describe('properties', () => {
 
       expect(properties.toObject()).to.deep.equal({ x: val, y: val, z: val })
     })
+
+    it('should convert to object ignoring eval', () => {
+      const properties = new Props([
+        new Prop('x', { '1s': '{ test }', '2s': '{ test + 5 }' }),
+        new Prop('y', { '1s': '{ test + 10 }', '2s': '{ test + 15 }' })
+      ])
+
+      properties.mappings = [new EvalMap(/test/, 5)]
+
+      expect(properties.toObject()).to.deep.equal({
+        'x': {
+          '1s': { value: 5, ease: null },
+          '2s': { value: 10, ease: null }
+        },
+        'y': {
+          '1s': { value: 15, ease: null },
+          '2s': { value: 20, ease: null }
+        }
+      })
+
+      expect(properties.toObject(true)).to.deep.equal({
+        'x': {
+          '1s': { value: '{ test }', ease: null },
+          '2s': { value: '{ test + 5 }', ease: null }
+        },
+        'y': {
+          '1s': { value: '{ test + 10 }', ease: null },
+          '2s': { value: '{ test + 15 }', ease: null }
+        }
+      })
+    })
   })
 
   describe('#toArray', () => {

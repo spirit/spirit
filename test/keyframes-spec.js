@@ -187,6 +187,24 @@ describe('keyframes', () => {
         '40s': { value: 100, ease: null }
       })
     })
+
+    it('should convert to object ignoring eval', () => {
+      const keyframes = new Keyframes([
+        new Keyframe(0, '{ test + 10 }'),
+        new Keyframe(1.5, '{ test + 100 }')
+      ])
+      keyframes.mappings = [new EvalMap(/test/, 123)]
+
+      expect(keyframes.toObject()).to.deep.equal({
+        '0s': { value: 133, ease: null },
+        '1.5s': { value: 223, ease: null }
+      })
+
+      expect(keyframes.toObject(true)).to.deep.equal({
+        '0s': { value: '{ test + 10 }', ease: null },
+        '1.5s': { value: '{ test + 100 }', ease: null }
+      })
+    })
   })
 
   describe('parse array', () => {

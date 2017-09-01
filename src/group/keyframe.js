@@ -133,13 +133,14 @@ class Keyframe extends EventEmitter {
   /**
    * Convert to readable object
    *
+   * @param   {boolean} ignoreEval
    * @returns {object} { "0.2s": { value: 10, ease: "Linear.easeNone" }}
    */
-  toObject() {
+  toObject(ignoreEval = false) {
     let value
 
     try {
-      value = this.value
+      value = ignoreEval ? this._value : this.value
     } catch (err) {
       value = this._value
     }

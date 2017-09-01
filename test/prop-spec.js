@@ -1,6 +1,7 @@
 import Prop from '../src/group/prop'
 import Keyframes from '../src/group/keyframes'
 import Keyframe from '../src/group/keyframe'
+import EvalMap from '../src/group/evalmap'
 
 describe('property', () => {
 
@@ -83,6 +84,36 @@ describe('property', () => {
           '0s': { value: 10, ease: null },
           '1s': { value: 100, ease: null },
           '2s': { value: 200, ease: 'Power3.easeInOut' }
+        }
+      })
+    })
+  })
+
+  describe('toObject', () => {
+    it('should convert to object ignoring eval', () => {
+      const prop = Prop.fromObject({
+        x: {
+          '0s': '{ test }',
+          '1s': '{ test + 10 }',
+          '2s': '{ test + 100 }'
+        }
+      })
+
+      prop.keyframes.mappings = [new EvalMap(/test/, 5)]
+
+      expect(prop.toObject()).to.deep.equal({
+        x: {
+          '0s': { value: 5, ease: null },
+          '1s': { value: 15, ease: null },
+          '2s': { value: 105, ease: null }
+        }
+      })
+
+      expect(prop.toObject(true)).to.deep.equal({
+        x: {
+          '0s': { value: '{ test }', ease: null },
+          '1s': { value: '{ test + 10 }', ease: null },
+          '2s': { value: '{ test + 100 }', ease: null }
         }
       })
     })
