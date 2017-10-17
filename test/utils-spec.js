@@ -186,6 +186,56 @@ describe('utils', () => {
           .to.throw(/Timeline invalid. Needs a timeline with type of dom/)
       })
 
+      describe('transform origin', () => {
+
+        beforeEach(async () => {
+          config.gsap.autoInjectUrl = 'test/fixtures/gsap.js'
+          await gsap.ensure()
+        })
+
+        it('should add default transform origin if prop is a css-transform', () => {
+          const vars = gsap.generateTimeline(new Timeline('dom', div, {
+            rotation: {
+              '0s':  -180,
+              '5s':  180,
+              '10s': -180
+            }
+          }, 'div[0]')).getChildren().map(c => c.vars)
+
+          expect(vars[0]).to.have.deep.property('css.transformOrigin', '50% 50%')
+          expect(vars[1]).to.have.deep.property('transformOrigin', '50% 50%')
+          expect(vars[2]).to.have.deep.property('transformOrigin', '50% 50%')
+        })
+
+        it('should add transform origin by "transformOrigin" prop last know keyframe', () => {
+          const vars = gsap.generateTimeline(new Timeline('dom', div, {
+            rotation:        {
+              '0s':  -180,
+              '5s':  180,
+              '10s': -180
+            },
+            transformOrigin: {
+              '0s':  '0% 0%',
+              '5s':  '0% 50%'
+            }
+          }, 'div[0]')).getChildren().map(c => c.vars)
+
+          expect(vars[0]).to.have.deep.property('css.transformOrigin', '0% 0%')
+          expect(vars[1]).to.have.deep.property('transformOrigin', '0% 0%')
+          expect(vars[2]).to.have.deep.property('transformOrigin', '0% 50%')
+        })
+
+        it('should set transform origin at first frame with no duration at all', () => {
+          const vars = gsap.generateTimeline(new Timeline('dom', div, {
+            rotation:        { '0s': -180 },
+            transformOrigin: { '0s': '0% 0%' }
+          }, 'div[0]')).getChildren().map(c => c.vars)
+
+          expect(vars[0]).to.have.deep.property('css.transformOrigin', '0% 0%')
+        })
+
+      })
+
       describe('on generated', () => {
 
         let timeline
@@ -242,12 +292,12 @@ describe('utils', () => {
           it('should have correct transitions', () => {
             const vars = timeline.getChildren().map(c => c.vars)
 
-            expect(vars[0]).to.deep.equal({ ease: 'Linear.easeNone', immediateRender: true, css: { rotationX: 300 } })
-            expect(vars[1]).to.deep.equal({ rotationX: 500, ease: 'Power3.easeInOut' })
-            expect(vars[2]).to.deep.equal({ ease: 'Linear.easeNone', immediateRender: true, css: { x: 100 } })
-            expect(vars[3]).to.deep.equal({ x: 1000, ease: 'Linear.easeNone' })
-            expect(vars[4]).to.deep.equal({ immediateRender: true, css: { y: 100 }, ease: 'Linear.easeNone' })
-            expect(vars[5]).to.deep.equal({ rotationX: -300, ease: 'Linear.easeNone' })
+            expect(vars[0]).to.deep.equal({ ease: 'Linear.easeNone', immediateRender: true, css: { rotationX: 300, transformOrigin: '50% 50%' } })
+            expect(vars[1]).to.deep.equal({ rotationX: 500, ease: 'Power3.easeInOut', transformOrigin: '50% 50%' })
+            expect(vars[2]).to.deep.equal({ ease: 'Linear.easeNone', immediateRender: true, css: { x: 100, transformOrigin: '50% 50%' } })
+            expect(vars[3]).to.deep.equal({ x: 1000, ease: 'Linear.easeNone', transformOrigin: '50% 50%' })
+            expect(vars[4]).to.deep.equal({ immediateRender: true, css: { y: 100, transformOrigin: '50% 50%' }, ease: 'Linear.easeNone' })
+            expect(vars[5]).to.deep.equal({ rotationX: -300, ease: 'Linear.easeNone', transformOrigin: '50% 50%' })
           })
 
           it('should have the correct offset (start time)', () => {
@@ -264,6 +314,7 @@ describe('utils', () => {
           })
 
         })
+
       })
 
       describe('dot values', () => {

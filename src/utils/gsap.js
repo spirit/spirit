@@ -93,8 +93,10 @@ export function generateTimeline(timeline) {
 
   const tl = new config.gsap.timeline({ paused: true }) // eslint-disable-line new-cap
 
+  let transformOrigin = timeline.props.get('transformOrigin')
+
   timeline.props.each(prop => {
-    if (prop.keyframes.length === 0) {
+    if (prop.keyframes.length === 0 || prop.name === 'transformOrigin' || prop.name === 'svgOrigin') {
       return
     }
 
@@ -107,10 +109,7 @@ export function generateTimeline(timeline) {
       const start = prev ? prev.time : 0
       const duration = prev ? time - prev.time : time
 
-      let props = {
-        ease: ease || 'Linear.easeNone'
-      }
-
+      let props = { ease: ease || 'Linear.easeNone' }
       let property = { [prop.name]: value }
 
       // parse dots into recursive object
@@ -135,6 +134,18 @@ export function generateTimeline(timeline) {
 
       if (time === 0) {
         props.immediateRender = true
+      }
+
+      if (prop.isCSSTransform()) {
+        // set transform origin to last known frame
+        let _transformOrigin = '50% 50%'
+        if (transformOrigin && transformOrigin.keyframes.list.length > 0) {
+          const l = transformOrigin.keyframes.list
+            .filter(k => time === 0 ? k.time <= time : k.time < time)
+            .sort((a, b) => a.time < b.time)
+          _transformOrigin = l.length > 0 && l[0].value || _transformOrigin
+        }
+        props.transformOrigin = _transformOrigin
       }
 
       tl.to(timeline.transformObject, duration, props, start)
