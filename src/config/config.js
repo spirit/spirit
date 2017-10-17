@@ -4,7 +4,7 @@ class Config {
     tween: null,
     timeline: null,
     autoInject: true,
-    autoInjectUrl: 'https://cdnjs.cloudflare.com/ajax/libs/gsap/1.20.2/TweenMax.min.js'
+    autoInjectUrl: 'https://unpkg.com/gsap/src/minified/TweenMax.min.js'
   }
 }
 
