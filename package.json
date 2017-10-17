@@ -12,6 +12,7 @@
   "scripts": {
     "build": "npm run build:umd && npm run build:umd:min && npm run build:lib",
     "build:umd": "BABEL_ENV=umd webpack --progress",
+    "build:umd:watch": "BABEL_ENV=umd webpack --progress -w",
     "build:umd:min": "NODE_ENV=production BABEL_ENV=umd webpack --progress",
     "build:lib": "babel src --out-dir lib",
     "build:lib:watch": "babel -w src --out-dir lib",
