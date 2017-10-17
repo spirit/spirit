@@ -164,7 +164,7 @@ class Group extends EventEmitter {
   construct() {
     try {
       if (!config.gsap.timeline || !config.gsap.tween) {
-        if (debug) {
+        if (debug()) {
           console.warn(`
             Trying to construct group ${this.name}, but GSAP cannot be found.
             

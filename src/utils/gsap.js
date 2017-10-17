@@ -24,7 +24,7 @@ export function ensure() {
   }
 
   if (!config.gsap.autoInject) {
-    if (debug) {
+    if (debug()) {
       console.warn(`
       
         It seems that you have disabled autoInject. GSAP can not be found by Spirit.
@@ -45,7 +45,7 @@ export function ensure() {
     return Promise.reject(new Error('GSAP not found.'))
   }
 
-  if (debug) {
+  if (debug()) {
     console.warn(`
       
       GSAP is being fetched from CDN: ${config.gsap.autoInjectUrl}.

@@ -1,5 +1,7 @@
 class Config {
 
+  debug = true
+
   gsap = {
     tween: null,
     timeline: null,

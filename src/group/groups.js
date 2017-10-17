@@ -65,7 +65,7 @@ class Groups extends List {
    */
   construct() {
     if (!config.gsap.timeline || !config.gsap.tween) {
-      if (debug) {
+      if (debug()) {
         console.warn(`
             Trying to construct groups, but GSAP cannot be found.
             
