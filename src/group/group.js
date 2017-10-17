@@ -168,13 +168,23 @@ class Group extends EventEmitter {
           console.warn(`
             Trying to construct group ${this.name}, but GSAP cannot be found.
             
-            Did you forgot to call spirit.setup() ?
+            Did you forgot to call spirit.setup() perhaps?
             
             @usage
                 
                 spirit.setup().then(function(){
                   // gsap is loaded here..
                 })
+                
+            or provide gsap instances manually:
+            
+                spirit.setup({ 
+                  tween:    TweenLite,
+                  timeline: TimelineLite
+                }).then(function(){
+                  // gsap is loaded here..
+                })
+                
           `)
         }
         throw new Error('GSAP cannot be found')
