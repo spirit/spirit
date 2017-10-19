@@ -193,45 +193,129 @@ describe('utils', () => {
           await gsap.ensure()
         })
 
+        it('should iterate over origins', () => {
+          const iterator = gsap.transformOrigins(new Timeline('dom', div, {
+            x: {
+              '0s': -100,
+              '5s': 100,
+              '10s': -100
+            },
+            transformOrigin: {
+              '7s': 'left bottom',
+              '9s': 'right bottom',
+              '12s': 'center center'
+            }
+          }, 'div[0]'))
+
+          let val = iterator.current
+          expect(val).to.deep.equal({ time: 0, value: '50% 50%' })
+
+          val = iterator.next().current
+          expect(val).to.deep.equal({ time: 7, value: 'left bottom' })
+
+          val = iterator.next().current
+          expect(val).to.deep.equal({ time: 9, value: 'right bottom' })
+
+          val = iterator.next().current
+          expect(val).to.deep.equal({ time: 12, value: 'center center' })
+
+          val = iterator.next().current
+          expect(val).to.deep.equal(null)
+        })
+
+        it('should return default origin at time(0) if transformOrigins are not defined', () => {
+          const iterator = gsap.transformOrigins(new Timeline('dom', div, {
+            x: {
+              '0s': -100,
+              '5s': 100,
+              '10s': -100
+            },
+          }, 'div[0]'))
+
+          expect(iterator.current).to.deep.equal({ time: 0, value: '50% 50%' })
+          expect(iterator.next().current).to.equal(null)
+          expect(iterator.next().current).to.equal(null)
+        })
+
         it('should add default transform origin if prop is a css-transform', () => {
           const vars = gsap.generateTimeline(new Timeline('dom', div, {
             rotation: {
-              '0s':  -180,
-              '5s':  180,
+              '0s': -180,
+              '5s': 180,
               '10s': -180
             }
           }, 'div[0]')).getChildren().map(c => c.vars)
 
-          expect(vars[0]).to.have.deep.property('css.transformOrigin', '50% 50%')
-          expect(vars[1]).to.have.deep.property('transformOrigin', '50% 50%')
-          expect(vars[2]).to.have.deep.property('transformOrigin', '50% 50%')
+          expect(vars[0]).to.deep.equal({
+            ease: 'Linear.easeNone',
+            css: { rotation: -180, transformOrigin: '50% 50%' },
+            immediateRender: true
+          })
+
+          expect(vars[1]).to.deep.equal({ ease: 'Linear.easeNone', rotation: 180 })
+          expect(vars[2]).to.deep.equal({ ease: 'Linear.easeNone', rotation: -180 })
         })
 
         it('should add transform origin by "transformOrigin" prop last know keyframe', () => {
           const vars = gsap.generateTimeline(new Timeline('dom', div, {
-            rotation:        {
-              '0s':  -180,
-              '5s':  180,
+            rotation: {
+              '0s': -180,
+              '5s': 180,
               '10s': -180
             },
             transformOrigin: {
-              '0s':  '0% 0%',
-              '5s':  '0% 50%'
+              '0s': '0% 0%',
+              '5s': '0% 50%'
             }
           }, 'div[0]')).getChildren().map(c => c.vars)
 
-          expect(vars[0]).to.have.deep.property('css.transformOrigin', '0% 0%')
-          expect(vars[1]).to.have.deep.property('transformOrigin', '0% 0%')
-          expect(vars[2]).to.have.deep.property('transformOrigin', '0% 50%')
+          expect(vars[0]).to.deep.equal({
+            ease: 'Linear.easeNone',
+            immediateRender: true,
+            css: { rotation: -180, transformOrigin: '0% 0%' }
+          })
+
+          expect(vars[1]).to.deep.equal({
+            ease: 'Linear.easeNone',
+            rotation: 180,
+            transformOrigin: '0% 50%'
+          })
+
+          expect(vars[2]).to.deep.equal({
+            ease: 'Linear.easeNone',
+            rotation: -180
+          })
         })
 
         it('should set transform origin at first frame with no duration at all', () => {
           const vars = gsap.generateTimeline(new Timeline('dom', div, {
-            rotation:        { '0s': -180 },
+            rotation: { '0s': -180 },
             transformOrigin: { '0s': '0% 0%' }
           }, 'div[0]')).getChildren().map(c => c.vars)
 
           expect(vars[0]).to.have.deep.property('css.transformOrigin', '0% 0%')
+        })
+
+        it('should add default transform origin for time(0) is origins length > 0 but not starting at 0', () => {
+          const vars = gsap.generateTimeline(new Timeline('dom', div, {
+            rotation: {
+              '0.5s': 360,
+              '2s': 0,
+              '8s': -180
+            },
+            transformOrigin: {
+              '4s': 'left top'
+            }
+          }, 'div[0]')).getChildren().map(c => c.vars)
+
+          expect(vars[0]).to.deep.equal({
+            ease: 'Linear.easeNone',
+            rotation: 360,
+            transformOrigin: '50% 50%'
+          })
+
+          expect(vars[1]).to.deep.equal({ ease: 'Linear.easeNone', rotation: 0 })
+          expect(vars[2]).to.deep.equal({ ease: 'Linear.easeNone', rotation: -180, transformOrigin: 'left top' })
         })
 
       })
@@ -292,12 +376,24 @@ describe('utils', () => {
           it('should have correct transitions', () => {
             const vars = timeline.getChildren().map(c => c.vars)
 
-            expect(vars[0]).to.deep.equal({ ease: 'Linear.easeNone', immediateRender: true, css: { rotationX: 300, transformOrigin: '50% 50%' } })
-            expect(vars[1]).to.deep.equal({ rotationX: 500, ease: 'Power3.easeInOut', transformOrigin: '50% 50%' })
-            expect(vars[2]).to.deep.equal({ ease: 'Linear.easeNone', immediateRender: true, css: { x: 100, transformOrigin: '50% 50%' } })
-            expect(vars[3]).to.deep.equal({ x: 1000, ease: 'Linear.easeNone', transformOrigin: '50% 50%' })
-            expect(vars[4]).to.deep.equal({ immediateRender: true, css: { y: 100, transformOrigin: '50% 50%' }, ease: 'Linear.easeNone' })
-            expect(vars[5]).to.deep.equal({ rotationX: -300, ease: 'Linear.easeNone', transformOrigin: '50% 50%' })
+            expect(vars[0]).to.deep.equal({
+              ease: 'Linear.easeNone',
+              immediateRender: true,
+              css: { rotationX: 300, transformOrigin: '50% 50%' }
+            })
+            expect(vars[1]).to.deep.equal({ rotationX: 500, ease: 'Power3.easeInOut' })
+            expect(vars[2]).to.deep.equal({
+              ease: 'Linear.easeNone',
+              immediateRender: true,
+              css: { x: 100 }
+            })
+            expect(vars[3]).to.deep.equal({ x: 1000, ease: 'Linear.easeNone' })
+            expect(vars[4]).to.deep.equal({
+              immediateRender: true,
+              css: { y: 100 },
+              ease: 'Linear.easeNone'
+            })
+            expect(vars[5]).to.deep.equal({ rotationX: -300, ease: 'Linear.easeNone' })
           })
 
           it('should have the correct offset (start time)', () => {
@@ -364,7 +460,7 @@ describe('utils', () => {
     describe('kill timeline', () => {
       const div = document.createElement('div')
 
-      beforeEach(async() => {
+      beforeEach(async () => {
         await gsap.ensure()
       })
 
@@ -487,6 +583,7 @@ describe('utils', () => {
         @emitter.emitChange('label')
         class A extends EventEmitter {
         }
+
         const ins = new A()
 
         expect(ins).to.have.property('_label')
@@ -640,6 +737,7 @@ describe('utils', () => {
 
           it('should emit if is event emitter', () => {
             class B extends EventEmitter {}
+
             ins._list = new B()
 
             const spy = sinon.spy()
@@ -683,6 +781,7 @@ describe('utils', () => {
 
       it('should bubble event', () => {
         class MyEmitter extends require('events').EventEmitter {}
+
         const spy = sinon.spy()
         const myEmitter = new MyEmitter()
         myEmitter.on('update', spy)
@@ -705,6 +804,7 @@ describe('utils', () => {
           Object.assign(this, obj)
         }
       }
+
       Model.fromObject = (obj) => new Model(obj)
 
       it('should create a valid event object for model', () => {

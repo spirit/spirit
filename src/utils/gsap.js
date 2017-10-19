@@ -72,6 +72,29 @@ export function ensure() {
     })
 }
 
+export function transformOrigins(timeline) {
+  const prop = timeline.props.get('transformOrigin')
+  let origins = (prop && prop.keyframes.list.map(k => ({ time: k.time, value: k.value }))) || []
+
+  // add start 50% 50% ?
+  if (origins.length > 0 && origins[0].time !== 0 || origins.length === 0) {
+    origins.unshift({ time: 0, value: '50% 50%' })
+  }
+
+  let current = origins.shift()
+
+  let next, getVal
+
+  getVal = () => ({ current, next })
+
+  next = () => {
+    current = (origins && origins.length > 0 && origins.shift()) || null
+    return getVal()
+  }
+
+  return getVal()
+}
+
 /**
  * Generate timeline from data
  *
@@ -93,7 +116,8 @@ export function generateTimeline(timeline) {
 
   const tl = new config.gsap.timeline({ paused: true }) // eslint-disable-line new-cap
 
-  let transformOrigin = timeline.props.get('transformOrigin')
+  const origins = transformOrigins(timeline)
+  let origin = origins.current
 
   timeline.props.each(prop => {
     if (prop.keyframes.length === 0 || prop.name === 'transformOrigin' || prop.name === 'svgOrigin') {
@@ -136,16 +160,9 @@ export function generateTimeline(timeline) {
         props.immediateRender = true
       }
 
-      if (prop.isCSSTransform()) {
-        // set transform origin to last known frame
-        let _transformOrigin = '50% 50%'
-        if (transformOrigin && transformOrigin.keyframes.list.length > 0) {
-          const l = transformOrigin.keyframes.list
-            .filter(k => time === 0 ? k.time <= time : k.time < time)
-            .sort((a, b) => a.time < b.time)
-          _transformOrigin = l.length > 0 && l[0].value || _transformOrigin
-        }
-        props.transformOrigin = _transformOrigin
+      if (prop.isCSSTransform() && origin && time >= origin.time) {
+        props.transformOrigin = origin.value
+        origin = origins.next().current
       }
 
       tl.to(timeline.transformObject, duration, props, start)
