@@ -1,5 +1,5 @@
 /*!
- * Spirit.js v2.0.1
+ * Spirit.js v2.0.2
  * (c) 2017 Patrick Brouwer
  * Released under the MIT License.
  */
@@ -3165,7 +3165,7 @@ var _debug2 = _interopRequireDefault(_debug);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-var version = '2.0.1';
+var version = '2.0.2';
 
 /**
  * Setup Spirit GSAP
@@ -3794,6 +3794,7 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
 
 exports.has = has;
 exports.ensure = ensure;
+exports.transformOrigins = transformOrigins;
 exports.generateTimeline = generateTimeline;
 exports.killTimeline = killTimeline;
 
@@ -3857,6 +3858,34 @@ function ensure() {
   });
 }
 
+function transformOrigins(timeline) {
+  var prop = timeline.props.get('transformOrigin');
+  var origins = prop && prop.keyframes.list.map(function (k) {
+    return { time: k.time, value: k.value };
+  }) || [];
+
+  // add start 50% 50% ?
+  if (origins.length > 0 && origins[0].time !== 0 || origins.length === 0) {
+    origins.unshift({ time: 0, value: '50% 50%' });
+  }
+
+  var current = origins.shift();
+
+  var next = void 0,
+      getVal = void 0;
+
+  getVal = function getVal() {
+    return { current: current, next: next };
+  };
+
+  next = function next() {
+    current = origins && origins.length > 0 && origins.shift() || null;
+    return getVal();
+  };
+
+  return getVal();
+}
+
 /**
  * Generate timeline from data
  *
@@ -3878,7 +3907,8 @@ function generateTimeline(timeline) {
 
   var tl = new _config2.default.gsap.timeline({ paused: true }); // eslint-disable-line new-cap
 
-  var transformOrigin = timeline.props.get('transformOrigin');
+  var origins = transformOrigins(timeline);
+  var origin = origins.current;
 
   timeline.props.each(function (prop) {
     if (prop.keyframes.length === 0 || prop.name === 'transformOrigin' || prop.name === 'svgOrigin') {
@@ -3887,7 +3917,7 @@ function generateTimeline(timeline) {
 
     var keyframe = prop.keyframes.at(0);
 
-    var _loop = function _loop() {
+    while (keyframe) {
       var _keyframe = keyframe,
           value = _keyframe.value,
           ease = _keyframe.ease,
@@ -3925,27 +3955,14 @@ function generateTimeline(timeline) {
         props.immediateRender = true;
       }
 
-      if (prop.isCSSTransform()) {
-        // set transform origin to last known frame
-        var _transformOrigin = '50% 50%';
-        if (transformOrigin && transformOrigin.keyframes.list.length > 0) {
-          var l = transformOrigin.keyframes.list.filter(function (k) {
-            return time === 0 ? k.time <= time : k.time < time;
-          }).sort(function (a, b) {
-            return a.time < b.time;
-          });
-          _transformOrigin = l.length > 0 && l[0].value || _transformOrigin;
-        }
-        props.transformOrigin = _transformOrigin;
+      if (prop.isCSSTransform() && origin && time >= origin.time) {
+        props.transformOrigin = origin.value;
+        origin = origins.next().current;
       }
 
       tl.to(timeline.transformObject, duration, props, start);
 
       keyframe = keyframe.next();
-    };
-
-    while (keyframe) {
-      _loop();
     }
   });
 
@@ -4188,7 +4205,7 @@ var _parser = __webpack_require__(20);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-var version = '2.0.1';
+var version = '2.0.2';
 
 var Spirit = function Spirit() {
   this.config = _config2.default;
