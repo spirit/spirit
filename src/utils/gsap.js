@@ -182,6 +182,10 @@ export function generateTimeline(timeline) {
  */
 export function killTimeline(gsapTimeline) {
   if (gsapTimeline && gsapTimeline instanceof config.gsap.timeline) {
+    gsapTimeline.eventCallback('onComplete', null)
+    gsapTimeline.eventCallback('onUpdate', null)
+    gsapTimeline.eventCallback('onStart', null)
+
     const targets = gsapTimeline.getChildren()
     gsapTimeline.kill()
 
