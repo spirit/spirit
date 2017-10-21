@@ -1,5 +1,5 @@
 /*!
- * Spirit.js v2.0.2
+ * Spirit.js v2.0.3
  * (c) 2017 Patrick Brouwer
  * Released under the MIT License.
  */
@@ -3165,7 +3165,7 @@ var _debug2 = _interopRequireDefault(_debug);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-var version = '2.0.2';
+var version = '2.0.3';
 
 /**
  * Setup Spirit GSAP
@@ -3977,6 +3977,10 @@ function generateTimeline(timeline) {
  */
 function killTimeline(gsapTimeline) {
   if (gsapTimeline && gsapTimeline instanceof _config2.default.gsap.timeline) {
+    gsapTimeline.eventCallback('onComplete', null);
+    gsapTimeline.eventCallback('onUpdate', null);
+    gsapTimeline.eventCallback('onStart', null);
+
     var targets = gsapTimeline.getChildren();
     gsapTimeline.kill();
 
@@ -4205,7 +4209,7 @@ var _parser = __webpack_require__(20);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-var version = '2.0.2';
+var version = '2.0.3';
 
 var Spirit = function Spirit() {
   this.config = _config2.default;
