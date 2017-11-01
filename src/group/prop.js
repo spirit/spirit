@@ -33,7 +33,7 @@ import { emitChange } from '../utils/emitter'
 
 @emitChange('name', null, [
   { validator: val => typeof val === 'string', message: 'Name must be a string' },
-  { validator: val => !/\d+/.test(val), message: 'Name must be a string' }
+  { validator: val => !/^\d+\.?\d*?$/.test(val), message: 'Name must be a string' }
 ])
 
 class Prop extends EventEmitter {
@@ -145,11 +145,12 @@ class Prop extends EventEmitter {
   /**
    * Convert Prop to readable object
    *
+   * @param   {boolean} ignoreEval
    * @example { x: { "10.5s": { value: 100, ease: "Power2.easeOut" } } }
    * @returns {object}
    */
-  toObject() {
-    const keyframes = this.keyframes ? this.keyframes.toObject() : {}
+  toObject(ignoreEval = false) {
+    const keyframes = this.keyframes ? this.keyframes.toObject(ignoreEval) : {}
     return { [this.name]: keyframes }
   }
 

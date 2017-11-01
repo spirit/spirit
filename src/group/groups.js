@@ -17,7 +17,7 @@ class Groups extends List {
   constructor(rootEl = document.body, data = []) {
     super(data, Group, [{ name: 'untitled' }])
 
-    if (!(rootEl instanceof window.HTMLElement)) {
+    if (!(rootEl instanceof window.Element)) {
       throw new Error('No root element provided.')
     }
     this.rootEl = rootEl
@@ -65,7 +65,7 @@ class Groups extends List {
    */
   construct() {
     if (!config.gsap.timeline || !config.gsap.tween) {
-      if (debug) {
+      if (debug()) {
         console.warn(`
             Trying to construct groups, but GSAP cannot be found.
             

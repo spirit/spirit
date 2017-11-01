@@ -1,5 +1,6 @@
 import Timeline from '../src/group/timeline'
 import Props from '../src/group/props'
+import EvalMap from '../src/group/evalmap'
 
 describe('timeline', () => {
   let el
@@ -208,6 +209,22 @@ describe('timeline', () => {
     it('should convert timeline to object with label', () => {
       const tl = new Timeline('dom', el, {}, 'div[0]', null, 'myLabel')
       expect(tl.toObject()).to.have.property('label', 'myLabel')
+    })
+
+    it('should convert to object ignoring eval', () => {
+      const tl = new Timeline('dom', el, {
+        x: { '0s': '{ test + 10 }' }
+      }, 'div[0]')
+
+      tl.props.mappings = [new EvalMap(/test/, 10)]
+
+      expect(tl.toObject()).to.have.property('props').to.deep.equal({
+        x: { '0s': { value: 20, ease: null } }
+      })
+
+      expect(tl.toObject(true)).to.have.property('props').to.deep.equal({
+        x: { '0s': { value: '{ test + 10 }', ease: null } }
+      })
     })
   })
 

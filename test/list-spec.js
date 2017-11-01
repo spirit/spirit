@@ -484,6 +484,32 @@ describe('list', () => {
       expect(calls).to.deep.equal([1, 2, 3, 4])
     })
 
+    it('should return mapped data', () => {
+      expect(
+        new List([{ a: 1 }, { a: 2 }, { a: 3 }, { a: 4 }]).each((item, i) => ({ b: item.a * i }))
+      ).to.deep.equal([
+        { b: 0 },
+        { b: 2 },
+        { b: 6 },
+        { b: 12 }
+      ])
+    })
+
+    it('should throw error when iteration failed and break the iteration', () => {
+      const list = new List([1, 2, 3, 4])
+      let count = 0
+
+      const fn = () => list.each(i => {
+        count = i
+        if (i % 2 === 0) {
+          throw new Error('no even numbers allowed')
+        }
+      })
+
+      expect(fn).to.throw(/no even numbers allowed/)
+      expect(count).to.equal(2)
+    })
+
   })
 
   describe('#toObject', () => {

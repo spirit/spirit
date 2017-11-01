@@ -19,12 +19,12 @@ class Registry extends List {
     }
 
     if (!this.groupNames().includes(group.name)) {
-      if (debug) {
+      if (debug()) {
         console.warn(`registry.add() Group "${group.name}" added to registry (spirit.groups) and can be resolved by Spirit app`)
       }
       super.add(group)
     } else {
-      if (debug) {
+      if (debug()) {
         console.warn(`registry.add() Group "${group.name}" already exist in registry. Skip registry (spirit.groups)`)
       }
     }

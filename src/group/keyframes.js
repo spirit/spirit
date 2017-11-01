@@ -96,10 +96,11 @@ class Keyframes extends List {
   /**
    * Convert keyframes to object
    *
+   * @param   {boolean} ignoreEval
    * @returns {object}
    */
-  toObject() {
-    return this.list.reduce((obj, keyframe) => ({ ...obj, ...keyframe.toObject() }), {})
+  toObject(ignoreEval = false) {
+    return this.list.reduce((obj, keyframe) => ({ ...obj, ...keyframe.toObject(ignoreEval) }), {})
   }
 
   /**

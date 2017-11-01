@@ -11,3 +11,4 @@ test/
 wallaby.config.js
 webpack.config.js
 stats.json
+yarn.lock

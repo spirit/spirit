@@ -1,10 +1,12 @@
 class Config {
 
+  debug = true
+
   gsap = {
     tween: null,
     timeline: null,
     autoInject: true,
-    autoInjectUrl: 'https://cdnjs.cloudflare.com/ajax/libs/gsap/latest/TweenMax.min.js'
+    autoInjectUrl: 'https://unpkg.com/gsap/src/minified/TweenMax.min.js'
   }
 }
 

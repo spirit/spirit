@@ -1,5 +1,8 @@
 import { gsap, is } from '../utils'
 import config from './config'
+import debug from '../utils/debug'
+
+const version = require('../../package.json').version
 
 /**
  * Setup Spirit GSAP
@@ -15,6 +18,14 @@ export default function setup(conf) {
         timeline = conf.timeline
         tween = conf.tween
       }
+
+      if (typeof conf.debug === 'boolean') {
+        config.debug = conf.debug
+      }
+    }
+
+    if (debug()) {
+      console.warn(`You are running the development build of Spirit v${version}.`)
     }
 
     if (!tween || !timeline) {

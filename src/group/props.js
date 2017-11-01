@@ -102,10 +102,11 @@ class Props extends List {
   /**
    * Convert properties to object
    *
+   * @param   {boolean} ignoreEval
    * @returns {object}
    */
-  toObject() {
-    return this.list.reduce((obj, prop) => ({ ...obj, ...prop.toObject() }), {})
+  toObject(ignoreEval = false) {
+    return this.list.reduce((obj, prop) => ({ ...obj, ...prop.toObject(ignoreEval) }), {})
   }
 
   /**

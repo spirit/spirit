@@ -96,11 +96,11 @@ class Timeline {
     this.props.mappings = [new EvalMap(/this/g, transformObject)]
   }
 
-  toObject() {
+  toObject(ignoreEval = false) {
     let obj = {
       type: this.type,
       transformObject: this.transformObject,
-      props: this.props.toObject(),
+      props: this.props.toObject(ignoreEval),
       label: this.label,
       path: this.path,
       id: this.id

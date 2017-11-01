@@ -3,6 +3,7 @@ import { gsap, debug } from '../utils'
 import Timelines from './timelines'
 import { EventEmitter } from 'events'
 import { emitChange } from '../utils/emitter'
+import { TimelineError } from '../utils/errors'
 
 /**
  * Group.
@@ -149,6 +150,12 @@ class Group extends EventEmitter {
     return { name, timeScale, timelines }
   }
 
+  reset() {
+    if (this.timeline) {
+      gsap.killTimeline(this.timeline)
+    }
+  }
+
   /**
    * Construct gsap timeline
    *
@@ -157,17 +164,27 @@ class Group extends EventEmitter {
   construct() {
     try {
       if (!config.gsap.timeline || !config.gsap.tween) {
-        if (debug) {
+        if (debug()) {
           console.warn(`
             Trying to construct group ${this.name}, but GSAP cannot be found.
             
-            Did you forgot to call spirit.setup() ?
+            Did you forgot to call spirit.setup() perhaps?
             
             @usage
                 
                 spirit.setup().then(function(){
                   // gsap is loaded here..
                 })
+                
+            or provide gsap instances manually:
+            
+                spirit.setup({ 
+                  tween:    TweenLite,
+                  timeline: TimelineLite
+                }).then(function(){
+                  // gsap is loaded here..
+                })
+                
           `)
         }
         throw new Error('GSAP cannot be found')
@@ -175,31 +192,23 @@ class Group extends EventEmitter {
 
       // initiate an empty GSAP timeline
       if (this.timeline && this.timeline instanceof config.gsap.timeline) {
-        this.timeline.stop()
-        this.timeline.kill()
-        this.timeline.clear()
+        gsap.killTimeline(this.timeline)
       } else {
         this.timeline = new config.gsap.timeline({ paused: true }) // eslint-disable-line new-cap
-        this.timeline.autoRemoveChildren = false
       }
 
       // create a valid GSAP timeline out of timelines
       this.timelines.each(timeline => {
         if (timeline.type === 'dom') {
           const el = timeline.transformObject
-
           if (!(el instanceof window.Element)) {
-            throw new Error('transformObject is not an Element')
+            throw new TimelineError('transformObject is not an Element', el)
           }
-
-          // kill existing tweens
-          config.gsap.tween.killTweensOf(el)
-          delete el._gsTransform
-          delete el._gsTweenID
-          el.setAttribute('style', '')
-
-          // generate new timelines
-          this.timeline.add(gsap.generateTimeline(timeline).play(), 0, 'start')
+          try {
+            this.timeline.add(gsap.generateTimeline(timeline).play(), 0, 'start')
+          } catch (err) {
+            throw new TimelineError(err.message, el, err.stack)
+          }
         }
       })
 
@@ -207,7 +216,8 @@ class Group extends EventEmitter {
       this.timeline.timeScale(this.timeScale)
       this._duration = this.timeline.duration()
     } catch (err) {
-      throw new Error(`Could not construct timeline: ${err.message}`)
+      err.message = `Could not construct timeline: ${err.message}`
+      throw err
     }
 
     this.emit('construct', this.timeline)
