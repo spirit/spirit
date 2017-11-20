@@ -9,13 +9,13 @@ import { Groups, Group } from '../group'
  * @returns {HTMLElement|object}
  */
 function getTransformObject(container, tl) {
-  let to
+  let transformObject
 
   if (tl.type !== 'object') {
     if (tl.id) {
-      to = container.querySelector(`[data-spirit-id="${tl.id}"]`)
+      transformObject = container.querySelector(`[data-spirit-id="${tl.id}"]`)
 
-      if (!to && !tl.path) {
+      if (!transformObject && !tl.path) {
         if (debug()) {
           console.group('Unable to resolve element by [data-spirit-id] attribute')
           console.warn('Timeline: ', tl)
@@ -25,13 +25,13 @@ function getTransformObject(container, tl) {
       }
     }
 
-    if (!to && tl.path) {
+    if (!transformObject && tl.path) {
       if (container === document.body) {
         container = undefined
       }
-      to = xpath.getElement(tl.path, container)
+      transformObject = xpath.getElement(tl.path, container)
 
-      if (!to) {
+      if (!transformObject) {
         if (debug()) {
           console.group('Unable to resolve element by path expression')
           console.warn('Timeline: ', tl)
@@ -41,7 +41,7 @@ function getTransformObject(container, tl) {
       }
     }
 
-    if (!to) {
+    if (!transformObject) {
       if (debug()) {
         console.group('Unable to resolve element')
         console.warn('Timeline: ', tl)
@@ -51,28 +51,47 @@ function getTransformObject(container, tl) {
     }
   }
 
-  return to
+  return transformObject
 }
 
 /**
  * Get label for timeline to parse
  *
- * @param   {object} tl
+ * @param   {object} timeline
  * @returns {string}
  */
-function getLabel(tl) {
-  if (typeof tl.label === 'string' && tl.label.trim().length > 0) {
-    return tl.label
+function getLabel(timeline) {
+  if (typeof timeline.label === 'string' && timeline.label.trim().length > 0) {
+    return timeline.label
   }
 
-  if (tl.id) {
-    return tl.id
+  if (timeline.id) {
+    return timeline.id
   }
 
-  if (tl.path) {
-    return tl.path
+  if (timeline.path) {
+    return timeline.path
   }
+
   return 'undefined'
+}
+
+/**
+ * Get the id for a timeline based on transformObject and id
+ *
+ * @param {Element|object} transformObject
+ * @param {object}         timeline
+ */
+function getId(transformObject, timeline) {
+  if (timeline.id && transformObject.getAttribute('data-spirit-id') === timeline.id) {
+    return timeline.id
+  }
+
+  if (timeline.type === 'dom' && transformObject.hasAttribute('data-spirit-id')) {
+    return transformObject.getAttribute('data-spirit-id')
+  }
+
+  return null
 }
 
 /**
@@ -84,7 +103,6 @@ function getLabel(tl) {
  */
 export function create(data, element = undefined) {
   if (!context.isBrowser()) {
-    throw new Error('Invalid context. spirit.create() can only be executed in browser.')
     throw new Error('Invalid context. spirit.create() can only be executed in the browser.')
   }
 
@@ -121,13 +139,14 @@ export function create(data, element = undefined) {
 
         d.timelines.push({
           transformObject,
+          type: tl.type,
           props: tl.props,
           label: getLabel(tl),
           path: xpath.getExpression(transformObject, element),
-          id: tl.id
+          id: getId(transformObject, tl)
         })
       } catch (error) {
-        d.unresolved.push({ data: g, error })
+        d.unresolved.push({ data: tl, error })
       }
     })
 
@@ -147,7 +166,6 @@ export function create(data, element = undefined) {
  */
 export function load(url, element = undefined) {
   if (!context.isBrowser()) {
-    return Promise.reject(new Error('Invalid context: spirit.load() can only be executed in browser.'))
     return Promise.reject(new Error('Invalid context: spirit.load() can only be executed in the browser.'))
   }
 
