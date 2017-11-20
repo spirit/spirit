@@ -65,7 +65,7 @@ describe('parser', () => {
 
     it('should fail to create in node', () => {
       sandbox.stub(context, 'isBrowser').returns(false)
-      expect(() => create({}, document.body)).to.throw(/can only be executed in browser/)
+      expect(() => create({}, document.body)).to.throw(/can only be executed in the browser/)
     })
 
     it('should create groups from object', () => {
@@ -242,7 +242,7 @@ describe('parser', () => {
       sandbox.stub(context, 'isBrowser').returns(false)
 
       const result = await resolvePromise(load('animation.json'))
-      expect(result).to.be.an('error').to.match(/can only be executed in browser/)
+      expect(result).to.be.an('error').to.match(/can only be executed in the browser/)
     })
 
     it('should fail to load json', async () => {

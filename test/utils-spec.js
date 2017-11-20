@@ -45,7 +45,7 @@ describe('utils', () => {
       sinon.stub(context, 'isBrowser').returns(false)
 
       const err = await resolvePromise(loadscript('anything.js'))
-      expect(err).to.be.an('error').match(/can only be loaded in browser/)
+      expect(err).to.be.an('error').match(/can only be loaded in the browser/)
 
       context.isBrowser.restore()
     })

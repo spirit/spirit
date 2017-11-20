@@ -85,6 +85,7 @@ function getLabel(tl) {
 export function create(data, element = undefined) {
   if (!context.isBrowser()) {
     throw new Error('Invalid context. spirit.create() can only be executed in browser.')
+    throw new Error('Invalid context. spirit.create() can only be executed in the browser.')
   }
 
   // ensure root element
@@ -147,6 +148,7 @@ export function create(data, element = undefined) {
 export function load(url, element = undefined) {
   if (!context.isBrowser()) {
     return Promise.reject(new Error('Invalid context: spirit.load() can only be executed in browser.'))
+    return Promise.reject(new Error('Invalid context: spirit.load() can only be executed in the browser.'))
   }
 
   return jsonloader(url).then(data => create(data, element))
