@@ -83,25 +83,45 @@ describe('parser', () => {
       expect(groups).to.have.lengthOf(1)
     })
 
-    describe('element not found', () => {
+    describe('unresolved elements', () => {
       it('should fail to resolve element with id only', () => {
         group.timelines = [{ id: 'ghost', label: 'logo' }]
-        expect(() => create(group)).to.throw(/Cannot find element with \[data-spirit-id="ghost"/)
+
+        const result = create(group)
+        expect(result.at(0).unresolved).to.have.lengthOf(1)
+        expect(result.at(0).unresolved)
+          .to.have.deep.property('[0].error')
+          .to.match(/Cannot find element with \[data-spirit-id="ghost"/)
       })
 
       it('should fail to resolve element with path only', () => {
         group.timelines = [{ path: 'div[1]/h1[1]', logo: 'logo' }]
-        expect(() => create(group)).to.throw(/Cannot find element with path expression div\[1]\/h1\[1]/)
+
+        const result = create(group)
+        expect(result.at(0).unresolved).to.have.lengthOf(1)
+        expect(result.at(0).unresolved)
+          .to.have.deep.property('[0].error')
+          .to.match(/Cannot find element with path expression div\[1]\/h1\[1]/)
       })
 
       it('should fail to resolve element with id and path', () => {
         group.timelines = [{ id: 'ghost', path: 'div[2]/p[2]' }]
-        expect(() => create(group)).to.throw(/Cannot find element with path expression div\[2]\/p\[2]/)
+
+        const result = create(group)
+        expect(result.at(0).unresolved).to.have.lengthOf(1)
+        expect(result.at(0).unresolved)
+          .to.have.deep.property('[0].error')
+          .to.match(/Cannot find element with path expression div\[2]\/p\[2]/)
       })
 
       it('should fail to resolve if id and path are not set', () => {
         group.timelines = [{ label: 'logo' }]
-        expect(() => create(group)).to.throw(/^Cannot find element.$/)
+
+        const result = create(group)
+        expect(result.at(0).unresolved).to.have.lengthOf(1)
+        expect(result.at(0).unresolved)
+          .to.have.deep.property('[0].error')
+          .to.match(/Cannot find element/)
       })
     })
 
@@ -246,11 +266,27 @@ describe('parser', () => {
       expect(cache[url]).to.deep.equal(JSON.parse(jsonGhost))
     })
 
-    it('should try to create groups from data', async () => {
+    it('should store unresolved timelines with errors', async () => {
       stubXhr(sandbox, { responseText: jsonGhost })
 
-      const result = await resolvePromise(load('animation.json'))
-      expect(result).to.be.an('error').to.match(/Cannot find element/)
+      const result = await load('animation.json')
+      expect(result).to.have.lengthOf(1)
+
+      const g = result.at(0)
+
+      expect(g.timelines).to.have.lengthOf(0)
+      expect(g.unresolved).to.have.lengthOf(4)
+
+      let matchers = [
+        /Cannot find element with path expression svg\[1]/,
+        /Cannot find element with path expression svg\[1]\/path\[1]/,
+        /Cannot find element with \[data-spirit-id="eyes"]/,
+        /Cannot find element with path expression svg\[1]\/path\[2]/
+      ]
+
+      matchers.forEach((matcher, i) => {
+        expect(g.unresolved[i].error).to.match(matcher)
+      })
     })
 
     describe('parse', () => {

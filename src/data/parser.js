@@ -1,4 +1,4 @@
-import { context, jsonloader, xpath, debug } from '../utils'
+import { context, jsonloader, xpath, debug, is } from '../utils'
 import { Groups, Group } from '../group'
 
 /**
@@ -64,9 +64,11 @@ function getLabel(tl) {
   if (typeof tl.label === 'string' && tl.label.trim().length > 0) {
     return tl.label
   }
+
   if (tl.id) {
     return tl.id
   }
+
   if (tl.path) {
     return tl.path
   }
@@ -90,7 +92,7 @@ export function create(data, element = undefined) {
     element = document.body || document.documentElement
   }
 
-  if (!Array.isArray(data) && data['groups'] && Array.isArray(data['groups'])) {
+  if (is.isObject(data) && data['groups'] && Array.isArray(data['groups'])) {
     data = data['groups']
   }
 
@@ -104,19 +106,28 @@ export function create(data, element = undefined) {
     const d = {
       name: g.name,
       timeScale: g.timeScale || 1,
-      timelines: []
+      timelines: [],
+      unresolved: []
     }
 
-    g.timelines.forEach(tl => {
-      const transformObject = getTransformObject(element, tl)
+    let timelines = g.timelines || []
 
-      d.timelines.push({
-        transformObject,
-        props: tl.props,
-        label: getLabel(tl),
-        path: xpath.getExpression(transformObject, element),
-        id: tl.id
-      })
+    timelines.forEach(tl => {
+      let transformObject
+
+      try {
+        transformObject = getTransformObject(element, tl)
+
+        d.timelines.push({
+          transformObject,
+          props: tl.props,
+          label: getLabel(tl),
+          path: xpath.getExpression(transformObject, element),
+          id: tl.id
+        })
+      } catch (error) {
+        d.unresolved.push({ data: g, error })
+      }
     })
 
     const group = new Group(d)
