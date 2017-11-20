@@ -1,5 +1,5 @@
 /*!
- * Spirit.js v2.0.5
+ * Spirit.js v2.0.6
  * (c) 2017 Patrick Brouwer
  * Released under the MIT License.
  */
@@ -1752,6 +1752,7 @@ var Group = (_dec = (0, _emitter.emitChange)(), _dec2 = (0, _emitter.emitChange)
     _this._timeScale = 1;
     _this._timelines = new _timelines2.default();
     _this.timeline = null;
+    _this.unresolved = [];
 
     _this.setMaxListeners(Infinity);
 
@@ -1773,6 +1774,13 @@ var Group = (_dec = (0, _emitter.emitChange)(), _dec2 = (0, _emitter.emitChange)
    * Get timelines
    *
    * @returns {Timelines}
+   */
+
+
+  /**
+   * Unresolved timelines
+   *
+   * @type {Array}
    */
 
 
@@ -3118,7 +3126,7 @@ var _context = __webpack_require__(4);
  */
 function loadScript(src) {
   if (!(0, _context.isBrowser)()) {
-    return Promise.reject(new Error('Script can only be loaded in browser: ' + src));
+    return Promise.reject(new Error('Script can only be loaded in the browser: ' + src));
   }
 
   return new Promise(function (resolve, reject) {
@@ -3165,7 +3173,7 @@ var _debug2 = _interopRequireDefault(_debug);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-var version = '2.0.5';
+var version = '2.0.6';
 
 /**
  * Setup Spirit GSAP
@@ -3228,13 +3236,13 @@ var _group = __webpack_require__(12);
  * @returns {HTMLElement|object}
  */
 function getTransformObject(container, tl) {
-  var to = void 0;
+  var transformObject = void 0;
 
   if (tl.type !== 'object') {
     if (tl.id) {
-      to = container.querySelector('[data-spirit-id="' + tl.id + '"]');
+      transformObject = container.querySelector('[data-spirit-id="' + tl.id + '"]');
 
-      if (!to && !tl.path) {
+      if (!transformObject && !tl.path) {
         if ((0, _utils.debug)()) {
           console.group('Unable to resolve element by [data-spirit-id] attribute');
           console.warn('Timeline: ', tl);
@@ -3244,13 +3252,13 @@ function getTransformObject(container, tl) {
       }
     }
 
-    if (!to && tl.path) {
+    if (!transformObject && tl.path) {
       if (container === document.body) {
         container = undefined;
       }
-      to = _utils.xpath.getElement(tl.path, container);
+      transformObject = _utils.xpath.getElement(tl.path, container);
 
-      if (!to) {
+      if (!transformObject) {
         if ((0, _utils.debug)()) {
           console.group('Unable to resolve element by path expression');
           console.warn('Timeline: ', tl);
@@ -3260,7 +3268,7 @@ function getTransformObject(container, tl) {
       }
     }
 
-    if (!to) {
+    if (!transformObject) {
       if ((0, _utils.debug)()) {
         console.group('Unable to resolve element');
         console.warn('Timeline: ', tl);
@@ -3270,26 +3278,47 @@ function getTransformObject(container, tl) {
     }
   }
 
-  return to;
+  return transformObject;
 }
 
 /**
  * Get label for timeline to parse
  *
- * @param   {object} tl
+ * @param   {object} timeline
  * @returns {string}
  */
-function getLabel(tl) {
-  if (typeof tl.label === 'string' && tl.label.trim().length > 0) {
-    return tl.label;
+function getLabel(timeline) {
+  if (typeof timeline.label === 'string' && timeline.label.trim().length > 0) {
+    return timeline.label;
   }
-  if (tl.id) {
-    return tl.id;
+
+  if (timeline.id) {
+    return timeline.id;
   }
-  if (tl.path) {
-    return tl.path;
+
+  if (timeline.path) {
+    return timeline.path;
   }
+
   return 'undefined';
+}
+
+/**
+ * Get the id for a timeline based on transformObject and id
+ *
+ * @param {Element|object} transformObject
+ * @param {object}         timeline
+ */
+function getId(transformObject, timeline) {
+  if (timeline.id && transformObject.getAttribute('data-spirit-id') === timeline.id) {
+    return timeline.id;
+  }
+
+  if (timeline.type === 'dom' && transformObject.hasAttribute('data-spirit-id')) {
+    return transformObject.getAttribute('data-spirit-id');
+  }
+
+  return null;
 }
 
 /**
@@ -3303,7 +3332,7 @@ function create(data) {
   var element = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : undefined;
 
   if (!_utils.context.isBrowser()) {
-    throw new Error('Invalid context. spirit.create() can only be executed in browser.');
+    throw new Error('Invalid context. spirit.create() can only be executed in the browser.');
   }
 
   // ensure root element
@@ -3311,7 +3340,7 @@ function create(data) {
     element = document.body || document.documentElement;
   }
 
-  if (!Array.isArray(data) && data['groups'] && Array.isArray(data['groups'])) {
+  if (_utils.is.isObject(data) && data['groups'] && Array.isArray(data['groups'])) {
     data = data['groups'];
   }
 
@@ -3325,19 +3354,29 @@ function create(data) {
     var d = {
       name: g.name,
       timeScale: g.timeScale || 1,
-      timelines: []
+      timelines: [],
+      unresolved: []
     };
 
-    g.timelines.forEach(function (tl) {
-      var transformObject = getTransformObject(element, tl);
+    var timelines = g.timelines || [];
 
-      d.timelines.push({
-        transformObject: transformObject,
-        props: tl.props,
-        label: getLabel(tl),
-        path: _utils.xpath.getExpression(transformObject, element),
-        id: tl.id
-      });
+    timelines.forEach(function (tl) {
+      var transformObject = void 0;
+
+      try {
+        transformObject = getTransformObject(element, tl);
+
+        d.timelines.push({
+          transformObject: transformObject,
+          type: tl.type,
+          props: tl.props,
+          label: getLabel(tl),
+          path: _utils.xpath.getExpression(transformObject, element),
+          id: getId(transformObject, tl)
+        });
+      } catch (error) {
+        d.unresolved.push({ data: tl, error: error });
+      }
     });
 
     var group = new _group.Group(d);
@@ -3358,7 +3397,7 @@ function load(url) {
   var element = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : undefined;
 
   if (!_utils.context.isBrowser()) {
-    return Promise.reject(new Error('Invalid context: spirit.load() can only be executed in browser.'));
+    return Promise.reject(new Error('Invalid context: spirit.load() can only be executed in the browser.'));
   }
 
   return (0, _utils.jsonloader)(url).then(function (data) {
@@ -4209,7 +4248,7 @@ var _parser = __webpack_require__(20);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-var version = '2.0.5';
+var version = '2.0.6';
 
 var Spirit = function Spirit() {
   this.config = _config2.default;
