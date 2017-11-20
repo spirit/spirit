@@ -17,6 +17,13 @@ class Group extends EventEmitter {
   timeline = null
 
   /**
+   * Unresolved timelines
+   *
+   * @type {Array}
+   */
+  unresolved = []
+
+  /**
    * Create a group instance.
    *
    * @param {object} props

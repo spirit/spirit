@@ -1,83 +1,81 @@
-# Spirit
+# Spirit (GSAP) Runtime
 
 Spirit is the animation tool for the web. 
 
-![](https://spiritapp.io/spirit.jpg)
+![](https://spiritapp.io/spirit.gif)
 
 [![npm version](https://badge.fury.io/js/spiritjs.svg)](https://badge.fury.io/js/spiritjs) 
 [![Build Status](https://travis-ci.org/spirit/spirit.svg?branch=master)](https://travis-ci.org/spirit/spirit)
-[![Greensock Compatibility](https://img.shields.io/badge/gsap-v1.19.1-brightgreen.svg)](https://greensock.com/gsap)
+[![Greensock Compatibility](https://img.shields.io/badge/gsap-v1.20.3-brightgreen.svg)](https://greensock.com/gsap)
 
-## Spirit Runtime - API
+## Getting Started:
 
-#### Setup
+- [Spirit Homepage](https://spiritapp.io)
+- [Get you up and running](https://spiritapp.io/getting-started)
+- [Documentation](https://docs.spiritapp.io)
 
-Spirit uses [GSAP](https://greensock.com/gsap) tween and timeline for animation playback.
+## Install
 
-```javascript
-/**
-* @param   {Object}
-* @returns {Promise}
-*/
-spirit.setup({ tween, timeline })
+### Browser
+
+Development:
+
+> With warnings and tips
+
+```html
+<script src="https://unpkg.com/spiritjs/dist/spirit.js"></script>
 ```
 
-By default it fetches GSAP from CDN:
+Production:
+
+> Warnings and tips stripped, 13KB min+gzip
+
+```html
+<script src="https://unpkg.com/spiritjs/dist/spirit.min.js"></script>
+```
+
+> Don’t use the minified version during development. You will miss out on all the nice warnings for common mistakes!
+
+
+> **CDN**
+>
+> Recommended: [`https://unpkg.com/spiritjs/dist/spirit.min.js`](https://unpkg.com/spiritjs/dist/spirit.min.js), which reflect the latest version as soon as it is published to npm. You can also browse the source of the npm package at [`https://unpkg.com/spiritjs/`](https://unpkg.com/spiritjs/).
+>
+> Also available on [cdn.jdelivr.net](https://cdn.jsdelivr.net/npm/spiritjs/dist/spirit.min.js).
+
+### Node
+
+```bash
+# npm
+npm i spiritjs -S
+
+# yarn
+yarn add spiritjs
+```
+
+> **NOTE:**
+> Make sure to install `spiritjs` from npm, the `spirit` package is not related to this project at all.
+
+## Usage
 
 ```javascript
+import spirit from 'spiritjs'
+
+// load GSAP from CDN
 spirit.setup().then(() => {
-  // gsap is present, fetched from cdn
-  // run spirit code here..
+  
+  // now GSAP is present, create/load animation
+  
+  spirit.load('groups.json').then(groups => {
+    // play first animation group
+    groups.at(0).construct().play()  
+  })
+  
 })
 ```
 
-If you already have GSAP installed, you can pass it to `spirit.setup()`:
+Checkout the [API documentation](https://docs.spiritapp.io) for more information.
 
-```javascript
-spirit.setup({
-
-  tween:    TweenMax,
-  timeline: TimelineMax
-
-}).then(() => {
-  // run spirit code here..
-})
-```
-
-#### Config
-
-Change auto inject url for cdn. Default: `https://cdnjs.cloudflare.com/ajax/libs/gsap/latest/TweenMax.min.js`
- 
-```javascript
-spirit.config.gsap.autoInjectUrl = 'https://cdn.somewhere.com/TweenMax.min.js'
-```
-
-#### Create groups
-
-Create groups based on animation data
-
-```javascript
-/**
-* @param   {Object}    data     animation data (created with Spirit app)
-* @param   {Element}   element  bind groups to element (default document.body)
-* @returns {spirit.Groups}
-*/
-spirit.create(data, element)
-```
-
-#### Load groups
-
-Load groups based on animation data. Use `XMLHttpRequest` to fetch the json data and parse groups.
- 
- ```javascript
- /**
- * @param   {String}  url     load animation data (created with Spirit app)
- * @param   {Element} element bind groups to element (default document.body)
- * @returns {Promise}
- */
- spirit.load(url, element)
- ```
-    
 ## Example
 
 ```html
@@ -99,45 +97,3 @@ groups.get('dialog').construct().play()
 ```
 
 As you can have multiple animation groups, you'll need to construct the GSAP timelime before you use it.
-
-## Install
-
-#### Standalone
-
-Simply download and include with a script tag. Spirit will be registered as a global variable.
-
-[https://unpkg.com/spiritjs/dist/spirit.min.js](https://unpkg.com/spiritjs/dist/spirit.min.js)
-
-#### NPM
-
-```
-npm install spiritjs
-```
-
-or 
-
-```
-yarn add spiritjs
-```
-
-And use it.
-
-Example:
-
-```javascript
-import * as spirit from 'spiritjs'
-
-async start() {
-  // load gsap from cdn
-  await spirit.setup()
-  
-  // create animations, construct all group timelines and play all timelines at once
-  spirit
-    .create(data)
-    .construct()
-    .forEach( timeline => timeline.play() )
-}
-
-start()
-
-```

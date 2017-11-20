@@ -8,7 +8,7 @@ import { isBrowser } from './context'
  */
 export default function loadScript(src) {
   if (!isBrowser()) {
-    return Promise.reject(new Error(`Script can only be loaded in browser: ${src}`))
+    return Promise.reject(new Error(`Script can only be loaded in the browser: ${src}`))
   }
 
   return new Promise((resolve, reject) => {
