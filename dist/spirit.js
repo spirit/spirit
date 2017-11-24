@@ -1,5 +1,5 @@
 /*!
- * Spirit.js v2.0.6
+ * Spirit.js v2.0.7
  * (c) 2017 Patrick Brouwer
  * Released under the MIT License.
  */
@@ -486,10 +486,6 @@ var List = function (_EventEmitter) {
           if (index > -1) {
             _this3._list.splice(index, 1);
 
-            if (ins._list && ins._list instanceof List) {
-              ins._list = null;
-            }
-
             if (is.isObject(ins)) {
               if ('_prev' in ins) {
                 delete ins._prev;
@@ -507,6 +503,10 @@ var List = function (_EventEmitter) {
              * @type {*}
              */
             _this3.emit('remove', ins);
+
+            if (ins._list && ins._list instanceof List) {
+              ins._list = null;
+            }
 
             Array.isArray(result) ? result.push(ins) : result = ins;
           }
@@ -3173,7 +3173,7 @@ var _debug2 = _interopRequireDefault(_debug);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-var version = '2.0.6';
+var version = '2.0.7';
 
 /**
  * Setup Spirit GSAP
@@ -4248,7 +4248,7 @@ var _parser = __webpack_require__(20);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-var version = '2.0.6';
+var version = '2.0.7';
 
 var Spirit = function Spirit() {
   this.config = _config2.default;
