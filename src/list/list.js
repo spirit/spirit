@@ -350,10 +350,6 @@ class List extends EventEmitter {
         if (index > -1) {
           this._list.splice(index, 1)
 
-          if (ins._list && ins._list instanceof List) {
-            ins._list = null
-          }
-
           if (is.isObject(ins)) {
             if ('_prev' in ins) {
               delete ins._prev
@@ -371,6 +367,10 @@ class List extends EventEmitter {
            * @type {*}
            */
           this.emit('remove', ins)
+
+          if (ins._list && ins._list instanceof List) {
+            ins._list = null
+          }
 
           Array.isArray(result)
             ? result.push(ins)
