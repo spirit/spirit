@@ -125,7 +125,6 @@ export function create(data, root = undefined) {
   const groups = new Groups(root, [])
 
   data.forEach(g => {
-
     let groupRoot = root
 
     if (resolveRoot && g.root) {
