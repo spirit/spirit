@@ -1,5 +1,5 @@
 /*!
- * Spirit.js v2.0.7
+ * Spirit.js v2.0.8
  * (c) 2017 Patrick Brouwer
  * Released under the MIT License.
  */
@@ -3173,7 +3173,7 @@ var _debug2 = _interopRequireDefault(_debug);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-var version = '2.0.7';
+var version = '2.0.8';
 
 /**
  * Setup Spirit GSAP
@@ -3324,20 +3324,23 @@ function getId(transformObject, timeline) {
 /**
  * Parse groups
  *
- * @param   {object|Array}  data    animation data
- * @param   {HTMLElement}   element root element for animation groups
+ * @param   {object|Array}  data  animation data
+ * @param   {HTMLElement}   root  the root element for animation groups
  * @returns Groups
  */
 function create(data) {
-  var element = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : undefined;
+  var root = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : undefined;
 
   if (!_utils.context.isBrowser()) {
     throw new Error('Invalid context. spirit.create() can only be executed in the browser.');
   }
 
+  var resolveRoot = false;
+
   // ensure root element
-  if (!(element instanceof window.Element)) {
-    element = document.body || document.documentElement;
+  if (!(root instanceof window.Element)) {
+    resolveRoot = true;
+    root = document.body || document.documentElement;
   }
 
   if (_utils.is.isObject(data) && data['groups'] && Array.isArray(data['groups'])) {
@@ -3348,9 +3351,19 @@ function create(data) {
     data = [data];
   }
 
-  var groups = new _group.Groups(element, []);
+  var groups = new _group.Groups(root, []);
 
   data.forEach(function (g) {
+    var groupRoot = root;
+
+    if (resolveRoot && g.root) {
+      groupRoot = g.root.id ? root.querySelector('[data-spirit-id=' + g.root.id + ']') : _utils.xpath.getElement(g.root.path, root);
+
+      if (!groupRoot) {
+        groupRoot = root;
+      }
+    }
+
     var d = {
       name: g.name,
       timeScale: g.timeScale || 1,
@@ -3364,14 +3377,14 @@ function create(data) {
       var transformObject = void 0;
 
       try {
-        transformObject = getTransformObject(element, tl);
+        transformObject = getTransformObject(groupRoot, tl);
 
         d.timelines.push({
           transformObject: transformObject,
           type: tl.type,
           props: tl.props,
           label: getLabel(tl),
-          path: _utils.xpath.getExpression(transformObject, element),
+          path: _utils.xpath.getExpression(transformObject, groupRoot),
           id: getId(transformObject, tl)
         });
       } catch (error) {
@@ -3390,18 +3403,18 @@ function create(data) {
  * Load data and apply it to element
  *
  * @param   {string}      url
- * @param   {HTMLElement} element
+ * @param   {HTMLElement} root
  * @returns {Promise}
  */
 function load(url) {
-  var element = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : undefined;
+  var root = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : undefined;
 
   if (!_utils.context.isBrowser()) {
     return Promise.reject(new Error('Invalid context: spirit.load() can only be executed in the browser.'));
   }
 
   return (0, _utils.jsonloader)(url).then(function (data) {
-    return create(data, element);
+    return create(data, root);
   });
 }
 
@@ -4248,7 +4261,7 @@ var _parser = __webpack_require__(20);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-var version = '2.0.7';
+var version = '2.0.8';
 
 var Spirit = function Spirit() {
   this.config = _config2.default;
