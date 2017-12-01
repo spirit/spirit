@@ -97,18 +97,21 @@ function getId(transformObject, timeline) {
 /**
  * Parse groups
  *
- * @param   {object|Array}  data    animation data
- * @param   {HTMLElement}   element root element for animation groups
+ * @param   {object|Array}  data  animation data
+ * @param   {HTMLElement}   root  the root element for animation groups
  * @returns Groups
  */
-export function create(data, element = undefined) {
+export function create(data, root = undefined) {
   if (!context.isBrowser()) {
     throw new Error('Invalid context. spirit.create() can only be executed in the browser.')
   }
 
+  let resolveRoot = false
+
   // ensure root element
-  if (!(element instanceof window.Element)) {
-    element = document.body || document.documentElement
+  if (!(root instanceof window.Element)) {
+    resolveRoot = true
+    root = document.body || document.documentElement
   }
 
   if (is.isObject(data) && data['groups'] && Array.isArray(data['groups'])) {
@@ -119,9 +122,22 @@ export function create(data, element = undefined) {
     data = [data]
   }
 
-  const groups = new Groups(element, [])
+  const groups = new Groups(root, [])
 
   data.forEach(g => {
+
+    let groupRoot = root
+
+    if (resolveRoot && g.root) {
+      groupRoot = g.root.id
+        ? root.querySelector(`[data-spirit-id=${g.root.id}]`)
+        : xpath.getElement(g.root.path, root)
+
+      if (!groupRoot) {
+        groupRoot = root
+      }
+    }
+
     const d = {
       name: g.name,
       timeScale: g.timeScale || 1,
@@ -135,14 +151,14 @@ export function create(data, element = undefined) {
       let transformObject
 
       try {
-        transformObject = getTransformObject(element, tl)
+        transformObject = getTransformObject(groupRoot, tl)
 
         d.timelines.push({
           transformObject,
           type: tl.type,
           props: tl.props,
           label: getLabel(tl),
-          path: xpath.getExpression(transformObject, element),
+          path: xpath.getExpression(transformObject, groupRoot),
           id: getId(transformObject, tl)
         })
       } catch (error) {
@@ -161,13 +177,13 @@ export function create(data, element = undefined) {
  * Load data and apply it to element
  *
  * @param   {string}      url
- * @param   {HTMLElement} element
+ * @param   {HTMLElement} root
  * @returns {Promise}
  */
-export function load(url, element = undefined) {
+export function load(url, root = undefined) {
   if (!context.isBrowser()) {
     return Promise.reject(new Error('Invalid context: spirit.load() can only be executed in the browser.'))
   }
 
-  return jsonloader(url).then(data => create(data, element))
+  return jsonloader(url).then(data => create(data, root))
 }
