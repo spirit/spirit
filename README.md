@@ -1,4 +1,4 @@
-# Spirit (GSAP) Runtime
+# Spirit - Runtime player
 
 Spirit is the animation tool for the web. 
 
