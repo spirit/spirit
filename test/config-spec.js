@@ -7,6 +7,7 @@ const configGsap = { ...config.gsap }
 describe('config', () => {
 
   beforeEach(() => {
+    config.gsap.autoInjectUrl = 'test/fixtures/gsap.js'
     sinon.spy(gsap, 'ensure')
   })
 

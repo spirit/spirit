@@ -8,6 +8,7 @@ const configGsap = { ...config.gsap }
 describe('groups', () => {
 
   before(async() => {
+    config.gsap.autoInjectUrl = 'test/fixtures/gsap.js'
     await setup()
   })
 

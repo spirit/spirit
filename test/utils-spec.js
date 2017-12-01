@@ -126,7 +126,7 @@ describe('utils', () => {
   describe('gsap', () => {
 
     beforeEach(() => {
-      config.gsap = { ...gsapConfig }
+      config.gsap.autoInjectUrl = 'test/fixtures/gsap.js'
     })
 
     afterEach(() => {

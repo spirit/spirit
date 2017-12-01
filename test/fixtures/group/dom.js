@@ -2,9 +2,9 @@
  * Create a simple post block
  * @returns {Element}
  */
-export function post() {
+export function post(classNames = '') {
   const el = document.createElement('div')
-  el.className = 'post'
+  el.className = 'post ' + classNames
   el.innerHTML = `
 
   <h1>Title Post</h1>

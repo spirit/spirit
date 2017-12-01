@@ -230,6 +230,84 @@ describe('parser', () => {
 
     })
 
+    describe('exported root', () => {
+      let container = document.createElement('div')
+      container.innerHTML = `
+        <div class="container-a">
+          ${post('post-a1').outerHTML}
+          ${post('post-a2').outerHTML}
+          ${post('post-a3').outerHTML}
+        </div>
+        <div class="container-b">
+          ${post('post-b1').outerHTML}
+          ${post('post-b2').outerHTML}
+          ${post('post-b3').outerHTML}
+        </div>
+      `
+
+      let group
+
+      beforeEach(() => {
+        group = {
+          name: 'ghost-animation',
+          timeScale: 1.5,
+          timelines: []
+        }
+        document.body.appendChild(container)
+      })
+
+      afterEach(() => {
+        document.body.removeChild(container)
+      })
+
+      it('should ignore exported root if root element is provided', () => {
+        group.root = { path: 'div[2]' }
+        group.timelines.push({ path: 'div[2]' }, { path: 'div[1]/div[3]' })
+
+        const groups = create(group, container)
+        expect(groups.rootEl).to.equal(container)
+
+        const g = groups.at(0)
+
+        expect(g.timelines).to.have.lengthOf(2)
+        expect(g.timelines.at(0)).to.have.property('transformObject', container.querySelector('.container-b'))
+        expect(g.timelines.at(1)).to.have.property('transformObject', container.querySelector('.post-a3'))
+
+        expect(g.timelines.at(0)).to.have.property('path', 'div[2]')
+        expect(g.timelines.at(1)).to.have.property('path', 'div[1]/div[3]')
+      })
+
+      it('should use exported root if no root element is provided', () => {
+        group.root = { path: 'div[1]/div[2]' }
+        group.timelines.push({ path: 'div[1]' }, { path: 'div[2]' })
+
+        const groups = create(group)
+
+        const g = groups.at(0)
+
+        expect(g.timelines).to.have.lengthOf(2)
+        expect(g.timelines.at(0)).to.have.property('transformObject', container.querySelector('.post-b1'))
+        expect(g.timelines.at(1)).to.have.property('transformObject', container.querySelector('.post-b2'))
+
+        expect(g.timelines.at(0)).to.have.property('path', 'div[1]')
+        expect(g.timelines.at(1)).to.have.property('path', 'div[2]')
+      })
+
+      it('should not be able to parse external root and resolve root by document.body', () => {
+        group.root = { path: '/span[1]' }
+        group.timelines.push({ path: 'div[1]/div[1]' })
+
+        const groups = create(group)
+        expect(groups.rootEl).to.equal(document.body)
+
+        const g = groups.at(0)
+
+        expect(g.timelines).to.have.lengthOf(1)
+        expect(g.timelines.at(0)).to.have.property('transformObject', container.querySelector('.container-a'))
+        expect(g.timelines.at(0)).to.have.property('path', 'div[1]/div[1]')
+      })
+    })
+
   })
 
   describe('load', () => {
