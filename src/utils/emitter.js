@@ -40,7 +40,7 @@
  *    }
  */
 
-import { Emitter } from '../utils/events'
+import { Emitter } from './events'
 import List from '../list/list'
 import { isFunction } from './is'
 
