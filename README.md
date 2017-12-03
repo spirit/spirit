@@ -28,7 +28,7 @@ Development:
 
 Production:
 
-> Warnings and tips stripped, 13KB min+gzip
+> Warnings and tips stripped, 10KB min+gzip
 
 ```html
 <script src="https://unpkg.com/spiritjs/dist/spirit.min.js"></script>

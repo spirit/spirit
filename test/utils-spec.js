@@ -2,6 +2,7 @@ import config from '../src/config/config'
 import Timeline from '../src/group/timeline'
 import List from '../src/list/list'
 import { Emitter } from '../src/utils/events'
+import { ArrayLike } from '../src/utils/proxify'
 
 import { post } from './fixtures/group/dom'
 
@@ -765,6 +766,65 @@ describe('utils', () => {
 
       })
 
+    })
+
+  })
+
+  describe('proxify array like', () => {
+    class WithList { list = [1, 2, 3] }
+
+    class C extends ArrayLike(WithList, 'list') {
+      prop = null
+
+      constructor(callables = [], prop = 'untitled') {
+        super()
+
+        callables.forEach(fn => fn())
+        this.prop = prop
+      }
+
+      test() {
+        this.prop = 'test'
+      }
+    }
+
+    it('should preserve class name', () => {
+      const ins = new C()
+      expect(ins.constructor.name).to.equal('C')
+    })
+
+    it('should be able to reach properties and methods', () => {
+      const ins = new C()
+      expect(ins.list).to.deep.equal([1, 2, 3])
+      expect(ins.prop).to.equal('untitled')
+
+      ins.test()
+      expect(ins.prop).to.deep.equal('test')
+    })
+
+    it('should call constructor', () => {
+      let spies = [sinon.spy(), sinon.spy(), sinon.spy()]
+      const ins = new C(spies, 'something')
+
+      spies.forEach(spy => expect(spy.calledOnce).to.be.true)
+      expect(ins.prop).to.equal('something')
+    })
+
+    it('should be able to iterate over items using for..of', () => {
+      const ins = new C()
+
+      let result = []
+      for (let i of ins) result.push(i)
+
+      expect(result).to.deep.equal(ins.list)
+    })
+
+    it('should be able to get list item by index', () => {
+      const ins = new C()
+
+      expect(ins[0]).to.equal(1)
+      expect(ins[1]).to.equal(2)
+      expect(ins[2]).to.equal(3)
     })
 
   })
