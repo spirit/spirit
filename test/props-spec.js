@@ -407,7 +407,7 @@ describe('properties', () => {
       expect(properties).to.have.lengthOf(2)
 
       const spy = sinon.spy()
-      properties.once('remove', spy)
+      properties.on('remove', spy)
 
       const prop = properties.at(0)
       properties.remove(prop)

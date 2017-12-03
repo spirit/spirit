@@ -1,6 +1,6 @@
-import { EventEmitter } from 'events'
 import { is, events } from '../utils'
 import { emitChange } from '../utils/emitter'
+import { Emitter } from '../utils/events'
 
 /**
  * -------------------------------------------
@@ -28,7 +28,7 @@ import { emitChange } from '../utils/emitter'
 @emitChange('time', null, [{ validator: val => typeof val === 'number', message: 'Time must be a number' }])
 @emitChange('ease', null)
 
-class Keyframe extends EventEmitter {
+class Keyframe extends Emitter {
 
   _list = null
   _value = null
@@ -44,10 +44,8 @@ class Keyframe extends EventEmitter {
    */
   constructor(time, value, ease = null) {
     super()
-    this.setMaxListeners(Infinity)
 
     ease = ease || null
-
     Object.assign(this, { time, value, ease })
   }
 
@@ -154,7 +152,7 @@ class Keyframe extends EventEmitter {
    * Destroy events
    */
   destroy() {
-    events.clearEvents(this, Keyframe.Events)
+    this.removeAllListeners()
   }
 }
 

@@ -1,14 +1,14 @@
 import config from '../config/config'
 import { gsap, debug } from '../utils'
 import Timelines from './timelines'
-import { EventEmitter } from 'events'
 import { emitChange } from '../utils/emitter'
 import { TimelineError } from '../utils/errors'
+import { Emitter } from '../utils/events'
 
 /**
  * Group.
  */
-class Group extends EventEmitter {
+class Group extends Emitter {
 
   _name = 'untitled'
   _timeScale = 1
@@ -30,7 +30,6 @@ class Group extends EventEmitter {
    */
   constructor(props = {}) {
     super()
-    this.setMaxListeners(Infinity)
 
     if (!props.name || typeof props.name !== 'string' || props.name.trim() === '') {
       throw new Error('Cannot create group without a name.')

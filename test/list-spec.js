@@ -6,11 +6,6 @@ describe('list', () => {
     expect(new List()).to.have.lengthOf(0)
   })
 
-  it('should have infinity listener counts', () => {
-    const list = new List()
-    expect(list._maxListeners).equal(Infinity)
-  })
-
   it('should fail provide something else than array', () => {
     expect(() => new List({})).to.throw(/Items should be an array/)
   })

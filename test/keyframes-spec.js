@@ -135,7 +135,7 @@ describe('keyframes', () => {
       expect(keyframes).to.have.lengthOf(2)
 
       const spy = sinon.spy()
-      keyframes.once('remove', spy)
+      keyframes.on('remove', spy)
 
       const frame = keyframes.at(0)
       keyframes.remove(frame)
@@ -525,6 +525,7 @@ describe('keyframes', () => {
       keyframe.ease = null
 
       const expectSpy = spy => {
+        console.log(spy.callCount)
         expect(spy.calledTwice).to.be.true
         expect(spy.getCall(0).args[0]).to.deep.equal({
           previous: { '20s': { value: 400, ease: null } },

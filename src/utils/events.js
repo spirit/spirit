@@ -1,5 +1,5 @@
-import { EventEmitter } from 'events'
 import List from '../list/list'
+import mitt from 'mitt'
 
 /**
  * Bubble events.
@@ -9,8 +9,8 @@ import List from '../list/list'
  * @returns {function}
  */
 export function bubbleEvent(evt, scope) {
-  if (!(scope instanceof EventEmitter)) {
-    throw new Error('Scope needs to be an event emitter.')
+  if (!(scope instanceof Emitter)) {
+    throw new Error('Scope needs to be an emitter.')
   }
 
   return function() {
@@ -55,15 +55,32 @@ export function createEventObjectForModel(model, obj, prop, prevVal, nextVal) {
 }
 
 /**
- * Clean up events.
- *
- * @param {*}     emitter
- * @param {Array} events fallback for older node implementations
+ * Minimal event emitter
  */
-export function clearEvents(emitter, events = []) {
-  if (emitter.eventNames && typeof emitter.eventNames === 'function') {
-    emitter.eventNames().forEach(e => emitter.removeAllListeners(e))
-  } else {
-    events.forEach(e => emitter.removeAllListeners(e))
+export class Emitter {
+  _events = {}
+  _emitter = mitt(this._events)
+
+  eventNames() {
+    return Object.keys(this._events)
+  }
+
+  emit(eventName, ...args) {
+    this._emitter.emit(eventName, ...args)
+  }
+
+  on(event, listener) {
+    this._emitter.on(event, listener)
+  }
+
+  removeListener(event, listener) {
+    this._emitter.off(event, listener)
+  }
+
+  removeAllListeners() {
+    Object.keys(this._events).forEach(evt => {
+      const listeners = this._events[evt]
+      listeners.forEach(listener => this._emitter.off(evt, listener))
+    })
   }
 }

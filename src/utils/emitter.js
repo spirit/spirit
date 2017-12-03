@@ -40,22 +40,22 @@
  *    }
  */
 
-import { EventEmitter } from 'events'
+import { Emitter } from '../utils/events'
 import List from '../list/list'
 import { isFunction } from './is'
 
 /**
  * Setter deco
  *
- * @param   {EventEmitter}  target
- * @param   {string}        key
- * @param   {object}        descriptor
+ * @param   {Emitter}  target
+ * @param   {string}   key
+ * @param   {object}   descriptor
  * @returns {object}
  */
 const setter = function(target, key, descriptor) {
   let fn = descriptor.set
 
-  if (!(EventEmitter.prototype.isPrototypeOf(target)) && !EventEmitter.prototype.isPrototypeOf(target.prototype)) {
+  if (!(Emitter.prototype.isPrototypeOf(target)) && !Emitter.prototype.isPrototypeOf(target.prototype)) {
     throw new Error('@emitter.emitChange can only be applied to event emitters')
   }
 
@@ -126,7 +126,7 @@ const setter = function(target, key, descriptor) {
       this.emit(...evtChange)
       this.emit(...evtChangeProp)
 
-      if (this._list && this._list instanceof EventEmitter) {
+      if (this._list && this._list instanceof Emitter) {
         this._list.emit(...evtChange)
         this._list.emit(...evtChangeProp)
       }

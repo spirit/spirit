@@ -114,7 +114,7 @@ class Props extends List {
    */
   destroy() {
     this.each(prop => prop.destroy())
-    events.clearEvents(this, Props.Events)
+    this.removeAllListeners()
   }
 
 }

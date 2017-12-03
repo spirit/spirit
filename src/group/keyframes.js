@@ -107,8 +107,8 @@ class Keyframes extends List {
    * Destroy events
    */
   destroy() {
+    this.removeAllListeners()
     this.each(keyframe => keyframe.destroy())
-    events.clearEvents(this, Keyframes.Events)
   }
 }
 

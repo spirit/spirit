@@ -1,5 +1,5 @@
-import { EventEmitter } from 'events'
 import * as is from '../utils/is'
+import { Emitter } from '../utils/events'
 
 /**
  * List
@@ -8,8 +8,7 @@ import * as is from '../utils/is'
  * @fires List#remove
  * @fires List#change:list
  */
-class List extends EventEmitter {
-
+class List extends Emitter {
   _list = []
   _model = null
   _duplicates = true
@@ -25,8 +24,6 @@ class List extends EventEmitter {
    */
   constructor(items = [], model = null, defaultModelArgs = undefined) {
     super()
-    this.setMaxListeners(Infinity)
-
     this._model = model
 
     if (model) {

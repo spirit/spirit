@@ -1,7 +1,7 @@
-import { EventEmitter } from 'events'
 import Keyframes from './keyframes'
 import { is, events } from '../utils'
 import { emitChange } from '../utils/emitter'
+import { Emitter } from '../utils/events'
 
 /**
  * -------------------------------------------
@@ -36,7 +36,7 @@ import { emitChange } from '../utils/emitter'
   { validator: val => !/^\d+\.?\d*?$/.test(val), message: 'Name must be a string' }
 ])
 
-class Prop extends EventEmitter {
+class Prop extends Emitter {
 
   _keyframes = null
   _list = null
@@ -49,7 +49,6 @@ class Prop extends EventEmitter {
    */
   constructor(name, keyframes = new Keyframes()) {
     super()
-    this.setMaxListeners(Infinity)
 
     if (!(keyframes instanceof Keyframes)) {
       keyframes = new Keyframes(keyframes)
@@ -111,7 +110,7 @@ class Prop extends EventEmitter {
 
     if (this._keyframes) {
       mappings = this._keyframes.mappings
-      events.clearEvents(this._keyframes, Keyframes.Events)
+      this._keyframes.removeAllListeners()
       this._keyframes.clear()
     }
 
@@ -126,7 +125,7 @@ class Prop extends EventEmitter {
    */
   setupBubbleEvents() {
     if (this._keyframes instanceof Keyframes) {
-      events.clearEvents(this._keyframes, Keyframes.Events)
+      this._keyframes.removeAllListeners()
 
       const evt = (from, to) => {
         this._keyframes.on(from, events.bubbleEvent(to, this))
@@ -176,7 +175,7 @@ class Prop extends EventEmitter {
     if (this._keyframes) {
       this._keyframes.destroy()
     }
-    events.clearEvents(this, Prop.Events)
+    this.removeAllListeners()
   }
 }
 

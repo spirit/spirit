@@ -1,7 +1,7 @@
 import config from '../src/config/config'
 import Timeline from '../src/group/timeline'
 import List from '../src/list/list'
-import { EventEmitter } from 'events'
+import { Emitter } from '../src/utils/events'
 
 import { post } from './fixtures/group/dom'
 
@@ -581,8 +581,7 @@ describe('utils', () => {
     describe('for class', () => {
       it('should have added property for emitting', () => {
         @emitter.emitChange('label')
-        class A extends EventEmitter {
-        }
+        class A extends Emitter {}
 
         const ins = new A()
 
@@ -593,8 +592,7 @@ describe('utils', () => {
       it('should add getters and setters with defaults', async () => {
         @emitter.emitChange('label', 'untitled')
         @emitter.emitChange('song')
-        class Album extends EventEmitter {
-        }
+        class Album extends Emitter {}
 
         const album = new Album()
         expect(album).to.have.property('label', 'untitled')
@@ -638,7 +636,7 @@ describe('utils', () => {
 
       it('should fail if has duplicates', () => {
         @emitter.emitChange('label')
-        class Item extends EventEmitter {
+        class Item extends Emitter {
 
           constructor(label) {
             super()
@@ -681,7 +679,7 @@ describe('utils', () => {
       describe('valid emitter', () => {
         let ins, cb
 
-        class A extends EventEmitter {
+        class A extends Emitter {
           _item = 123
 
           get item() { return this._item }
@@ -736,7 +734,7 @@ describe('utils', () => {
         describe('_list', () => {
 
           it('should emit if is event emitter', () => {
-            class B extends EventEmitter {}
+            class B extends Emitter {}
 
             ins._list = new B()
 
@@ -776,11 +774,11 @@ describe('utils', () => {
     describe('bubbleEvent', () => {
 
       it('should fail when setting invalid scope', () => {
-        expect(() => events.bubbleEvent('change', {})).to.throw(/Scope needs to be an event emitter./)
+        expect(() => events.bubbleEvent('change', {})).to.throw(/Scope needs to be an emitter./)
       })
 
       it('should bubble event', () => {
-        class MyEmitter extends require('events').EventEmitter {}
+        class MyEmitter extends Emitter {}
 
         const spy = sinon.spy()
         const myEmitter = new MyEmitter()
@@ -816,64 +814,6 @@ describe('utils', () => {
           model: { frame: 1 },
           changed: { type: 'frame', from: 0, to: 1 }
         })
-      })
-
-    })
-
-    describe('clear events', () => {
-
-      it('should clear all events for modern node implementations', () => {
-        class MyEmitter extends require('events').EventEmitter {
-          eventNames() {
-            return ['foo', 'bar']
-          }
-        }
-
-        const spyFoo = sinon.spy()
-        const spyBar = sinon.spy()
-
-        const emitter = new MyEmitter()
-        emitter.on('foo', spyFoo)
-        emitter.on('bar', spyBar)
-
-        emitter.emit('foo')
-        emitter.emit('bar')
-
-        expect(spyFoo.calledOnce).to.be.true
-        expect(spyBar.calledOnce).to.be.true
-
-        events.clearEvents(emitter)
-
-        emitter.emit('foo')
-        emitter.emit('bar')
-
-        expect(spyFoo.calledOnce).to.be.true
-        expect(spyBar.calledOnce).to.be.true
-      })
-
-      it('should clear all events for legacy node implementations', () => {
-        class MyEmitter extends require('events').EventEmitter {}
-
-        const spyFoo = sinon.spy()
-        const spyBar = sinon.spy()
-
-        const emitter = new MyEmitter()
-        emitter.on('foo', spyFoo)
-        emitter.on('bar', spyBar)
-
-        emitter.emit('foo')
-        emitter.emit('bar')
-
-        expect(spyFoo.calledOnce).to.be.true
-        expect(spyBar.calledOnce).to.be.true
-
-        events.clearEvents(emitter, ['foo', 'bar'])
-
-        emitter.emit('foo')
-        emitter.emit('bar')
-
-        expect(spyFoo.calledOnce).to.be.true
-        expect(spyBar.calledOnce).to.be.true
       })
 
     })
