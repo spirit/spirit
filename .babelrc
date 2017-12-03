@@ -5,7 +5,7 @@
     "inline-package-json"
   ],
   "env": {
-    "test": {
+    "modules": {
       "presets": ["es2015", "stage-0"],
       "plugins": [
         "transform-decorators-legacy",
