@@ -61,13 +61,9 @@
     "eslint-plugin-standard": "2.0.1",
     "jsdom": "9.8.0",
     "mocha": "3.1.2",
-    "prepack-webpack-plugin": "1.1.0",
     "sinon": "1.17.6",
     "webpack": "2.1.0-beta.25",
     "webpack-bundle-size-analyzer": "2.2.0"
-  },
-  "peerDependencies": {
-    "gsap": "^1.20.2"
   },
   "dependencies": {
     "mitt": "^1.1.2"

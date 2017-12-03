@@ -5,14 +5,10 @@ const nodeEnv = process.env.NODE_ENV || 'development'
 const isProd = nodeEnv === 'production'
 
 const version = require('./package.json').version
-const banner = `Spirit.js v${version}
-(c) ${new Date().getFullYear()} Patrick Brouwer
-Released under the MIT License.`
-
-const PrepackWebpackPlugin = require('prepack-webpack-plugin').default
+const banner = `Spirit.js v${version}\n\n(c) ${new Date().getFullYear()} Patrick Brouwer\nReleased under the MIT License.`
 
 const config = {
-  devtool: isProd ? 'hidden-source-map' : 'source-map',
+  devtool: isProd ? false : 'source-map',
   context: path.join(__dirname, './src'),
   entry: 'index',
   output: {
@@ -43,11 +39,6 @@ const config = {
 }
 
 if (isProd) {
-
-  config.plugins.unshift(
-    new PrepackWebpackPlugin({})
-  )
-
   config.plugins.push(
     new webpack.optimize.OccurrenceOrderPlugin(),
     new webpack.optimize.DedupePlugin(),
