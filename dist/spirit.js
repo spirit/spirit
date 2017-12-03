@@ -1,5 +1,5 @@
 /*!
- * Spirit.js v2.0.9
+ * Spirit.js v2.0.10
  * 
  * (c) 2017 Patrick Brouwer
  * Released under the MIT License.
@@ -2783,7 +2783,7 @@ function loadScript(src) {
 
 
 
-var version = '2.0.9';
+var version = '2.0.10';
 
 /**
  * Setup Spirit GSAP
@@ -3888,7 +3888,7 @@ module.exports = g;
 /* harmony export (binding) */ __webpack_require__.d(exports, "version", function() { return version; });
 
 
-var version = '2.0.9';
+var version = '2.0.10';
 
 
 
