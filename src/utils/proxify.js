@@ -1,5 +1,4 @@
 export function ArrayLike(targetClass, list) {
-
   return class extends targetClass {
 
     static get name() { return targetClass.name }
@@ -37,5 +36,4 @@ export function ArrayLike(targetClass, list) {
       }
     }
   }
-
 }

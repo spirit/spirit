@@ -1,6 +1,6 @@
 import List from '../list/list'
 import Keyframe from './keyframe'
-import { convert, is, events } from '../utils'
+import { convert, is } from '../utils'
 
 class Keyframes extends List {
 

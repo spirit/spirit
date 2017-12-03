@@ -1,6 +1,6 @@
 import List from '../list/list'
 import Prop from './prop'
-import { convert, is, events } from '../utils'
+import { convert, is } from '../utils'
 
 class Props extends List {
 

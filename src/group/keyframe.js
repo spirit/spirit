@@ -1,4 +1,4 @@
-import { is, events } from '../utils'
+import { is } from '../utils'
 import { emitChange } from '../utils/emitter'
 import { Emitter } from '../utils/events'
 
