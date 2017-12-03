@@ -1,5 +1,6 @@
 import * as is from '../utils/is'
 import { Emitter } from '../utils/events'
+import { ArrayLike } from '../utils/proxify'
 
 /**
  * List
@@ -8,7 +9,7 @@ import { Emitter } from '../utils/events'
  * @fires List#remove
  * @fires List#change:list
  */
-class List extends Emitter {
+class List extends ArrayLike(Emitter, '_list') {
   _list = []
   _model = null
   _duplicates = true
