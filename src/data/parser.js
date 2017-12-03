@@ -95,6 +95,40 @@ function getId(transformObject, timeline) {
 }
 
 /**
+ * Create groups factory
+ *
+ * @return {{add: {function} add, groups: {array|Groups} groups}}
+ */
+function groupsFactory() {
+  let list = []
+
+  const getGroupsByRoot = function(root) {
+    for (let groups of list) {
+      if (groups.rootEl === root) {
+        return groups
+      }
+    }
+    return null
+  }
+
+  return {
+    add: function(root, group) {
+      let groups = getGroupsByRoot(root)
+      if (!groups) {
+        groups = new Groups(root, [])
+        list.push(groups)
+      }
+      if (group) {
+        groups.add(group)
+      }
+    },
+    groups: function() {
+      return list.length === 1 ? list[0] : list
+    }
+  }
+}
+
+/**
  * Parse groups
  *
  * @param   {object|Array}  data  animation data
@@ -122,7 +156,11 @@ export function create(data, root = undefined) {
     data = [data]
   }
 
-  const groups = new Groups(root, [])
+  const factory = groupsFactory()
+
+  if (data.length === 0) {
+    factory.add(root, null)
+  }
 
   data.forEach(g => {
     let groupRoot = root
@@ -165,11 +203,10 @@ export function create(data, root = undefined) {
       }
     })
 
-    const group = new Group(d)
-    groups.add(group)
+    factory.add(groupRoot, new Group(d))
   })
 
-  return groups
+  return factory.groups()
 }
 
 /**
