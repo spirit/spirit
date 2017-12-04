@@ -33,7 +33,11 @@ declare namespace spirit {
 
     type sortFn = (a: number | object, b: number | object) => number | boolean
 
-    interface List<T> {
+    interface List<T> extends Iterable<T> {
+        [key: number]: T;
+
+        [Symbol.iterator](): Iterator<T>;
+
         duplicates: boolean | object;
 
         checkOnDuplicates(): void;
