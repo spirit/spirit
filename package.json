@@ -42,6 +42,7 @@
   "bugs": {
     "url": "https://github.com/spirit/spirit/issues"
   },
+  "typings": "./spiritjs.d.ts",
   "devDependencies": {
     "babel-cli": "6.16.0",
     "babel-core": "6.17.0",

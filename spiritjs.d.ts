@@ -1,184 +1,209 @@
+import { TweenLite, TweenMax, TimelineLite, TimelineMax } from 'gsap';
+
+declare var spirit: spirit.SpiritStatic;
+
+export = spirit;
+
 export as namespace spirit;
-export = spiritjs
 
-import {
-    TweenLite, TweenMax,
-    TimelineLite, TimelineMax
-} from 'gsap';
+declare namespace spirit {
+    type gsapTween =  TweenLite | TweenMax;
 
-type GSAPTimeline = TimelineLite | TimelineMax;
-type GSAPTween = TweenLite | TweenMax
+    type gsapTimeline = TimelineLite | TimelineMax;
 
-interface EvalMap {
-    regex: RegExp,
-    map: any
-}
+    interface SpiritStatic {
+        config: Config;
 
-interface List {
-    duplicates: boolean | object,
+        version: string;
 
-    checkOnDuplicates(): void,
+        setup(config: ({ tween?: gsapTween, timeline?: gsapTimeline })): Promise<void>;
 
-    sortOn(): boolean | string,
+        create(data: DataGroup | DataGroup[], element?: Element): Groups;
 
-    sort(): void,
+        load(url: string, element?: Element): Promise<Groups>;
 
-    linkedList: boolean,
+        groups: Groups;
+    }
 
-    linkItems(): void,
+    interface EvalMap {
+        regex: RegExp;
 
-    list: any[],
+        map: any;
+    }
 
-    length: number,
+    type sortFn = (a: number | object, b: number | object) => number | boolean
 
-    at(index: number): any,
+    interface List<T> {
+        duplicates: boolean | object;
 
-    add(item: any): any,
+        checkOnDuplicates(): void;
 
-    remove(item: any): any,
+        sortOn: boolean | string | sortFn
 
-    clear(): void,
+        sort(): void;
 
-    each(callback: () => any): void,
+        linkedList: boolean;
 
-    toArray(): any[]
-}
+        linkItems(): void;
 
-interface Props extends List {
-    mappings: EvalMap[],
+        list: T[];
 
-    get(name: string): Prop,
+        length: number;
 
-    add<T>(prop: Prop | object | Array<Prop | object>): T,
+        at(index: number): T;
 
-    remove<T>(prop: Prop | Prop[]): T,
+        add(item: T | object | Array<T | object>): T | T[];
 
-    haveProp(name: string): boolean,
+        remove(item: T | T[]): T | T[];
 
-    toObject(): object,
+        clear(): void;
 
-    destroy(): void
-}
+        each<K>(callback: (item: T) => K): K[];
 
-interface Prop {
-    keyframes: Keyframes,
-    list: List,
+        toArray(): T[];
+    }
 
-    next(): Prop | null,
+    interface Props extends List<Prop> {
+        mappings: EvalMap[];
 
-    prev(): Prop | null,
+        get(name: string): Prop;
 
-    setupBubbleEvents(): void,
+        haveProp(name: string): boolean;
 
-    toObject(): object,
+        toObject(): object;
 
-    isCSSTransform(): boolean,
+        destroy(): void;
+    }
 
-    destroy(): void
-}
+    interface Prop {
+        keyframes: Keyframes;
 
-interface Keyframes extends List {
-    get(time: string | number): Keyframe,
+        list: Props;
 
-    add<T>(keyframe: Keyframe | object | Array<Keyframe | object>): T,
+        next(): Prop | null;
 
-    remove<T>(keyframe: Keyframe): T,
+        prev(): Prop | null;
 
-    mappings(): EvalMap[],
+        setupBubbleEvents(): void;
 
-    toObject(): object,
+        toObject(): object;
 
-    destroy(): void
-}
+        isCSSTransform(): boolean;
 
-interface Keyframe {
-    time: number,
-    ease?: string,
-    value: any,
-    list: List,
+        destroy(): void;
+    }
 
-    prev(): Keyframe | null,
+    interface Keyframes extends List<Keyframe> {
+        get(time: string | number): Keyframe;
 
-    next(): Keyframe | null,
+        mappings(): EvalMap[];
 
-    isEval(): boolean,
+        toObject(): object;
 
-    toObject(): object,
+        destroy(): void;
+    }
 
-    destroy(): void
-}
+    interface Keyframe {
+        time: number;
 
-interface Timelines extends List {
-    get(transformObject: HTMLElement | object): Timeline
-}
+        ease?: string;
 
-interface Timeline {
-    type: 'dom' | 'object',
-    transferObject: HTMLElement | object | null,
-    label?: string,
-    path: string,
-    id?: string,
-    props: Props,
+        value: any;
 
-    toObject(): object,
+        list: Keyframes;
 
-    destroy(): void
-}
+        prev(): Keyframe | null;
 
-interface config {
-    gsap: {
-        tween: GSAPTween,
-        timeline: GSAPTimeline,
-        autoInject: boolean,
-        autoInjectUrl: string
+        next(): Keyframe | null;
+
+        isEval(): boolean;
+
+        toObject(): object;
+
+        destroy(): void;
+    }
+
+    interface Timelines extends List<Timeline> {
+        get(transformObject: Element | object): Timeline;
+    }
+
+    interface Timeline {
+        type: 'dom' | 'object';
+
+        transferObject: Element | object | null;
+
+        label?: string;
+
+        path: string;
+
+        id?: string;
+
+        props: Props;
+
+        toObject(): object;
+
+        destroy(): void;
+    }
+
+    interface Config {
+        gsap: {
+            tween: gsapTween;
+
+            timeline: gsapTimeline;
+
+            autoInject: boolean;
+
+            autoInjectUrl: string;
+        }
+    }
+
+    interface SetupConfig {
+        timeline?: gsapTimeline;
+
+        tween?: gsapTween;
+    }
+
+    interface Groups extends List<Group> {
+        get(name: string): Group;
+
+        groupNames(): string[];
+    }
+
+    interface Group {
+        timeline: gsapTimeline;
+
+        timelines: Timelines;
+
+        timeScale: number;
+
+        duration: number;
+
+        list: Groups;
+
+        name: string;
+
+        toObject(): object;
+
+        construct(): gsapTimeline;
+    }
+
+    interface DataTimeline {
+        type: 'dom' | 'object';
+
+        id?: string;
+
+        label?: string;
+
+        path?: string;
+
+        props?: object;
+    }
+
+    interface DataGroup {
+        name: string;
+
+        timeScale?: number;
+
+        timelines?: DataTimeline[];
     }
 }
-
-interface SetupConfig {
-    timeline?: GSAPTimeline,
-    tween?: GSAPTween
-}
-
-interface Groups extends List {
-    add(group: Group): void,
-
-    get(name: string): Group,
-
-    groupNames(): string[]
-}
-
-interface Group {
-    timeline: GSAPTimeline,
-    timelines: Timelines,
-    timeScale: number,
-    duration: number,
-    name: string,
-    toObject(): object,
-    construct(): GSAPTimeline
-}
-
-interface DataTimeline {
-    type: 'dom' | 'object',
-    id?: string,
-    label?: string,
-    path?: string,
-    props?: object
-}
-
-interface DataGroup {
-    name: string,
-    timeScale?: number,
-    timelines?: DataTimeline[]
-}
-
-declare namespace spiritjs {
-    export const config: config;
-    export const version: string;
-
-    export function setup(config: SetupConfig): Promise;
-    export function create(data: DataGroup | DataGroup[], element: HTMLElement)
-    export function load(url: string, element: HTMLElement)
-
-    export const groups: Groups;
-}
-
