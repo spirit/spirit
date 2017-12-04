@@ -68,5 +68,8 @@
   },
   "dependencies": {
     "mitt": "^1.1.2"
+  },
+  "peerDependencies": {
+    "gsap": "*"
   }
 }
