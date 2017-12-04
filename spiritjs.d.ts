@@ -161,12 +161,6 @@ declare namespace spirit {
         }
     }
 
-    interface SetupConfig {
-        timeline?: gsapTimeline;
-
-        tween?: gsapTween;
-    }
-
     interface Groups extends List<Group> {
         get(name: string): Group;
 
