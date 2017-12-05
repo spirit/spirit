@@ -54,6 +54,10 @@ export default function(manifest) {
   const options = { ...defaults, ...manifest }
   const { animationData, container, path } = options
 
+  if (options.loop === true) {
+    options.loop = -1
+  }
+
   return new Promise((resolve, reject) => {
     let result = []
     let add = coll => { result = [...result, ...(Array.isArray(coll) ? [...coll] : [coll])] }
@@ -93,7 +97,7 @@ export default function(manifest) {
 
         for (let timeline of timelines) {
           if (options.loop) {
-            timeline.repeat(-1)
+            timeline.repeat(options.loop)
           }
 
           if (options.yoyo) {

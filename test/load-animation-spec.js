@@ -338,7 +338,6 @@ describe('load-animation', () => {
 
       it('should not loop all groups', async () => {
         const groups = await loadAnimation({
-          autoPlay: true,
           animationData: [
             createSimpleGroup('a', 'div[1]/div[1]'),
             createSimpleGroup('b', 'div[1]/div[2]'),
@@ -346,6 +345,18 @@ describe('load-animation', () => {
           ]
         })
         expect(Object.keys(groups).map(g => groups[g].repeat())).to.deep.equal([0, 0, 0])
+      })
+
+      it('should loop x times', async () => {
+        const groups = await loadAnimation({
+          loop: 2,
+          animationData: [
+            createSimpleGroup('a', 'div[1]/div[1]'),
+            createSimpleGroup('b', 'div[1]/div[2]'),
+            createSimpleGroup('c', 'div[1]/div[3]')
+          ]
+        })
+        expect(Object.keys(groups).map(g => groups[g].repeat())).to.deep.equal([2, 2, 2])
       })
 
     })
