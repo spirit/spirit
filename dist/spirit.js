@@ -1,5 +1,5 @@
 /*!
- * Spirit.js v2.1.0
+ * Spirit.js v2.1.1
  * 
  * (c) 2017 Patrick Brouwer
  * Released under the MIT License.
@@ -1362,7 +1362,7 @@ var debug = function debug() {
 
 
 
-var version = '2.1.0';
+var version = '2.1.1';
 
 /**
  * Setup Spirit GSAP
@@ -3262,7 +3262,7 @@ function loadFromPath(path, container) {
           }
 
           if (options.delay !== 0) {
-            timeline.delay(options.delay);
+            timeline.repeatDelay(options.delay);
           }
 
           if (options.timeScale) {
@@ -4103,7 +4103,7 @@ module.exports = g;
 /* harmony export (binding) */ __webpack_require__.d(exports, "version", function() { return version; });
 
 
-var version = '2.1.0';
+var version = '2.1.1';
 
 
 
