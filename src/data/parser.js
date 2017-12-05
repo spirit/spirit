@@ -4,9 +4,9 @@ import { Groups, Group } from '../group'
 /**
  * Get transform object from container
  *
- * @param   {HTMLElement} container
+ * @param   {Element} container
  * @param   {object}      tl
- * @returns {HTMLElement|object}
+ * @returns {Element|object}
  */
 function getTransformObject(container, tl) {
   let transformObject
@@ -132,7 +132,7 @@ function groupsFactory() {
  * Parse groups
  *
  * @param   {object|Array}  data  animation data
- * @param   {HTMLElement}   root  the root element for animation groups
+ * @param   {Element}       root  the root element for animation groups
  * @returns Groups
  */
 export function create(data, root = undefined) {
@@ -212,8 +212,8 @@ export function create(data, root = undefined) {
 /**
  * Load data and apply it to element
  *
- * @param   {string}      url
- * @param   {HTMLElement} root
+ * @param   {string}  url
+ * @param   {Element} root
  * @returns {Promise}
  */
 export function load(url, root = undefined) {

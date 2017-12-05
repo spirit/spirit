@@ -6,14 +6,18 @@ import config from './config/config'
 import setup from './config/setup'
 import groups from './registry/registry'
 import { create, load } from './data/parser'
+import loadAnimation from './loadAnimation'
 
-const Spirit = function() {
-  this.config = config
-  this.version = version
-  this.setup = setup
-  this.groups = groups
-  this.create = create
-  this.load = load
+const Spirit = function() {}
+
+Spirit.prototype = {
+  config,
+  version,
+  setup,
+  groups,
+  create,
+  load,
+  loadAnimation
 }
 
 export {
@@ -22,7 +26,8 @@ export {
   setup,
   groups,
   create,
-  load
+  load,
+  loadAnimation
 }
 
 const spirit = new Spirit()

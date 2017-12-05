@@ -4,7 +4,6 @@ install:
   - npm install --ignore-scripts
 
 node_js:
-  - "6"
   - "stable"
 
 script:
