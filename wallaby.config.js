@@ -1,5 +1,8 @@
 'use strict'
 
+// use babel modules
+process.env.BABEL_ENV = 'modules'
+
 module.exports = function(wallaby) {
 
   return {
