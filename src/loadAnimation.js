@@ -55,7 +55,7 @@ export default function(manifest) {
 
   return new Promise((resolve, reject) => {
     let result = []
-    let add = coll => result = [...result, ...(Array.isArray(coll) ? [...coll] : [coll])]
+    let add = coll => { result = [...result, ...(Array.isArray(coll) ? [...coll] : [coll])] }
 
     // setup gsap
     setup()
