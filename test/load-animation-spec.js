@@ -414,7 +414,7 @@ describe('load-animation', () => {
           delay: 2,
           animationData: createSimpleGroup('a', 'div[1]')
         })
-        expect(timeline.delay()).to.equal(2)
+        expect(timeline.repeatDelay()).to.equal(2)
       })
 
       it('should delay all groups', async () => {
@@ -426,7 +426,7 @@ describe('load-animation', () => {
             createSimpleGroup('c', 'div[1]/div[3]')
           ]
         })
-        expect(Object.keys(groups).map(g => groups[g].delay())).to.deep.equal([2, 2, 2])
+        expect(Object.keys(groups).map(g => groups[g].repeatDelay())).to.deep.equal([2, 2, 2])
       })
 
       it('should not delay all groups', async () => {
@@ -438,7 +438,7 @@ describe('load-animation', () => {
             createSimpleGroup('c', 'div[1]/div[3]')
           ]
         })
-        expect(Object.keys(groups).map(g => groups[g].delay())).to.deep.equal([0, 0, 0])
+        expect(Object.keys(groups).map(g => groups[g].repeatDelay())).to.deep.equal([0, 0, 0])
       })
 
     })

@@ -105,7 +105,7 @@ export default function(manifest) {
           }
 
           if (options.delay !== 0) {
-            timeline.delay(options.delay)
+            timeline.repeatDelay(options.delay)
           }
 
           if (options.timeScale) {
