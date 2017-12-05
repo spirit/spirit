@@ -2,6 +2,7 @@ import setup from './config/setup'
 import { create, load } from './data/parser'
 import { isObject } from './utils/is'
 import config from './config/config'
+import registry from './registry/registry'
 
 const defaults = {
   loop: false,
@@ -78,6 +79,11 @@ export default function(manifest) {
         for (let groups of result) {
           for (let group of groups) {
             g[group.name] = group.construct()
+            g[group.name].construct = function() {
+              let tl = registry.get(group.name).construct()
+              tl.construct = this.construct
+              return tl
+            }
           }
         }
         return g
