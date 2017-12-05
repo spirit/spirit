@@ -3,7 +3,7 @@ import { isSVG } from './is'
 /**
  * Get DOM representation for an element.
  *
- * @param   {HTMLElement}                 element
+ * @param   {Element}                     element
  * @param   {null|undefined|HTMLElement}  nodeContext
  * @returns {string|null}
  */
