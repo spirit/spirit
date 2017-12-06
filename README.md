@@ -16,84 +16,34 @@ Spirit is the animation tool for the web.
 
 ## Install
 
-### Browser
+See:
+ 
+- [Documentation - Install](https://docs.spiritapp.io/installation.html)
+- [Documentation - Embed Runtime](https://docs.spiritapp.io/gsap_runtime_include.html)
 
-Development:
+TLDR;
 
-> With warnings and tips
-
-```html
-<script src="https://unpkg.com/spiritjs/dist/spirit.js"></script>
-```
-
-Production:
-
-> Warnings and tips stripped, 10KB min+gzip
+browser:
 
 ```html
 <script src="https://unpkg.com/spiritjs/dist/spirit.min.js"></script>
 ```
 
-> Don’t use the minified version during development. You will miss out on all the nice warnings for common mistakes!
-
-
-> **CDN**
->
-> Recommended: [`https://unpkg.com/spiritjs/dist/spirit.min.js`](https://unpkg.com/spiritjs/dist/spirit.min.js), which reflect the latest version as soon as it is published to npm. You can also browse the source of the npm package at [`https://unpkg.com/spiritjs/`](https://unpkg.com/spiritjs/).
->
-> Also available on [cdn.jdelivr.net](https://cdn.jsdelivr.net/npm/spiritjs/dist/spirit.min.js).
-
-### Node
+node:
 
 ```bash
-# npm
-npm i spiritjs -S
-
-# yarn
-yarn add spiritjs
+npm install spiritjs --save
 ```
-
-> **NOTE:**
-> Make sure to install `spiritjs` from npm, the `spirit` package is not related to this project at all.
 
 ## Usage
 
 ```javascript
-import spirit from 'spiritjs'
-
-// load GSAP from CDN
-spirit.setup().then(() => {
-  
-  // now GSAP is present, create/load animation
-  
-  spirit.load('groups.json').then(groups => {
-    // play first animation group
-    groups.at(0).construct().play()  
-  })
-  
+spirit.loadAnimation({
+  loop: true,
+  yoyo: true,
+  delay: 1,
+  path: './animation.json'
 })
 ```
 
-Checkout the [API documentation](https://docs.spiritapp.io) for more information.
-
-## Example
-
-```html
-<div class="container">
-  <!-- html used for animation -->
-</div>
-```
-
-```javascript
-// load animation and bind to container element
-const groups = await spirit.load('./animation.json', document.querySelector('.container'))
-
-// play folding-cards group
-groups.get('folding-cards').construct().play()
-
-// play dialog
-groups.get('dialog').construct().play()
-
-```
-
-As you can have multiple animation groups, you'll need to construct the GSAP timelime before you use it.
+Head over to the [API documentation](https://docs.spiritapp.io/gsap_runtime_simple.html) for more information.
