@@ -1,6 +1,7 @@
 import List from '../list/list'
 import { Group } from '../group'
 import { debug } from '../utils'
+import { includes } from '../utils/polyfill'
 
 class Registry extends List {
 
@@ -18,7 +19,7 @@ class Registry extends List {
       throw new Error('Invalid group. Only Group instances allowed.')
     }
 
-    if (!this.groupNames().includes(group.name)) {
+    if (!includes(this.groupNames(), group.name)) {
       if (debug()) {
         console.warn(`registry.add() Group "${group.name}" added to registry (spirit.groups) and can be resolved by Spirit app`)
       }

@@ -1,3 +1,5 @@
+import { includes } from './polyfill'
+
 export default function(...args) {
   return (args.length === 1)
     ? boundClass(...args)
@@ -13,7 +15,7 @@ function boundClass(target) {
   }
 
   keys.forEach(key => {
-    if (ignoreMethods.includes(key)) {
+    if (includes(ignoreMethods, key)) {
       return
     }
 

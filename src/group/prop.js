@@ -2,6 +2,7 @@ import Keyframes from './keyframes'
 import { is, events } from '../utils'
 import { emitChange } from '../utils/emitter'
 import { Emitter } from '../utils/events'
+import { includes } from '../utils/polyfill'
 
 /**
  * -------------------------------------------
@@ -159,12 +160,12 @@ class Prop extends Emitter {
    * @returns {boolean}
    */
   isCSSTransform() {
-    return [
+    return includes([
       'x', 'y', 'z',
       'rotation', 'rotationZ', 'rotationX', 'rotationY',
       'skewX', 'skewY',
       'scale', 'scaleX', 'scaleY'
-    ].includes(this.name)
+    ], this.name)
   }
 
   /**
