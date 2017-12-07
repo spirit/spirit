@@ -1,10 +1,11 @@
 import { isSVG } from './is'
+import debug from './debug'
 
 /**
  * Get DOM representation for an element.
  *
- * @param   {Element}                     element
- * @param   {null|undefined|HTMLElement}  nodeContext
+ * @param   {Element}              element
+ * @param   {null|undefined|Node}  nodeContext
  * @returns {string|null}
  */
 export function getExpression(element, nodeContext = null) {
@@ -49,15 +50,24 @@ export function getExpression(element, nodeContext = null) {
 /**
  * Get an element from expression
  *
- * @param {string}      expression
- * @param {HTMLElement} nodeContext
- * @returns {HTMLElement|null}
+ * @param   {string} expression
+ * @param   {Node}   nodeContext
+ * @returns {Node|null}
  */
 export function getElement(expression, nodeContext = null) {
   if (!nodeContext) {
     nodeContext = document.body
   }
 
-  const evaluated = document.evaluate(expression, nodeContext, null, window.XPathResult.ANY_TYPE, null)
-  return evaluated.iterateNext()
+  try {
+    const evaluated = document.evaluate(expression, nodeContext, null, window.XPathResult.ANY_TYPE, null)
+    return evaluated.iterateNext()
+  } catch (err) {
+    if (debug()) {
+      console.error('Cannot get element from expression: ', expression)
+      console.error(err.stack)
+    }
+  }
+
+  return null
 }
