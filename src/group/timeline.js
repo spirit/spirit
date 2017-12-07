@@ -1,5 +1,6 @@
 import Props from './props'
 import { context, convert, is } from '../utils'
+import { includes } from '../utils/polyfill'
 import EvalMap from './evalmap'
 
 /**
@@ -130,7 +131,7 @@ Timeline.fromObject = function(obj) {
 
   const keys = Object.keys(obj)
 
-  if (!keys.includes('transformObject')) {
+  if (!includes(keys, 'transformObject')) {
     throw new Error('Object is invalid')
   }
 
