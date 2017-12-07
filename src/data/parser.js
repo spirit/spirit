@@ -103,7 +103,8 @@ function groupsFactory() {
   let list = []
 
   const getGroupsByRoot = function(root) {
-    for (let groups of list) {
+    for (let i = 0; i < list.length; i++) {
+      let groups = list[i]
       if (groups.rootEl === root) {
         return groups
       }

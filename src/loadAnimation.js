@@ -80,22 +80,24 @@ export default function(manifest) {
 
         // multiple groups!
         let g = {}
-        for (let groups of result) {
-          for (let group of groups) {
+        result.forEach(groups => {
+          groups.each(group => {
             g[group.name] = group.construct()
             g[group.name].construct = function() {
               let tl = registry.get(group.name).construct()
               tl.construct = this.construct
               return tl
             }
-          }
-        }
+          })
+        })
         return g
       })
       .then(res => {
         let timelines = (res instanceof config.gsap.timeline) ? [res] : Object.keys(res).map(k => res[k])
 
-        for (let timeline of timelines) {
+        for (let i = 0; i < timelines.length; i++) {
+          let timeline = timelines[i]
+
           if (options.loop) {
             timeline.repeat(options.loop)
           }
