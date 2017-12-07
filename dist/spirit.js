@@ -1,5 +1,5 @@
 /*!
- * Spirit.js v2.1.2
+ * Spirit.js v2.1.3
  * 
  * (c) 2017 Patrick Brouwer
  * Released under the MIT License.
@@ -85,12 +85,12 @@ return /******/ (function(modules) { // webpackBootstrap
 /***/ function(module, exports, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__context__ = __webpack_require__(5);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__context__ = __webpack_require__(4);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__gsap__ = __webpack_require__(27);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__events__ = __webpack_require__(3);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__convert__ = __webpack_require__(25);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__xpath__ = __webpack_require__(30);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__is__ = __webpack_require__(4);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__is__ = __webpack_require__(5);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__emitter__ = __webpack_require__(7);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__loadscript__ = __webpack_require__(21);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__jsonloader__ = __webpack_require__(28);
@@ -147,7 +147,7 @@ var Config = function Config() {
 /***/ function(module, exports, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__utils_is__ = __webpack_require__(4);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__utils_is__ = __webpack_require__(5);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__utils_events__ = __webpack_require__(3);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__utils_proxify__ = __webpack_require__(29);
 var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
@@ -828,6 +828,17 @@ var Emitter = function () {
 /***/ function(module, exports, __webpack_require__) {
 
 "use strict";
+/* WEBPACK VAR INJECTION */(function(global) {/* harmony export (immutable) */ exports["isBrowser"] = isBrowser;
+function isBrowser() {
+  return 'window' in global && 'document' in global;
+}
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(32)))
+
+/***/ },
+/* 5 */
+/***/ function(module, exports, __webpack_require__) {
+
+"use strict";
 /* harmony export (immutable) */ exports["isObject"] = isObject;
 /* harmony export (immutable) */ exports["isSVG"] = isSVG;
 /* harmony export (immutable) */ exports["isFunction"] = isFunction;
@@ -844,22 +855,11 @@ function isFunction(fn) {
 }
 
 /***/ },
-/* 5 */
-/***/ function(module, exports, __webpack_require__) {
-
-"use strict";
-/* WEBPACK VAR INJECTION */(function(global) {/* harmony export (immutable) */ exports["isBrowser"] = isBrowser;
-function isBrowser() {
-  return 'window' in global && 'document' in global;
-}
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(32)))
-
-/***/ },
 /* 6 */
 /***/ function(module, exports, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__context__ = __webpack_require__(5);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__context__ = __webpack_require__(4);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__config_config__ = __webpack_require__(1);
 
 
@@ -876,7 +876,7 @@ var debug = function debug() {
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__events__ = __webpack_require__(3);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__list_list__ = __webpack_require__(2);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__is__ = __webpack_require__(4);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__is__ = __webpack_require__(5);
 /* harmony export (immutable) */ exports["a"] = emitChange;
 var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
 
@@ -1381,7 +1381,7 @@ Timeline.fromObject = function (obj) {
 
 
 
-var version = '2.1.2';
+var version = '2.1.3';
 
 /**
  * Setup Spirit GSAP
@@ -3047,7 +3047,7 @@ var Timelines = function (_List) {
 /***/ function(module, exports, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__context__ = __webpack_require__(5);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__context__ = __webpack_require__(4);
 /* harmony export (immutable) */ exports["a"] = loadScript;
 
 
@@ -3088,7 +3088,7 @@ function loadScript(src) {
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__config_setup__ = __webpack_require__(11);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__data_parser__ = __webpack_require__(12);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__utils_is__ = __webpack_require__(4);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__utils_is__ = __webpack_require__(5);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__config_config__ = __webpack_require__(1);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__registry_registry__ = __webpack_require__(9);
 var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; }();
@@ -3178,7 +3178,7 @@ function loadFromPath(path, container) {
     }).then(function () {
       // one animation group, return it's timeline directly
       if (result.length === 1 && result[0].length === 1) {
-        return result[0][0].construct();
+        return result[0].at(0).construct();
       }
 
       // multiple groups!
@@ -3716,7 +3716,7 @@ function killTimeline(gsapTimeline) {
 /***/ function(module, exports, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__context__ = __webpack_require__(5);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__context__ = __webpack_require__(4);
 /* unused harmony export req */
 /* unused harmony export cache */
 
@@ -3786,6 +3786,7 @@ var cache = {};
 /***/ function(module, exports, __webpack_require__) {
 
 "use strict";
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__context__ = __webpack_require__(4);
 /* harmony export (immutable) */ exports["a"] = ArrayLike;
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
@@ -3795,11 +3796,9 @@ function _possibleConstructorReturn(self, call) { if (!self) { throw new Referen
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
-function ArrayLike(targetClass, list) {
-  if (!('Proxy' in window)) {
-    return targetClass;
-  }
 
+
+function ArrayLike(targetClass, list) {
   return function (_targetClass) {
     _inherits(_class, _targetClass);
 
@@ -3813,7 +3812,7 @@ function ArrayLike(targetClass, list) {
     function _class() {
       var _ref;
 
-      var _ret;
+      var _ret2;
 
       _classCallCheck(this, _class);
 
@@ -3823,7 +3822,24 @@ function ArrayLike(targetClass, list) {
 
       var _this = _possibleConstructorReturn(this, (_ref = _class.__proto__ || Object.getPrototypeOf(_class)).call.apply(_ref, [this].concat(args)));
 
-      return _ret = new Proxy(_this, {
+      if (__webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__context__["isBrowser"])() && !('Proxy' in window)) {
+        var _ret;
+
+        return _ret = _this, _possibleConstructorReturn(_this, _ret);
+      }
+
+      _this[Symbol.iterator] = function () {
+        var index = -1;
+        var l = this[list];
+
+        return {
+          next: function next() {
+            return { value: l[++index], done: !(index in l) };
+          }
+        };
+      };
+
+      return _ret2 = new Proxy(_this, {
         get: function get(target, key, receiver) {
           var isIndex = false;
 
@@ -3841,22 +3857,8 @@ function ArrayLike(targetClass, list) {
             return Reflect.get(_this, key, receiver);
           }
         }
-      }), _possibleConstructorReturn(_this, _ret);
+      }), _possibleConstructorReturn(_this, _ret2);
     }
-
-    _createClass(_class, [{
-      key: Symbol.iterator,
-      value: function value() {
-        var index = -1;
-        var l = this[list];
-
-        return {
-          next: function next() {
-            return { value: l[++index], done: !(index in l) };
-          }
-        };
-      }
-    }]);
 
     return _class;
   }(targetClass);
@@ -3867,7 +3869,7 @@ function ArrayLike(targetClass, list) {
 /***/ function(module, exports, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__is__ = __webpack_require__(4);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__is__ = __webpack_require__(5);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__debug__ = __webpack_require__(6);
 /* harmony export (immutable) */ exports["getExpression"] = getExpression;
 /* harmony export (immutable) */ exports["getElement"] = getElement;
@@ -4055,7 +4057,7 @@ module.exports = g;
 /* harmony export (binding) */ __webpack_require__.d(exports, "version", function() { return version; });
 
 
-var version = '2.1.2';
+var version = '2.1.3';
 
 
 
