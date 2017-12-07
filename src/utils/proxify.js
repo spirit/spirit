@@ -1,4 +1,8 @@
 export function ArrayLike(targetClass, list) {
+  if (!('Proxy' in window)) {
+    return targetClass
+  }
+
   return class extends targetClass {
 
     static get name() { return targetClass.name }
