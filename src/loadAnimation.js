@@ -75,7 +75,7 @@ export default function(manifest) {
       .then(() => {
         // one animation group, return it's timeline directly
         if (result.length === 1 && result[0].length === 1) {
-          return result[0][0].construct()
+          return result[0].at(0).construct()
         }
 
         // multiple groups!

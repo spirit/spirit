@@ -1,14 +1,25 @@
-export function ArrayLike(targetClass, list) {
-  if (!('Proxy' in window)) {
-    return targetClass
-  }
+import { isBrowser } from './context'
 
+export function ArrayLike(targetClass, list) {
   return class extends targetClass {
 
     static get name() { return targetClass.name }
 
     constructor(...args) {
       super(...args)
+
+      if (isBrowser() && !('Proxy' in window)) {
+        return this
+      }
+
+      this[Symbol.iterator] = function() {
+        let index = -1
+        let l = this[list]
+
+        return {
+          next: () => ({ value: l[++index], done: !(index in l) })
+        }
+      }
 
       return new Proxy(this, {
         get: (target, key, receiver) => {
@@ -29,15 +40,6 @@ export function ArrayLike(targetClass, list) {
           }
         }
       })
-    }
-
-    [Symbol.iterator]() {
-      let index = -1
-      let l = this[list]
-
-      return {
-        next: () => ({ value: l[++index], done: !(index in l) })
-      }
     }
   }
 }
