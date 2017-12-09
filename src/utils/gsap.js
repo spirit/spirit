@@ -1,37 +1,49 @@
 import config from '../config/config'
-import loadScript from './loadscript'
+import loadscript from './loadscript'
 import Timeline from '../group/timeline'
 import debug from './debug'
+import { isFunction } from './is'
+import { isBrowser } from './context'
 
 /**
- * Check on gsap presence
+ * Check on GSAP presence
  *
  * @returns {boolean}
  */
 export function has() {
-  return !!(config.gsap.tween && config.gsap.timeline)
+  return isFunction(config.gsap.tween) && isFunction(config.gsap.timeline)
 }
 
 /**
- * Ensure gsap is loaded
- * Auto inject gsap if configured
+ * Ensure GSAP is loaded
+ * Auto inject
  *
- * @returns {Promise}
+ * @returns {Promise<void>}
  */
 export function ensure() {
   if (has()) {
     return Promise.resolve()
   }
 
+  // has gsap on window object?
+  const wTween = window.TweenMax || window.TweenLite
+  const wTimeline = window.TimelineMax || window.TimelineLite
+
+  if (isBrowser() && isFunction(wTween) && isFunction(wTimeline)) {
+    config.gsap.tween = wTween
+    config.gsap.timeline = wTimeline
+
+    return Promise.resolve()
+  }
+
+  // load from cdn
   if (!config.gsap.autoInject) {
     if (debug()) {
       console.warn(`
       
-        It seems that you have disabled autoInject. GSAP can not be found by Spirit.
-        Please make sure you provide the tween and timeline to Spirit.
+        It seems that you've disabled autoInject. GSAP cannot be found or loaded by Spirit.
+        Please make sure you provide the tween and timeline to Spirit:
       
-        For example:
-        
         spirit.setup({
           tween: TweenMax,
           timeline: TimelineMax
@@ -63,15 +75,32 @@ export function ensure() {
     `)
   }
 
-  return loadScript(config.gsap.autoInjectUrl)
+  return this.loadFromCDN()
+}
+
+/**
+ * Load GSAP from CDN based on autoInjectUrl
+ *
+ * @return {Promise<void>}
+ */
+export function loadFromCDN() {
+  return loadscript(config.gsap.autoInjectUrl)
     .then(() => {
       config.gsap.tween = window.TweenMax
       config.gsap.timeline = window.TimelineMax
 
       return Promise.resolve()
+    }).catch(err => {
+      return Promise.reject(err)
     })
 }
 
+/**
+ * Get transform origins for timeline
+ *
+ * @param {Timeline} timeline
+ * @return {Function}
+ */
 export function transformOrigins(timeline) {
   const prop = timeline.props.get('transformOrigin')
   let origins = (prop && prop.keyframes.list.map(k => ({ time: k.time, value: k.value }))) || []
