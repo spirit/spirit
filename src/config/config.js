@@ -1,6 +1,9 @@
+import { isBrowser } from '../utils/context'
+
 class Config {
 
-  debug = true
+  debug = process.env.NODE_ENV === 'development' && isBrowser()
+  overwriteAnimations = true
 
   gsap = {
     tween: null,
