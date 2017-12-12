@@ -1,11 +1,16 @@
 import { create } from '../src'
 import registry from '../src/registry/registry'
 import { Group } from '../src/group'
+import config from '../src/config/config'
 
 describe('registry', () => {
 
   beforeEach(() => {
     registry.clear()
+  })
+
+  afterEach(() => {
+    config.overwriteAnimations = true
   })
 
   it('should have an empty registry', () => {
@@ -45,19 +50,32 @@ describe('registry', () => {
     expect(registry.groupNames()).to.deep.equal(['ghost', 'logo'])
   })
 
-  it('should skip existing group', () => {
+  it('should skip existing group with config.overwriteAnimations false', () => {
+    config.overwriteAnimations = false
+
     create([
       { name: 'ghost', timelines: [] },
       { name: 'logo', timelines: [] }
     ])
 
     const ghost = registry.get('ghost')
-    const logo = registry.get('logo')
-
     const created = create({ name: 'ghost', timelines: [] }).at(0)
 
     expect(registry.get('ghost')).to.equal(ghost)
     expect(registry.get('ghost')).not.to.equal(created)
+  })
+
+  it('should overwrite existing group with config.overwriteAnimations true', () => {
+    create([
+      { name: 'ghost', timelines: [] },
+      { name: 'logo', timelines: [] }
+    ])
+
+    const ghost = registry.get('ghost')
+    const created = create({ name: 'ghost', timelines: [] }).at(0)
+
+    expect(registry.get('ghost')).to.equal(created)
+    expect(registry.get('ghost')).not.to.equal(ghost)
   })
 
   describe('add and remove from groups', () => {
@@ -138,7 +156,7 @@ describe('registry', () => {
       expect(registry.groupNames()).to.deep.equal(['a', 'b', 'c', 'd', 'e'])
       expect(registry.get('a')).to.equal(a.get('a'))
       expect(registry.get('b')).to.equal(a.get('b'))
-      expect(registry.get('c')).to.equal(a.get('c'))
+      expect(registry.get('c')).to.equal(b.get('c'))
       expect(registry.get('d')).to.equal(b.get('d'))
       expect(registry.get('e')).to.equal(b.get('e'))
     })
