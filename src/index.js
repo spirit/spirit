@@ -7,6 +7,7 @@ import setup from './config/setup'
 import groups from './registry/registry'
 import { create, load } from './data/parser'
 import loadAnimation from './loadAnimation'
+import debug from './utils/debug'
 
 const Spirit = function() {}
 
@@ -36,4 +37,8 @@ module.exports = spirit
 
 if (context.isBrowser() && !window.spirit) {
   window.spirit = spirit
+
+  if (debug()) {
+    console.warn(`You are running the development build of Spirit v${version}.`)
+  }
 }
