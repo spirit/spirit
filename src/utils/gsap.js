@@ -210,7 +210,7 @@ export function generateTimeline(timeline) {
  * @param {TimelineMax|TimelineLite} gsapTimeline
  */
 export function killTimeline(gsapTimeline) {
-  if (gsapTimeline && gsapTimeline instanceof config.gsap.timeline) {
+  if (gsapTimeline && isFunction(config.gsap.timeline) && gsapTimeline instanceof config.gsap.timeline) {
     gsapTimeline.eventCallback('onComplete', null)
     gsapTimeline.eventCallback('onUpdate', null)
     gsapTimeline.eventCallback('onStart', null)
