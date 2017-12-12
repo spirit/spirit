@@ -41,6 +41,16 @@ class Registry extends List {
 
     warn('skipped, already exists in registry')
   }
+
+  /**
+   * Remove group from registry
+   *
+   * @param   {Group} group
+   * @returns {Group}
+   */
+  remove(group) {
+    group.reset()
+    return super.remove(group)
   }
 
   /**

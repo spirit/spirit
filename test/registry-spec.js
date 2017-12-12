@@ -137,6 +137,29 @@ describe('registry', () => {
       expect(registry).to.have.lengthOf(0)
     })
 
+    it('should call reset for removed group', () => {
+      const group = groups.add({ name: 'a' })
+      sinon.spy(group, 'reset')
+
+      groups.remove(group)
+      expect(group.reset.called).to.be.true
+      group.reset.restore()
+    })
+
+    it('should call reset for removed groups on clear', () => {
+      const created = groups.add([
+        { name: 'a' },
+        { name: 'b' },
+        { name: 'c' }
+      ])
+
+      groups.each(g => sinon.spy(g, 'reset'))
+      groups.clear()
+
+      expect(created.map(g => g.reset.called)).to.deep.equal([true, true, true])
+      created.forEach(g => g.reset.restore())
+    })
+
   })
 
   describe('multi groups', () => {
