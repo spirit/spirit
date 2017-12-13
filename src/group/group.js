@@ -17,13 +17,6 @@ class Group extends Emitter {
   timeline = null
 
   /**
-   * Unresolved timelines
-   *
-   * @type {Array}
-   */
-  unresolved = []
-
-  /**
    * Create a group instance.
    *
    * @param {object} props
@@ -54,6 +47,28 @@ class Group extends Emitter {
    */
   get timelines() {
     return this._timelines
+  }
+
+  /**
+   * Get unresolved timelines
+   *
+   * @returns {Timelines}
+   */
+  get unresolved() {
+    let timelines = new Timelines()
+    this.timelines.each(tl => !tl.transformObject && timelines.add(tl))
+    return timelines
+  }
+
+  /**
+   * Get resolved timelines
+   *
+   * @returns {Timelines}
+   */
+  get resolved() {
+    let timelines = new Timelines()
+    this.timelines.each(tl => !!tl.transformObject && timelines.add(tl))
+    return timelines
   }
 
   /**
