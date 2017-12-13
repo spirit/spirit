@@ -1,12 +1,13 @@
 import Props from './props'
 import { context, convert, is } from '../utils'
-import { includes } from '../utils/polyfill'
+import { emitChange } from '../utils/emitter'
+import { Emitter } from '../utils/events'
 import EvalMap from './evalmap'
 
 /**
  * Timeline.
  */
-class Timeline {
+class Timeline extends Emitter {
 
   /**
    * Timeline type.
@@ -22,7 +23,7 @@ class Timeline {
    *
    * @type {HTMLElement|Object}
    */
-  transformObject = null
+  _transformObject = null
 
   /**
    * Defined label representing this timeline node.
@@ -65,36 +66,44 @@ class Timeline {
    * @param {string|null}         label
    */
   constructor(type = 'dom', transformObject = null, props = new Props(), path = null, id = null, label = null) {
-    if (!(props instanceof Props)) {
-      props = new Props(props)
-    }
+    super()
 
     Object.assign(this, {
       type,
-      transformObject,
-      props,
+      props: (props instanceof Props) ? props : new Props(props),
       label,
       path,
       id
     })
 
-    if (type === 'dom') {
-      if (!transformObject || context.isBrowser() && !(transformObject instanceof window.Element)) {
-        throw new Error('transformObject needs to be an element.')
-      }
+    this.transformObject = transformObject
+  }
 
-      if (!id && !path) {
-        throw new Error('path is not defined')
-      }
+  @emitChange()
+  set transformObject(transformObject) {
+    this._transformObject = transformObject
+    this.validate()
+
+    }
+  }
+
+  get transformObject() {
+    return this._transformObject
+  }
+
+  validate() {
+    if (
+      this.type === 'dom' &&
+      context.isBrowser() &&
+      this.transformObject &&
+      !(this.transformObject instanceof window.Element)
+    ) {
+      throw new Error('transformObject needs to be an element')
     }
 
-    if (type === 'object') {
-      if (!transformObject) {
-        throw new Error('transformObject needs to be an object')
-      }
+    if (this.type === 'object' && this.transformObject && !is.isObject(this.transformObject)) {
+      throw new Error('transformObject needs to be an object')
     }
-
-    this.props.mappings = [new EvalMap(/this/g, transformObject)]
   }
 
   toObject(ignoreEval = false) {
@@ -127,12 +136,6 @@ class Timeline {
 Timeline.fromObject = function(obj) {
   if (!is.isObject(obj)) {
     throw new Error('Object is invalid.')
-  }
-
-  const keys = Object.keys(obj)
-
-  if (!includes(keys, 'transformObject')) {
-    throw new Error('Object is invalid')
   }
 
   let args = convert.objectToArray(obj).filter(arg => arg !== undefined)
