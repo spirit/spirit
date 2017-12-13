@@ -135,12 +135,12 @@ export function generateTimeline(timeline) {
     throw new Error('Need valid timeline data to generate GSAP timeline from')
   }
 
-  if (!config.gsap.timeline) {
-    throw new Error('GSAP not set. Please make sure GSAP is available.')
-  }
-
   if (timeline.type !== 'dom') {
     throw new Error('Timeline invalid. Needs a timeline with type of dom.')
+  }
+
+  if (!has()) {
+    throw new Error('GSAP not set. Please make sure GSAP is available.')
   }
 
   const tl = new config.gsap.timeline({ paused: true }) // eslint-disable-line new-cap
@@ -210,7 +210,7 @@ export function generateTimeline(timeline) {
  * @param {TimelineMax|TimelineLite} gsapTimeline
  */
 export function killTimeline(gsapTimeline) {
-  if (gsapTimeline && isFunction(config.gsap.timeline) && gsapTimeline instanceof config.gsap.timeline) {
+  if (isTimeline(gsapTimeline)) {
     gsapTimeline.eventCallback('onComplete', null)
     gsapTimeline.eventCallback('onUpdate', null)
     gsapTimeline.eventCallback('onStart', null)
@@ -219,7 +219,7 @@ export function killTimeline(gsapTimeline) {
     gsapTimeline.kill()
 
     for (let i = 0; i < targets.length; i++) {
-      if (targets[i] && targets[i] instanceof config.gsap.timeline) {
+      if (isTimeline(targets[i])) {
         killTimeline(targets[i])
         continue
       }
@@ -230,4 +230,14 @@ export function killTimeline(gsapTimeline) {
     }
     gsapTimeline.clear()
   }
+
+  return gsapTimeline
+}
+
+export function isTimeline(timeline) {
+  return timeline && isFunction(config.gsap.timeline) && timeline instanceof config.gsap.timeline
+}
+
+export function isTween(tween) {
+  return tween && isFunction(config.gsap.tween) && tween instanceof config.gsap.tween
 }
