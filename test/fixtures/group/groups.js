@@ -11,7 +11,7 @@ export const simpleGroups = [
       {
         label: 'head',
         transformObject: divA,
-        path: 'div[0]',
+        path: 'div[1]',
         props: {
           x: { '0s': { value: 0 }, '10s': { value: 300 } },
           y: { '0s': { value: 0 }, '10s': { value: 1000 } }
@@ -20,7 +20,7 @@ export const simpleGroups = [
       {
         label: 'body',
         transformObject: divB,
-        path: 'div[1]',
+        path: 'div[2]',
         props: {
           scale: { '10s': { value: 2 } }
         }
