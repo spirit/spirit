@@ -288,6 +288,30 @@ describe('timeline', () => {
         expect(keyframe).to.have.property('mappings').to.have.lengthOf(1)
       })
 
+      it('should reapply mappings when transform object changes', () => {
+        const elA = document.createElement('div')
+        const elB = document.createElement('div')
+
+        elA.setAttribute('data-speed', 10)
+        elB.setAttribute('data-speed', 20)
+
+        const tl = new Timeline('dom', elA, {
+          x: {
+            '0s': `{ parseInt(this.getAttribute('data-speed')) }`
+          }
+        })
+
+        expect(tl.props.mappings).to.have.lengthOf(1)
+        expect(tl.props.mappings).to.have.deep.property('[0].map', elA)
+        expect(tl.props.get('x').keyframes.get(0)).to.have.property('value', 10)
+
+        tl.transformObject = elB
+
+        expect(tl.props.mappings).to.have.lengthOf(1)
+        expect(tl.props.mappings).to.have.deep.property('[0].map', elB)
+        expect(tl.props.get('x').keyframes.get(0)).to.have.property('value', 20)
+      })
+
     })
 
     describe('as dom', () => {

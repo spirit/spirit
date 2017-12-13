@@ -84,6 +84,14 @@ class Timeline extends Emitter {
     this._transformObject = transformObject
     this.validate()
 
+    if (transformObject && this.props instanceof Props) {
+      const thisMapper = this.props.mappings.find(mapping => String(mapping.regex) === '/this/g')
+
+      thisMapper
+        ? (thisMapper.map = transformObject)
+        : this.props.mappings.push(new EvalMap(/this/g, transformObject))
+
+      this.props.mappings = [...this.props.mappings]
     }
   }
 
