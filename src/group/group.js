@@ -1,5 +1,5 @@
 import config from '../config/config'
-import { gsap, debug } from '../utils'
+import { gsap, debug, resolver } from '../utils'
 import Timelines from './timelines'
 import { emitChange } from '../utils/emitter'
 import { TimelineError } from '../utils/errors'
@@ -178,62 +178,80 @@ class Group extends Emitter {
   }
 
   /**
-   * Construct gsap timeline
+   * Resolve transformObject for timelines
    *
+   * @returns {Group}
+   */
+  resolve() {
+    this.reset()
+
+    const root = (this._list && this._list.rootEl)
+      ? this._list.rootEl
+      : null
+
+    if (!root) {
+      return this
+    }
+
+    let hasUnresolved = false
+
+    this.timelines.each(timeline => {
+      if (timeline.type === 'dom') {
+        timeline.transformObject = !root ? null : resolver.resolveElement(root, timeline)
+        if (!hasUnresolved && !timeline.transformObject) {
+          hasUnresolved = true
+        }
+      }
+    })
+
+    this.emit('resolve', {
+      resolved: this.resolved,
+      unresolved: this.unresolved
+    })
+
+    if (hasUnresolved) {
+      if (debug()) {
+        console.warn(`Could not resolve all elements for group ${this.name}`, this.unresolved)
+      }
+      this.emit('unresolve', this.unresolved)
+    }
+
+    return this
+  }
+
+  /**
+   * Construct GSAP timeline
+   *
+   * @param   {boolean} resolve elements
    * @returns {TimelineMax|TimelineLite}
    */
-  construct() {
+  construct(resolve = false) {
     try {
-      if (!config.gsap.timeline || !config.gsap.tween) {
+      if (!gsap.has()) {
         if (debug()) {
-          console.warn(`
-            Trying to construct group ${this.name}, but GSAP cannot be found.
-            
-            Did you forgot to call spirit.setup() perhaps?
-            
-            @usage
-                
-                spirit.setup().then(function(){
-                  // gsap is loaded here..
-                })
-                
-            or provide gsap instances manually:
-            
-                spirit.setup({ 
-                  tween:    TweenLite,
-                  timeline: TimelineLite
-                }).then(function(){
-                  // gsap is loaded here..
-                })
-                
-          `)
+          console.warn(`Cannot construct group ${this.name}. GSAP not found.`)
         }
         throw new Error('GSAP cannot be found')
       }
 
-      // initiate an empty GSAP timeline
-      if (this.timeline && this.timeline instanceof config.gsap.timeline) {
+      resolve && this.resolve()
+
+      if (this.timeline) {
         gsap.killTimeline(this.timeline)
       } else {
         this.timeline = new config.gsap.timeline({ paused: true }) // eslint-disable-line new-cap
       }
 
-      // create a valid GSAP timeline out of timelines
-      this.timelines.each(timeline => {
-        if (timeline.type === 'dom') {
-          const el = timeline.transformObject
-          if (!(el instanceof window.Element)) {
-            throw new TimelineError('transformObject is not an Element', el)
-          }
+      this.resolved.each(timeline => {
+        if (timeline.type === 'dom' && timeline.transformObject instanceof window.Element) {
           try {
             this.timeline.add(gsap.generateTimeline(timeline).play(), 0, 'start')
           } catch (err) {
-            throw new TimelineError(err.message, el, err.stack)
+            throw new TimelineError(err.message, timeline.transformObject, err.stack)
           }
         }
       })
 
-      // update timescale
       this.timeline.timeScale(this.timeScale)
       this._duration = this.timeline.duration()
     } catch (err) {

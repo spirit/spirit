@@ -210,6 +210,11 @@ describe('group', () => {
 
     afterEach(() => {
       config.gsap = { ...configGsap }
+
+      delete window.TweenMax
+      delete window.TweenLite
+      delete window.TimelineMax
+      delete window.TimelineLite
     })
 
     describe('no gsap', () => {
@@ -218,18 +223,45 @@ describe('group', () => {
         expect(() => group.construct()).to.throw(/GSAP cannot be found/)
       })
 
-      it('should not throw gsap not found', async () => {
+      it('should construct with gsap', async () => {
         await setup()
         expect(() => group.construct()).to.not.throw(/GSAP cannot be found/)
       })
 
-      it('should fail when cannot construct timeline', async () => {
+      it('should allow empty transform objects', async () => {
         await setup()
 
         group.timelines = [{ transformObject: divA, path: 'div[0]' }]
-        group.timelines.get(divA).transformObject = null // needs to be set, silently fails
+        group.timelines.get(divA).transformObject = null
 
-        expect(() => group.construct()).to.throw(/transformObject is not an Element/)
+        expect(() => group.construct()).not.to.throw(/transformObject is not an Element/)
+      })
+
+    })
+
+    describe('resolve elements', () => {
+      let spy
+
+      const createSpy = (obj, spyMethod) => { spy = sinon.spy(obj, spyMethod) }
+
+      beforeEach(async () => {
+        await setup()
+      })
+
+      afterEach(() => {
+        spy && spy.restore()
+      })
+
+      it('should call resolve() on construct(true)', () => {
+        createSpy(group, 'resolve')
+        group.construct(true)
+        expect(spy.calledOnce).to.be.true
+      })
+
+      it('should not call resolve() on construct()', () => {
+        createSpy(group, 'resolve')
+        group.construct()
+        expect(spy.called).to.be.false
       })
 
     })
@@ -288,6 +320,21 @@ describe('group', () => {
         expect(spyKill.calledOnce).to.be.true
         expect(spyClear.calledOnce).to.be.true
       })
+
+      it('should have resolved elements', () => {
+        group.construct(true)
+
+        expect(group).to.have.property('resolved').to.be.instanceOf(Timelines)
+        expect(group).to.have.property('resolved').to.have.lengthOf(3)
+      })
+
+      it('should have empty unresolved elements', () => {
+        group.construct(true)
+
+        expect(group).to.have.property('unresolved').to.be.instanceOf(Timelines)
+        expect(group).to.have.property('unresolved').to.have.lengthOf(0)
+      })
+
     })
   })
 
