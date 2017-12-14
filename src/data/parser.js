@@ -27,8 +27,10 @@ function groupsFactory() {
         list.push(groups)
       }
       if (group) {
-        groups.add(group)
+        group._list = groups
         group.resolve()
+
+        groups.add(group)
       }
     },
     groups: function() {
