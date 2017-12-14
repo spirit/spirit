@@ -1,6 +1,6 @@
 {
   "name": "spiritjs",
-  "version": "2.2.0",
+  "version": "2.2.1",
   "title": "Spirit",
   "description": "The animation toolkit for the web",
   "main": "lib/index.js",

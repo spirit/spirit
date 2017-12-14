@@ -1,5 +1,5 @@
 /*!
- * Spirit.js v2.2.0
+ * Spirit.js v2.2.1
  * 
  * (c) 2017 Patrick Brouwer
  * Released under the MIT License.
@@ -3440,12 +3440,14 @@ var Groups = function (_List) {
   }, {
     key: 'construct',
     value: function construct() {
+      var resolve = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : false;
+
       if (!__WEBPACK_IMPORTED_MODULE_2__utils__["e" /* gsap */].has()) {
         __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__utils__["g" /* debug */])() && console.warn('Trying to construct groups, but GSAP cannot be found.');
         throw new Error('GSAP cannot be found');
       }
       return this.list.map(function (group) {
-        return group.construct();
+        return group.construct(resolve);
       });
     }
 
@@ -4169,7 +4171,7 @@ module.exports = g;
 /* harmony export (binding) */ __webpack_require__.d(exports, "version", function() { return version; });
 
 
-var version = '2.2.0';
+var version = '2.2.1';
 
 
 
