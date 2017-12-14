@@ -5,6 +5,7 @@ import * as convert from './convert'
 import * as xpath from './xpath'
 import * as is from './is'
 import * as emitter from './emitter'
+import * as resolver from './resolver'
 import loadscript from './loadscript'
 import jsonloader from './jsonloader'
 import autobind from './autobind'
@@ -21,5 +22,6 @@ export {
   loadscript,
   jsonloader,
   autobind,
-  debug
+  debug,
+  resolver
 }

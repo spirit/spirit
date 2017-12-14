@@ -132,6 +132,11 @@ describe('utils', () => {
 
     afterEach(() => {
       config.gsap = { ...gsapConfig }
+
+      delete window.TweenMax
+      delete window.TweenLite
+      delete window.TimelineMax
+      delete window.TimelineLite
     })
 
     describe('ensure', () => {

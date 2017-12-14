@@ -1,98 +1,5 @@
-import { context, jsonloader, xpath, debug, is } from '../utils'
+import { context, jsonloader, is, resolver } from '../utils'
 import { Groups, Group } from '../group'
-
-/**
- * Get transform object from container
- *
- * @param   {Element} container
- * @param   {object}      tl
- * @returns {Element|object}
- */
-function getTransformObject(container, tl) {
-  let transformObject
-
-  if (tl.type !== 'object') {
-    if (tl.id) {
-      transformObject = container.querySelector(`[data-spirit-id="${tl.id}"]`)
-
-      if (!transformObject && !tl.path) {
-        if (debug()) {
-          console.group('Unable to resolve element by [data-spirit-id] attribute')
-          console.warn('Timeline: ', tl)
-          console.groupEnd()
-        }
-        throw new Error(`Cannot find element with [data-spirit-id="${tl.id}"]`)
-      }
-    }
-
-    if (!transformObject && tl.path) {
-      if (container === document.body) {
-        container = undefined
-      }
-      transformObject = xpath.getElement(tl.path, container)
-
-      if (!transformObject) {
-        if (debug()) {
-          console.group('Unable to resolve element by path expression')
-          console.warn('Timeline: ', tl)
-          console.groupEnd()
-        }
-        throw new Error(`Cannot find element with path expression ${tl.path}`)
-      }
-    }
-
-    if (!transformObject) {
-      if (debug()) {
-        console.group('Unable to resolve element')
-        console.warn('Timeline: ', tl)
-        console.groupEnd()
-      }
-      throw new Error('Cannot find element.')
-    }
-  }
-
-  return transformObject
-}
-
-/**
- * Get label for timeline to parse
- *
- * @param   {object} timeline
- * @returns {string}
- */
-function getLabel(timeline) {
-  if (typeof timeline.label === 'string' && timeline.label.trim().length > 0) {
-    return timeline.label
-  }
-
-  if (timeline.id) {
-    return timeline.id
-  }
-
-  if (timeline.path) {
-    return timeline.path
-  }
-
-  return 'undefined'
-}
-
-/**
- * Get the id for a timeline based on transformObject and id
- *
- * @param {Element|object} transformObject
- * @param {object}         timeline
- */
-function getId(transformObject, timeline) {
-  if (timeline.id && transformObject.getAttribute('data-spirit-id') === timeline.id) {
-    return timeline.id
-  }
-
-  if (timeline.type === 'dom' && transformObject.hasAttribute('data-spirit-id')) {
-    return transformObject.getAttribute('data-spirit-id')
-  }
-
-  return null
-}
 
 /**
  * Create groups factory
@@ -121,6 +28,7 @@ function groupsFactory() {
       }
       if (group) {
         groups.add(group)
+        group.resolve()
       }
     },
     groups: function() {
@@ -167,41 +75,23 @@ export function create(data, root = undefined) {
     let groupRoot = root
 
     if (resolveRoot && g.root) {
-      groupRoot = g.root.id
-        ? root.querySelector(`[data-spirit-id=${g.root.id}]`)
-        : xpath.getElement(g.root.path, root)
-
+      groupRoot = resolver.resolveElement(root, g.root)
       if (!groupRoot) {
         groupRoot = root
       }
     }
 
-    const d = {
-      name: g.name,
-      timeScale: g.timeScale || 1,
-      timelines: [],
-      unresolved: []
-    }
-
+    const d = { name: g.name, timeScale: g.timeScale || 1, timelines: [] }
     let timelines = g.timelines || []
 
-    timelines.forEach(tl => {
-      let transformObject
-
-      try {
-        transformObject = getTransformObject(groupRoot, tl)
-
-        d.timelines.push({
-          transformObject,
-          type: tl.type,
-          props: tl.props,
-          label: getLabel(tl),
-          path: xpath.getExpression(transformObject, groupRoot),
-          id: getId(transformObject, tl)
-        })
-      } catch (error) {
-        d.unresolved.push({ data: tl, error })
-      }
+    timelines.forEach(timeline => {
+      d.timelines.push({
+        type: timeline.type,
+        props: timeline.props,
+        label: timeline.label || timeline.id || timeline.path,
+        path: timeline.path || null,
+        id: timeline.id || null
+      })
     })
 
     factory.add(groupRoot, new Group(d))

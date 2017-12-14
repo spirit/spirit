@@ -56,7 +56,7 @@ export function getExpression(element, nodeContext = null) {
  */
 export function getElement(expression, nodeContext = null) {
   if (!nodeContext) {
-    nodeContext = document.body
+    nodeContext = document.body || document.documentElement
   }
 
   try {

@@ -9,17 +9,9 @@ describe('timeline', () => {
     el = document.createElement('div')
   })
 
-  describe('type is DOM element', () => {
-    it('should require an html element', () => {
-      expect(() => new Timeline()).to.throw(/transformObject needs to be an element/)
-    })
-
-    it('should require path', () => {
-      expect(() => new Timeline('dom', el)).to.throw(/path is not defined/)
-    })
-
-    it('should not require path if id is set', async () => {
-      expect(() => new Timeline('dom', el, [], null, 'my-id')).to.not.throw(/path is not defined/)
+  describe('type is Element', () => {
+    it('should allow nullable element', () => {
+      expect(() => new Timeline()).not.to.throw(/transformObject needs to be an element/)
     })
 
     it('should have element and props defined', () => {
@@ -54,8 +46,8 @@ describe('timeline', () => {
   })
 
   describe('type is Object', () => {
-    it('should require an transform object', async () => {
-      expect(() => new Timeline('object')).to.throw(/transformObject needs to be an object/)
+    it('should allow nullable transform object', async () => {
+      expect(() => new Timeline('object')).not.to.throw(/transformObject needs to be an object/)
     })
 
     it('should not require any additional arguments', () => {
@@ -134,31 +126,57 @@ describe('timeline', () => {
     })
   })
 
+  describe('validate', () => {
+    it('should validate element', () => {
+      const tl = new Timeline('dom')
+
+      expect(() => tl.validate()).not.to.throw()
+      expect(() => {tl.transformObject = 123}).to.throw(/transformObject needs to be an element/)
+      expect(() => {tl.transformObject = null}).not.to.throw()
+      expect(() => {tl.transformObject = document.createElement('div')}).not.to.throw()
+    })
+
+    it('should validate object', () => {
+      const tl = new Timeline('object')
+
+      expect(() => tl.validate()).not.to.throw()
+      expect(() => {tl.transformObject = 123}).to.throw(/transformObject needs to be an object/)
+      expect(() => {tl.transformObject = null}).not.to.throw()
+      expect(() => {tl.transformObject = {}}).not.to.throw()
+    })
+  })
+
   describe('parse fromObject', () => {
     it('should fail with invalid type', () => {
       expect(() => Timeline.fromObject(123)).to.throw(/Object is invalid/)
       expect(() => Timeline.fromObject([])).to.throw(/Object is invalid/)
     })
 
-    it('should fail when no transformObject is provided', () => {
-      expect(() => Timeline.fromObject({})).to.throw(/Object is invalid/)
+    it('should be able to parse a timeline without a transform object', () => {
+      expect(() => Timeline.fromObject({})).not.to.throw()
     })
 
     describe('as dom', () => {
       it('should fail if transformObject is not a HTMLElement', () => {
-        expect(() => Timeline.fromObject({ transformObject: 123 })).to.throw(/transformObject needs to be an element/)
+        const fn = () => Timeline.fromObject({ type: 'dom', transformObject: 123 })
+        expect(fn).to.throw(/transformObject needs to be an element/)
       })
 
       it('should create a valid timeline', () => {
-        expect(() => Timeline.fromObject({ transformObject: el, path: 'div[0]' })).to.not.throw(Error)
+        const fn = () => Timeline.fromObject({ transformObject: el, path: 'div[0]' })
+        expect(fn).to.not.throw(Error)
       })
     })
 
     describe('as object', () => {
+      it('should fail if transformObject is not an object', () => {
+        const fn = () => Timeline.fromObject({ type: 'object', transformObject: 123 })
+        expect(fn).to.throw(/transformObject needs to be an object/)
+      })
+
       it('should create a timeline with transformObject as object', () => {
-        expect(() => {
-          Timeline.fromObject({ type: 'object', transformObject: { a: 'a', b: 'b' } })
-        }).not.to.throw(Error)
+        const fn = () => Timeline.fromObject({ type: 'object', transformObject: { a: 'a', b: 'b' } })
+        expect(fn).not.to.throw(Error)
       })
 
       it('should create a timeline with properties', () => {
@@ -270,6 +288,30 @@ describe('timeline', () => {
         expect(keyframe).to.have.property('mappings').to.have.lengthOf(1)
       })
 
+      it('should reapply mappings when transform object changes', () => {
+        const elA = document.createElement('div')
+        const elB = document.createElement('div')
+
+        elA.setAttribute('data-speed', 10)
+        elB.setAttribute('data-speed', 20)
+
+        const tl = new Timeline('dom', elA, {
+          x: {
+            '0s': `{ parseInt(this.getAttribute('data-speed')) }`
+          }
+        })
+
+        expect(tl.props.mappings).to.have.lengthOf(1)
+        expect(tl.props.mappings).to.have.deep.property('[0].map', elA)
+        expect(tl.props.get('x').keyframes.get(0)).to.have.property('value', 10)
+
+        tl.transformObject = elB
+
+        expect(tl.props.mappings).to.have.lengthOf(1)
+        expect(tl.props.mappings).to.have.deep.property('[0].map', elB)
+        expect(tl.props.get('x').keyframes.get(0)).to.have.property('value', 20)
+      })
+
     })
 
     describe('as dom', () => {
@@ -311,6 +353,31 @@ describe('timeline', () => {
       prop.keyframes.get(0).value = 20
       expect(spy.callCount).to.equal(1)
     })
+  })
+
+  describe('dispatch events', () => {
+
+    it('should dispatch change:transformObject', () => {
+      let spy = sinon.spy()
+      let tl = new Timeline('dom')
+
+      expect(tl).to.have.property('transformObject', null)
+
+      tl.on('change', spy)
+      tl.on('change:transformObject', spy)
+
+      const el = document.createElement('div')
+      tl.transformObject = el
+
+      expect(spy.calledTwice).to.be.true
+      expect(spy.getCall(0).args[0].changed).to.deep.equal({
+        type: 'transformObject',
+        from: null,
+        to: el
+      })
+      tl.removeAllListeners()
+    })
+
   })
 
 })

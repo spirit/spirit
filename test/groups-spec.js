@@ -1,5 +1,5 @@
 import config from '../src/config/config'
-import { Groups, Group }from '../src/group'
+import { Groups, Group, Timelines } from '../src/group'
 import setup from '../src/config/setup'
 import { simpleGroups } from './fixtures/group/groups'
 
@@ -7,12 +7,12 @@ const configGsap = { ...config.gsap }
 
 describe('groups', () => {
 
-  before(async() => {
+  before(async () => {
     config.gsap.autoInjectUrl = 'test/fixtures/gsap.js'
     await setup()
   })
 
-  after(async() => {
+  after(async () => {
     config.gsap = { ...configGsap }
   })
 
@@ -51,6 +51,57 @@ describe('groups', () => {
       const groups = new Groups(document.body, simpleGroups)
       groups.construct()
       expect(groups.list.map(group => group.duration)).to.deep.equal([10, 25])
+    })
+
+  })
+
+  describe('resolve elements', () => {
+    let data,
+        elements = [
+          document.createElement('div'),
+          document.createElement('div'),
+          document.createElement('div')
+        ]
+
+    beforeEach(() => {
+      data = simpleGroups[0]
+      data.timelines = data.timelines.map(({ transformObject, ...rest}) => rest)
+
+      elements.forEach(el => document.body.appendChild(el))
+    })
+
+    afterEach(() => {
+    	elements.forEach(el => document.body.contains(el) && document.body.removeChild(el))
+    })
+
+    it('should have resolved elements', () => {
+      const group = new Groups(document.body, [data]).at(0)
+      group.construct(true)
+
+      expect(group.timelines).to.have.lengthOf(2)
+      expect(group.resolved).to.have.lengthOf(2)
+      expect(group.unresolved).to.have.lengthOf(0)
+    })
+
+    it('should have unresolved elements after removing elements', () => {
+      const spy = sinon.spy()
+
+      const group = new Groups(document.body, [data]).at(0)
+      group.on('unresolve', spy)
+      group.resolve()
+
+      expect(group.timelines).to.have.lengthOf(2)
+      expect(group.resolved).to.have.lengthOf(2)
+      expect(group.unresolved).to.have.lengthOf(0)
+
+      elements.forEach(el => document.body.contains(el) && document.body.removeChild(el))
+      group.resolve()
+
+      expect(spy.callCount).to.equal(1)
+      expect(spy.getCall(0).args[0]).to.be.an.instanceOf(Timelines)
+      expect(group.timelines).to.have.lengthOf(2)
+      expect(group.resolved).to.have.lengthOf(0)
+      expect(group.unresolved).to.have.lengthOf(2)
     })
 
   })

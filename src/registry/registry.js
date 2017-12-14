@@ -1,7 +1,7 @@
 import List from '../list/list'
 import { Group } from '../group'
 import { debug } from '../utils'
-import { includes } from '../utils/polyfill'
+import config from '../config/config'
 
 class Registry extends List {
 
@@ -19,16 +19,38 @@ class Registry extends List {
       throw new Error('Invalid group. Only Group instances allowed.')
     }
 
-    if (!includes(this.groupNames(), group.name)) {
-      if (debug()) {
-        console.warn(`registry.add() Group "${group.name}" added to registry (spirit.groups) and can be resolved by Spirit app`)
+    const existingGroup = this.get(group.name)
+    const warn = msg => debug() && console.warn(`registry.add() Group "${group.name}" ${msg}`)
+
+    const addToRegistry = () => {
+      if (existingGroup) {
+        warn('overwrite group in registry')
+        this.remove(existingGroup)
       }
       super.add(group)
-    } else {
-      if (debug()) {
-        console.warn(`registry.add() Group "${group.name}" already exist in registry. Skip registry (spirit.groups)`)
-      }
     }
+
+    if (config.overwriteAnimations) {
+      return addToRegistry()
+    }
+
+    if (!existingGroup) {
+      warn('added to registry and can be resolved by Spirit desktop app')
+      return addToRegistry()
+    }
+
+    warn('skipped, already exists in registry')
+  }
+
+  /**
+   * Remove group from registry
+   *
+   * @param   {Group} group
+   * @returns {Group}
+   */
+  remove(group) {
+    group.reset()
+    return super.remove(group)
   }
 
   /**

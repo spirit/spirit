@@ -1,7 +1,6 @@
 import List from '../list/list'
 import Group from './group'
-import config from '../config/config'
-import { debug } from '../utils'
+import { debug, gsap } from '../utils'
 import registry from '../registry/registry'
 
 class Groups extends List {
@@ -64,25 +63,8 @@ class Groups extends List {
    * @returns {Array.<TimelineLite|TimelineMax>}
    */
   construct() {
-    if (!config.gsap.timeline || !config.gsap.tween) {
-      if (debug()) {
-        console.warn(`
-            Trying to construct groups, but GSAP cannot be found.
-            
-            Did you forgot to call spirit.setup() ?
-            
-            spirit.setup() usage:
-            
-                // auto inject gsap from cdn:
-                spirit.setup()
-                
-                // or provide gsap instances manually:
-                spirit.setup({
-                  tween:    TweenMax,
-                  timeline: TimelineMax
-                })
-          `)
-      }
+    if (!gsap.has()) {
+      debug() && console.warn('Trying to construct groups, but GSAP cannot be found.')
       throw new Error('GSAP cannot be found')
     }
     return this.list.map(group => group.construct())

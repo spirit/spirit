@@ -1,37 +1,49 @@
 import config from '../config/config'
-import loadScript from './loadscript'
+import loadscript from './loadscript'
 import Timeline from '../group/timeline'
 import debug from './debug'
+import { isFunction } from './is'
+import { isBrowser } from './context'
 
 /**
- * Check on gsap presence
+ * Check on GSAP presence
  *
  * @returns {boolean}
  */
 export function has() {
-  return !!(config.gsap.tween && config.gsap.timeline)
+  return isFunction(config.gsap.tween) && isFunction(config.gsap.timeline)
 }
 
 /**
- * Ensure gsap is loaded
- * Auto inject gsap if configured
+ * Ensure GSAP is loaded
+ * Auto inject
  *
- * @returns {Promise}
+ * @returns {Promise<void>}
  */
 export function ensure() {
   if (has()) {
     return Promise.resolve()
   }
 
+  // has gsap on window object?
+  const wTween = window.TweenMax || window.TweenLite
+  const wTimeline = window.TimelineMax || window.TimelineLite
+
+  if (isBrowser() && isFunction(wTween) && isFunction(wTimeline)) {
+    config.gsap.tween = wTween
+    config.gsap.timeline = wTimeline
+
+    return Promise.resolve()
+  }
+
+  // load from cdn
   if (!config.gsap.autoInject) {
     if (debug()) {
       console.warn(`
       
-        It seems that you have disabled autoInject. GSAP can not be found by Spirit.
-        Please make sure you provide the tween and timeline to Spirit.
+        It seems that you've disabled autoInject. GSAP cannot be found or loaded by Spirit.
+        Please make sure you provide the tween and timeline to Spirit:
       
-        For example:
-        
         spirit.setup({
           tween: TweenMax,
           timeline: TimelineMax
@@ -63,15 +75,32 @@ export function ensure() {
     `)
   }
 
-  return loadScript(config.gsap.autoInjectUrl)
+  return this.loadFromCDN()
+}
+
+/**
+ * Load GSAP from CDN based on autoInjectUrl
+ *
+ * @return {Promise<void>}
+ */
+export function loadFromCDN() {
+  return loadscript(config.gsap.autoInjectUrl)
     .then(() => {
       config.gsap.tween = window.TweenMax
       config.gsap.timeline = window.TimelineMax
 
       return Promise.resolve()
+    }).catch(err => {
+      return Promise.reject(err)
     })
 }
 
+/**
+ * Get transform origins for timeline
+ *
+ * @param {Timeline} timeline
+ * @return {Function}
+ */
 export function transformOrigins(timeline) {
   const prop = timeline.props.get('transformOrigin')
   let origins = (prop && prop.keyframes.list.map(k => ({ time: k.time, value: k.value }))) || []
@@ -106,12 +135,12 @@ export function generateTimeline(timeline) {
     throw new Error('Need valid timeline data to generate GSAP timeline from')
   }
 
-  if (!config.gsap.timeline) {
-    throw new Error('GSAP not set. Please make sure GSAP is available.')
-  }
-
   if (timeline.type !== 'dom') {
     throw new Error('Timeline invalid. Needs a timeline with type of dom.')
+  }
+
+  if (!has()) {
+    throw new Error('GSAP not set. Please make sure GSAP is available.')
   }
 
   const tl = new config.gsap.timeline({ paused: true }) // eslint-disable-line new-cap
@@ -181,7 +210,7 @@ export function generateTimeline(timeline) {
  * @param {TimelineMax|TimelineLite} gsapTimeline
  */
 export function killTimeline(gsapTimeline) {
-  if (gsapTimeline && gsapTimeline instanceof config.gsap.timeline) {
+  if (isTimeline(gsapTimeline)) {
     gsapTimeline.eventCallback('onComplete', null)
     gsapTimeline.eventCallback('onUpdate', null)
     gsapTimeline.eventCallback('onStart', null)
@@ -190,7 +219,7 @@ export function killTimeline(gsapTimeline) {
     gsapTimeline.kill()
 
     for (let i = 0; i < targets.length; i++) {
-      if (targets[i] && targets[i] instanceof config.gsap.timeline) {
+      if (isTimeline(targets[i])) {
         killTimeline(targets[i])
         continue
       }
@@ -201,4 +230,14 @@ export function killTimeline(gsapTimeline) {
     }
     gsapTimeline.clear()
   }
+
+  return gsapTimeline
+}
+
+export function isTimeline(timeline) {
+  return timeline && isFunction(config.gsap.timeline) && timeline instanceof config.gsap.timeline
+}
+
+export function isTween(tween) {
+  return tween && isFunction(config.gsap.tween) && tween instanceof config.gsap.tween
 }
