@@ -1,5 +1,5 @@
 /*!
- * Spirit.js v2.2.1
+ * Spirit.js v2.2.2
  * 
  * (c) 2017 Patrick Brouwer
  * Released under the MIT License.
@@ -1504,8 +1504,10 @@ function groupsFactory() {
         list.push(groups);
       }
       if (group) {
-        groups.add(group);
+        group._list = groups;
         group.resolve();
+
+        groups.add(group);
       }
     },
     groups: function groups() {
@@ -4171,7 +4173,7 @@ module.exports = g;
 /* harmony export (binding) */ __webpack_require__.d(exports, "version", function() { return version; });
 
 
-var version = '2.2.1';
+var version = '2.2.2';
 
 
 
