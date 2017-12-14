@@ -46,11 +46,21 @@ describe('groups', () => {
     })
 
     it('should get correct durations', async () => {
-      config.gsap.autoInjectUrl = 'test/fixtures/gsap.js'
-
       const groups = new Groups(document.body, simpleGroups)
       groups.construct()
       expect(groups.list.map(group => group.duration)).to.deep.equal([10, 25])
+    })
+
+    it('should construct groups and resolve items', () => {
+      const groups = new Groups(document.body, simpleGroups)
+
+      groups.each(g => sinon.spy(g, 'resolve'))
+      groups.construct(true)
+
+      groups.each(g => {
+        expect(g.resolve.called).to.be.true
+        g.resolve.restore()
+      })
     })
 
   })

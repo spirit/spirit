@@ -62,12 +62,12 @@ class Groups extends List {
    *
    * @returns {Array.<TimelineLite|TimelineMax>}
    */
-  construct() {
+  construct(resolve = false) {
     if (!gsap.has()) {
       debug() && console.warn('Trying to construct groups, but GSAP cannot be found.')
       throw new Error('GSAP cannot be found')
     }
-    return this.list.map(group => group.construct())
+    return this.list.map(group => group.construct(resolve))
   }
 
   /**
