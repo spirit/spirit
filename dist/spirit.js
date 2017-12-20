@@ -1,5 +1,5 @@
 /*!
- * Spirit.js v2.2.2
+ * Spirit.js v2.2.3
  * 
  * (c) 2017 Patrick Brouwer
  * Released under the MIT License.
@@ -1029,7 +1029,8 @@ var setter = function setter(target, key, descriptor) {
  * @param {*}       defaultValue  (optional, default=null)
  * @param {Array}   validators    (optional)
  */
-function emitChange(prop) {
+function emitChange() {
+  var prop = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : null;
   var defaultValue = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
   var validators = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : [];
 
@@ -1408,6 +1409,10 @@ var Timeline = (_dec = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__utils_
 
         this.props.mappings = [].concat(_toConsumableArray(this.props.mappings));
       }
+
+      if (this.type === 'dom' && transformObject instanceof window.Element) {
+        this._style = transformObject.getAttribute('style');
+      }
     },
     get: function get() {
       return this._transformObject;
@@ -1754,9 +1759,19 @@ var Group = (_dec = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_3__utils_emi
   }, {
     key: 'reset',
     value: function reset() {
+      var killed = false;
       if (this.timeline) {
+        killed = true;
         __WEBPACK_IMPORTED_MODULE_1__utils__["e" /* gsap */].killTimeline(this.timeline);
+
+        // reset styles
+        this.timelines.each(function (tl) {
+          if (tl.type === 'dom' && tl.transformObject instanceof window.Element) {
+            tl._style && tl.transformObject.setAttribute('style', tl._style);
+          }
+        });
       }
+      return killed;
     }
 
     /**
@@ -1826,9 +1841,7 @@ var Group = (_dec = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_3__utils_emi
 
         resolve && this.resolve();
 
-        if (this.timeline) {
-          __WEBPACK_IMPORTED_MODULE_1__utils__["e" /* gsap */].killTimeline(this.timeline);
-        } else {
+        if (!this.reset()) {
           this.timeline = new __WEBPACK_IMPORTED_MODULE_0__config_config__["a" /* default */].gsap.timeline({ paused: true }); // eslint-disable-line new-cap
         }
 
@@ -2161,6 +2174,13 @@ var Keyframe = (_dec = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__utils_
     value: function prev() {
       return this._prev;
     }
+
+    /**
+     * Get the  value
+     *
+     * @returns {*}
+     */
+
   }, {
     key: 'isEval',
 
@@ -2247,7 +2267,14 @@ var Keyframe = (_dec = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__utils_
       }
 
       return this._value;
-    },
+    }
+
+    /**
+     * Set value
+     *
+     * @param {*} val
+     */
+    ,
     set: function set(val) {
       this._value = val;
     }
@@ -4173,7 +4200,7 @@ module.exports = g;
 /* harmony export (binding) */ __webpack_require__.d(exports, "version", function() { return version; });
 
 
-var version = '2.2.2';
+var version = '2.2.3';
 
 
 
