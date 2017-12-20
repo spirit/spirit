@@ -93,6 +93,10 @@ class Timeline extends Emitter {
 
       this.props.mappings = [...this.props.mappings]
     }
+
+    if (this.type === 'dom' && transformObject instanceof window.Element) {
+      this._style = transformObject.getAttribute('style')
+    }
   }
 
   get transformObject() {
