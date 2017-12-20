@@ -1,5 +1,5 @@
 /*!
- * Spirit.js v2.2.3
+ * Spirit.js v2.2.4
  * 
  * (c) 2017 Patrick Brouwer
  * Released under the MIT License.
@@ -4200,7 +4200,7 @@ module.exports = g;
 /* harmony export (binding) */ __webpack_require__.d(exports, "version", function() { return version; });
 
 
-var version = '2.2.3';
+var version = '2.2.4';
 
 
 
