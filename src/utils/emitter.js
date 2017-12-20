@@ -141,7 +141,7 @@ const setter = function(target, key, descriptor) {
  * @param {*}       defaultValue  (optional, default=null)
  * @param {Array}   validators    (optional)
  */
-export function emitChange(prop, defaultValue = null, validators = []) {
+export function emitChange(prop = null, defaultValue = null, validators = []) {
   if (prop) {
     // bind as class
     return function(target) {

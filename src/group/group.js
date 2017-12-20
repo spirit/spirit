@@ -172,9 +172,19 @@ class Group extends Emitter {
   }
 
   reset() {
+    let killed = false
     if (this.timeline) {
+      killed = true
       gsap.killTimeline(this.timeline)
+
+      // reset styles
+      this.timelines.each(tl => {
+        if (tl.type === 'dom' && tl.transformObject instanceof window.Element) {
+          tl._style && tl.transformObject.setAttribute('style', tl._style)
+        }
+      })
     }
+    return killed
   }
 
   /**
@@ -236,9 +246,7 @@ class Group extends Emitter {
 
       resolve && this.resolve()
 
-      if (this.timeline) {
-        gsap.killTimeline(this.timeline)
-      } else {
+      if (!this.reset()) {
         this.timeline = new config.gsap.timeline({ paused: true }) // eslint-disable-line new-cap
       }
 

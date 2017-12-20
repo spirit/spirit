@@ -67,6 +67,11 @@ class Keyframe extends Emitter {
     return this._prev
   }
 
+  /**
+   * Get the  value
+   *
+   * @returns {*}
+   */
   get value() {
     if (this.isEval()) {
       // create available mappings for current value
@@ -105,6 +110,11 @@ class Keyframe extends Emitter {
     return this._value
   }
 
+  /**
+   * Set value
+   *
+   * @param {*} val
+   */
   @emitChange()
   set value(val) {
     this._value = val
