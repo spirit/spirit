@@ -3,7 +3,8 @@
   "version": "2.2.3",
   "title": "Spirit",
   "description": "The animation toolkit for the web",
-  "main": "lib/index.js",
+  "main": "dist/spirit.js",
+  "module": "lib/index.js",
   "files": [
     "spiritjs.d.ts",
     "dist/",
