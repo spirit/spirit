@@ -1,20 +1,37 @@
-# Spirit - Runtime player
+<p align="center">
+  <img src="https://spiritapp.io/spirit.gif" alt="Spirit" width="100" height="64" />
+</p>
+ 
+<h1 align="center">Spirit - Player for the Web</h1>
 
-Spirit is the animation tool for the web. 
+<p align="center">
+  <a href="https://npmjs.org/package/spiritjs">
+    <img src="https://img.shields.io/npm/v/spiritjs.svg" alt="version" />
+  </a>
+  <a href="https://travis-ci.org/terkelg/prompts">
+    <img src="https://img.shields.io/travis/spirit/spirit.svg" alt="travis" />
+  </a>
+  <a href="https://greensock.com/gsap">
+    <img src="https://img.shields.io/badge/gsap-v1.20.4-brightgreen.svg" alt="greensock" />
+  </a>
+  <a href="https://npmjs.org/package/spiritjs">
+    <img src="https://img.shields.io/npm/dm/spiritjs.svg" alt="downloads" />
+  </a>
+</p>
 
-![](https://spiritapp.io/spirit.gif)
+<p align="center">
+  <b>Lightweight and easy to use</b></br>
+  <sub>Play your (with Spirit Studio) created animations directly on your web page<sub> 
+</p>
 
-[![npm version](https://badge.fury.io/js/spiritjs.svg)](https://badge.fury.io/js/spiritjs) 
-[![Build Status](https://travis-ci.org/spirit/spirit.svg?branch=master)](https://travis-ci.org/spirit/spirit)
-[![Greensock Compatibility](https://img.shields.io/badge/gsap-v1.20.3-brightgreen.svg)](https://greensock.com/gsap)
 
-## Getting Started:
+## ❯ Getting Started:
 
 - [Spirit Homepage](https://spiritapp.io)
 - [Get you up and running](https://spiritapp.io/getting-started)
 - [Documentation](https://docs.spiritapp.io)
 
-## Install
+## ❯ Install
 
 See:
  
@@ -32,12 +49,16 @@ browser:
 node:
 
 ```bash
+# with npm
 npm install spiritjs --save
+
+# or yarn
+yarn add spiritjs
 ```
 
-## Usage
+## ❯ Usage
 
-```javascript
+```js
 spirit.loadAnimation({
   loop: true,
   yoyo: true,
