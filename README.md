@@ -28,15 +28,17 @@
 ## ❯ Getting Started:
 
 - [Spirit Homepage](https://spiritapp.io)
-- [Get you up and running](https://spiritapp.io/getting-started)
+- [Get you up and running](https://spiritapp.io/getstarted)
 - [Documentation](https://docs.spiritapp.io)
 
 ## ❯ Install
 
 See:
  
-- [Documentation - Install](https://docs.spiritapp.io/installation.html)
-- [Documentation - Embed Runtime](https://docs.spiritapp.io/gsap_runtime_include.html)
+- [Documentation - What is Spirit](https://docs.spiritapp.io/spirit.html)
+- [Documentation - Install Web Player](https://docs.spiritapp.io/web-player/install.html)
+- [Documentation - Usage Simple](https://docs.spiritapp.io/web-player/simple-api.html)
+- [Documentation - Usage Extended](https://docs.spiritapp.io/web-player/extended-api/)
 
 TLDR;
 
@@ -67,7 +69,7 @@ spirit.loadAnimation({
 })
 ```
 
-Head over to the [API documentation](https://docs.spiritapp.io/gsap_runtime_simple.html) for more information.
+Head over to the [API Documentation](https://docs.spiritapp.io/web-player/simple-api.html) for more information.
 
 ## Examples
 
