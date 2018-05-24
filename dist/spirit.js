@@ -1,7 +1,7 @@
 /*!
- * Spirit.js v2.2.4
+ * Spirit.js v2.2.5
  * 
- * (c) 2017 Patrick Brouwer
+ * (c) 2018 Patrick Brouwer
  * Released under the MIT License.
  */
 (function webpackUniversalModuleDefinition(root, factory) {
@@ -115,13 +115,13 @@ return /******/ (function(modules) { // webpackBootstrap
 /* harmony reexport (module object) */ __webpack_require__.d(exports, "e", function() { return __WEBPACK_IMPORTED_MODULE_1__gsap__; });
 /* harmony reexport (module object) */ __webpack_require__.d(exports, "c", function() { return __WEBPACK_IMPORTED_MODULE_2__events__; });
 /* harmony reexport (module object) */ __webpack_require__.d(exports, "b", function() { return __WEBPACK_IMPORTED_MODULE_3__convert__; });
-/* unused harmony reexport xpath */
+/* harmony reexport (module object) */ __webpack_require__.d(exports, "g", function() { return __WEBPACK_IMPORTED_MODULE_4__xpath__; });
 /* harmony reexport (module object) */ __webpack_require__.d(exports, "a", function() { return __WEBPACK_IMPORTED_MODULE_5__is__; });
 /* unused harmony reexport emitter */
 /* unused harmony reexport loadscript */
-/* harmony reexport (binding) */ __webpack_require__.d(exports, "h", function() { return __WEBPACK_IMPORTED_MODULE_9__jsonloader__["a"]; });
+/* harmony reexport (binding) */ __webpack_require__.d(exports, "i", function() { return __WEBPACK_IMPORTED_MODULE_9__jsonloader__["a"]; });
 /* unused harmony reexport autobind */
-/* harmony reexport (binding) */ __webpack_require__.d(exports, "g", function() { return __WEBPACK_IMPORTED_MODULE_11__debug__["a"]; });
+/* harmony reexport (binding) */ __webpack_require__.d(exports, "h", function() { return __WEBPACK_IMPORTED_MODULE_11__debug__["a"]; });
 
 
 /***/ },
@@ -1127,7 +1127,7 @@ var Registry = function (_List) {
 
       var existingGroup = this.get(group.name);
       var warn = function warn(msg) {
-        return __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__utils__["g" /* debug */])() && console.warn('registry.add() Group "' + group.name + '" ' + msg);
+        return __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__utils__["h" /* debug */])() && console.warn('registry.add() Group "' + group.name + '" ' + msg);
       };
 
       var addToRegistry = function addToRegistry() {
@@ -1600,7 +1600,7 @@ function load(url) {
     return Promise.reject(new Error('Invalid context: spirit.load() can only be executed in the browser.'));
   }
 
-  return __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__utils__["h" /* jsonloader */])(url).then(function (data) {
+  return __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__utils__["i" /* jsonloader */])(url).then(function (data) {
     return create(data, root);
   });
 }
@@ -1796,6 +1796,11 @@ var Group = (_dec = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_3__utils_emi
       this.timelines.each(function (timeline) {
         if (timeline.type === 'dom') {
           timeline.transformObject = !root ? null : __WEBPACK_IMPORTED_MODULE_1__utils__["f" /* resolver */].resolveElement(root, timeline);
+
+          if (timeline.transformObject) {
+            timeline.path = __WEBPACK_IMPORTED_MODULE_1__utils__["g" /* xpath */].getExpression(timeline.transformObject, root);
+          }
+
           if (!hasUnresolved && !timeline.transformObject) {
             hasUnresolved = true;
           }
@@ -1808,7 +1813,7 @@ var Group = (_dec = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_3__utils_emi
       });
 
       if (hasUnresolved) {
-        if (__webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__utils__["g" /* debug */])()) {
+        if (__webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__utils__["h" /* debug */])()) {
           console.warn('Could not resolve all elements for group ' + this.name, this.unresolved);
         }
         this.emit('unresolve', this.unresolved);
@@ -1833,7 +1838,7 @@ var Group = (_dec = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_3__utils_emi
 
       try {
         if (!__WEBPACK_IMPORTED_MODULE_1__utils__["e" /* gsap */].has()) {
-          if (__webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__utils__["g" /* debug */])()) {
+          if (__webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__utils__["h" /* debug */])()) {
             console.warn('Cannot construct group ' + this.name + '. GSAP not found.');
           }
           throw new Error('GSAP cannot be found');
@@ -3137,8 +3142,8 @@ function includes(arr, item) {
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__is__ = __webpack_require__(5);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__debug__ = __webpack_require__(6);
-/* unused harmony export getExpression */
-/* harmony export (immutable) */ exports["a"] = getElement;
+/* harmony export (immutable) */ exports["getExpression"] = getExpression;
+/* harmony export (immutable) */ exports["getElement"] = getElement;
 
 
 
@@ -3472,7 +3477,7 @@ var Groups = function (_List) {
       var resolve = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : false;
 
       if (!__WEBPACK_IMPORTED_MODULE_2__utils__["e" /* gsap */].has()) {
-        __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__utils__["g" /* debug */])() && console.warn('Trying to construct groups, but GSAP cannot be found.');
+        __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__utils__["h" /* debug */])() && console.warn('Trying to construct groups, but GSAP cannot be found.');
         throw new Error('GSAP cannot be found');
       }
       return this.list.map(function (group) {
@@ -4075,7 +4080,7 @@ function resolveElement(root, data) {
   }
 
   if (!transformObject && path) {
-    transformObject = __WEBPACK_IMPORTED_MODULE_1__xpath__["a" /* getElement */](path, root === document.body ? undefined : root);
+    transformObject = __WEBPACK_IMPORTED_MODULE_1__xpath__["getElement"](path, root === document.body ? undefined : root);
   }
 
   if (!transformObject) {
@@ -4200,7 +4205,7 @@ module.exports = g;
 /* harmony export (binding) */ __webpack_require__.d(exports, "version", function() { return version; });
 
 
-var version = '2.2.4';
+var version = '2.2.5';
 
 
 
