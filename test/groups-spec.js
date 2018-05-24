@@ -2,6 +2,7 @@ import config from '../src/config/config'
 import { Groups, Group, Timelines } from '../src/group'
 import setup from '../src/config/setup'
 import { simpleGroups } from './fixtures/group/groups'
+import { is } from '../src/utils'
 
 const configGsap = { ...config.gsap }
 
@@ -72,6 +73,14 @@ describe('groups', () => {
           document.createElement('div'),
           document.createElement('div')
         ]
+
+    before(() => {
+      sinon.stub(is, 'isSVG', element => ['SVG', 'G', 'RECT'].includes(element.nodeName))
+    })
+
+    after(() => {
+      is.isSVG.restore()
+    })
 
     beforeEach(() => {
       data = simpleGroups[0]
