@@ -1,5 +1,5 @@
 import config from '../config/config'
-import { gsap, debug, resolver } from '../utils'
+import { gsap, debug, resolver, xpath } from '../utils'
 import Timelines from './timelines'
 import { emitChange } from '../utils/emitter'
 import { TimelineError } from '../utils/errors'
@@ -208,6 +208,11 @@ class Group extends Emitter {
     this.timelines.each(timeline => {
       if (timeline.type === 'dom') {
         timeline.transformObject = !root ? null : resolver.resolveElement(root, timeline)
+
+        if (timeline.transformObject) {
+          timeline.path = xpath.getExpression(timeline.transformObject, root)
+        }
+
         if (!hasUnresolved && !timeline.transformObject) {
           hasUnresolved = true
         }
