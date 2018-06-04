@@ -762,56 +762,6 @@ describe('list', () => {
 
   })
 
-  describe('iterable generator', () => {
-
-    it('should be iterable', () => {
-      let list = new List()
-      expect(typeof list[Symbol.iterator] === 'function').to.be.true
-    })
-
-    it('should iterate over unsorted list', () => {
-      let list = new List([
-        { key: 'one' },
-        { key: 'two' },
-        { key: 'three' }
-      ])
-
-      let result = []
-      for (let i of list) result.push(i)
-
-      expect(result).to.deep.equal([
-        { key: 'one' },
-        { key: 'two' },
-        { key: 'three' }
-      ])
-
-      expect(list[0]).to.deep.equal({ key: 'one' })
-      expect(list[1]).to.deep.equal({ key: 'two' })
-      expect(list[2]).to.deep.equal({ key: 'three' })
-      expect([...list]).to.deep.equal([
-        { key: 'one' },
-        { key: 'two' },
-        { key: 'three' }
-      ])
-    })
-
-    it('should iterate over sorted list', () => {
-      const list = new List([1, 4, 2])
-      list.sortOn = true
-
-      let result = []
-      for (let i of list) result.push(i)
-
-      expect(result).to.deep.equal([1,2,4])
-
-      expect(result[0]).to.equal(1)
-      expect(result[1]).to.equal(2)
-      expect(result[2]).to.equal(4)
-      expect([...result]).to.deep.equal([1, 2, 4])
-    })
-
-  })
-
   describe('dispatch changes', () => {
 
     let spy
