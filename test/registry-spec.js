@@ -65,19 +65,6 @@ describe('registry', () => {
     expect(registry.get('ghost')).not.to.equal(created)
   })
 
-  it('should overwrite existing group with config.overwriteAnimations true', () => {
-    create([
-      { name: 'ghost', timelines: [] },
-      { name: 'logo', timelines: [] }
-    ])
-
-    const ghost = registry.get('ghost')
-    const created = create({ name: 'ghost', timelines: [] }).at(0)
-
-    expect(registry.get('ghost')).to.equal(created)
-    expect(registry.get('ghost')).not.to.equal(ghost)
-  })
-
   describe('add and remove from groups', () => {
     let groups
 
@@ -176,10 +163,10 @@ describe('registry', () => {
         { name: 'e', timeScale: 1.2, timelines: [] },
       ])
 
-      expect(registry.groupNames()).to.deep.equal(['a', 'b', 'c', 'd', 'e'])
+      expect(registry.groupNames()).to.deep.equal(['a', 'b', 'c', 'c', 'd', 'e'])
       expect(registry.get('a')).to.equal(a.get('a'))
       expect(registry.get('b')).to.equal(a.get('b'))
-      expect(registry.get('c')).to.equal(b.get('c'))
+      expect(registry.get('c')).to.equal(a.get('c'))
       expect(registry.get('d')).to.equal(b.get('d'))
       expect(registry.get('e')).to.equal(b.get('e'))
     })
