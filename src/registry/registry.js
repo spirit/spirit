@@ -1,7 +1,5 @@
 import List from '../list/list'
 import { Group } from '../group'
-import { debug } from '../utils'
-import config from '../config/config'
 
 class Registry extends List {
 
@@ -18,28 +16,7 @@ class Registry extends List {
     if (!(group instanceof Group)) {
       throw new Error('Invalid group. Only Group instances allowed.')
     }
-
-    const existingGroup = this.get(group.name)
-    const warn = msg => debug() && console.warn(`registry.add() Group "${group.name}" ${msg}`)
-
-    const addToRegistry = () => {
-      if (existingGroup) {
-        warn('overwrite group in registry')
-        this.remove(existingGroup)
-      }
-      super.add(group)
-    }
-
-    if (config.overwriteAnimations) {
-      return addToRegistry()
-    }
-
-    if (!existingGroup) {
-      warn('added to registry and can be resolved by Spirit desktop app')
-      return addToRegistry()
-    }
-
-    warn('skipped, already exists in registry')
+    super.add(group)
   }
 
   /**
