@@ -2,17 +2,17 @@
   <img src="https://spiritapp.io/banner.jpg" alt="Spirit" width="100%" />
 </p>
 
-<h1 align="center">Spirit - web player</h1>
+<h1 align="center">Spirit ⚡️ Web Player</h1>
 
 <p align="center">
-  <a href="https://npmjs.org/package/spiritjs">
-    <img src="https://img.shields.io/npm/v/spiritjs.svg" alt="version" />
-  </a>
   <a href="https://travis-ci.org/spirit/spirit">
     <img src="https://img.shields.io/travis/spirit/spirit.svg" alt="travis" />
   </a>
+  <a href="https://npmjs.org/package/spiritjs">
+    <img src="https://img.shields.io/npm/v/spiritjs.svg" alt="version" />
+  </a>
   <a href="https://greensock.com/gsap">
-    <img src="https://img.shields.io/badge/gsap-v2.0.0-brightgreen.svg" alt="greensock" />
+    <img src="https://img.shields.io/badge/gsap-v2.1.2-brightgreen.svg" alt="greensock" />
   </a>
   <a href="https://npmjs.org/package/spiritjs">
     <img src="https://img.shields.io/npm/dm/spiritjs.svg" alt="downloads" />
@@ -30,43 +30,58 @@
 
 ### Getting Started:
 
-* [Spirit Homepage](https://spiritapp.io)
-* [Get Started](https://spiritapp.io/getstarted)
-* [Documentation](https://docs.spiritapp.io)
+- [Spirit Homepage](https://spiritapp.io)
+- [Get Started](https://spiritapp.io/getstarted)
+- [Documentation](https://docs.spiritapp.io)
 
-### Install
-
-browser:
+### Browser:
 
 ```html
+<svg>
+  <g id="container">
+    <path d="..." data-spirit-id="body" />
+    <path d="..." data-spirit-id="mouth" />
+    <path d="..." data-spirit-id="legs" />
+  </g>
+</svg>
+
 <script src="https://unpkg.com/spiritjs/dist/spirit.min.js"></script>
+<script>
+  spirit.loadAnimation({ 
+    path: './animation.json',
+    container: dcument.getElementById('container') 
+  }).then(
+    timeline => timeline.play()
+  );
+</script>
 ```
 
-node:
+### Node:
+
+install:
 
 ```bash
 npm install spiritjs --save
 ```
 
-### Usage
+usage:
 
-```html
-<script src="https://unpkg.com/spiritjs/dist/spirit.js"></script>
-<script>
-  spirit.loadAnimation({ path: './animation.json' }).then(
-    timeline => timeline.play()
-  )
-</script>
+```js
+import spirit from 'spiritjs';
+
+spirit.loadAnimation({ path: './animation.json' }).then(
+  timeline => timeline.play()
+);
 ```
 
 For more info check out the [API Documentation](https://docs.spiritapp.io/web-player/simple-api.html).
 
 ### Links
 
-* [Documentation - What is Spirit](https://docs.spiritapp.io/spirit.html)
-* [Documentation - Install Web Player](https://docs.spiritapp.io/web-player/install.html)
-* [Documentation - Simple Usage](https://docs.spiritapp.io/web-player/simple-api.html)
-* [Documentation - Extended Usage](https://docs.spiritapp.io/web-player/extended-api/)
+- [Documentation - What is Spirit](https://docs.spiritapp.io/spirit.html)
+- [Documentation - Install Web Player](https://docs.spiritapp.io/web-player/install.html)
+- [Documentation - Simple Usage](https://docs.spiritapp.io/web-player/simple-api.html)
+- [Documentation - Extended Usage](https://docs.spiritapp.io/web-player/extended-api/)
 
 ### Examples
 
