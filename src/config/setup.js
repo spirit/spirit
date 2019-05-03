@@ -15,7 +15,7 @@ export default function setup(conf = {}) {
 
       obj[k] = conf[k]
     })
-
+    
     gsap.ensure()
       .then(resolve)
       .catch(reject)

@@ -1,16 +1,15 @@
 {
-  "presets": [["es2015", {"modules": false}], "stage-0"],
-  "plugins": [
-    "transform-decorators-legacy",
-    "inline-package-json"
+  "presets": [
+    ["@babel/preset-env"]
   ],
-  "env": {
-    "modules": {
-      "presets": ["es2015", "stage-0"],
-      "plugins": [
-        "transform-decorators-legacy",
-        "inline-package-json"
-      ]
-    }
-  }
+  "plugins": [
+    ["@babel/plugin-proposal-decorators", {
+      "legacy": true
+    }],
+    ["@babel/plugin-proposal-class-properties", {
+      "loose" : true
+    }],
+    "@babel/plugin-proposal-object-rest-spread",
+    "inline-package-json"
+  ]
 }
