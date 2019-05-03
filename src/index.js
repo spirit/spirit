@@ -9,18 +9,6 @@ import { create, load } from './data/parser'
 import loadAnimation from './loadAnimation'
 import debug from './utils/debug'
 
-const Spirit = function() {}
-
-Spirit.prototype = {
-  config,
-  version,
-  setup,
-  groups,
-  create,
-  load,
-  loadAnimation
-}
-
 export {
   config,
   version,
@@ -31,13 +19,17 @@ export {
   loadAnimation
 }
 
-const spirit = new Spirit()
+export default {
+  config,
+  version,
+  setup,
+  groups,
+  create,
+  load,
+  loadAnimation
+}
 
-module.exports = spirit
-
-if (context.isBrowser() && !window.spirit) {
-  window.spirit = spirit
-
+if (context.isBrowser()) {
   if (debug()) {
     console.warn(`You are running the development build of Spirit v${version}.`)
   }
