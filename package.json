@@ -1,6 +1,6 @@
 {
   "name": "spiritjs",
-  "version": "2.3.0",
+  "version": "2.4.0",
   "title": "Spirit",
   "description": "The animation toolkit for the web",
   "main": "dist/spirit.js",
