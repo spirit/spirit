@@ -2,7 +2,7 @@
   <img src="https://spiritapp.io/banner.jpg" alt="Spirit" width="100%" />
 </p>
 
-<h1 align="center">Spirit - Web Player</h1>
+<h1 align="center">Spirit - web player</h1>
 
 <p align="center">
   <a href="https://npmjs.org/package/spiritjs">
@@ -50,54 +50,21 @@ browser:
 node:
 
 ```bash
-# with npm
 npm install spiritjs --save
-
-# or yarn
-yarn add spiritjs
 ```
 
 ## ❯ Usage
 
 ```html
-<!--include the runtime-->
 <script src="https://unpkg.com/spiritjs/dist/spirit.js"></script>
-
-<!--script to play the created animation-->
 <script>
-
-  // Basic Usage
-
-  // note: use `path` or `animationData`
-  // to determine how to load animation data
-
-  // load animation data
-  spirit.loadAnimation({
-    loop: true,
-    yoyo: true,
-    delay: 0,
-    autoPlay: true,
-    path: './animation.json',
-    animationData: data
-  }).then(
-    // play it
+  spirit.loadAnimation({ path: './animation.json' }).then(
     timeline => timeline.play()
   )
-
-  // Extended Usage
-
-// load GSAP from CDN
-  spirit.setup().then(() => {
-    // load animation data
-    spirit.load('animation.json').then(groups => {
-      // construct first group and play it
-      groups.at(0).construct().play()
-    })
-  })
 </script>
 ```
 
-Head over to the [API Documentation](https://docs.spiritapp.io/web-player/simple-api.html) for more information.
+For more info check out the [API Documentation](https://docs.spiritapp.io/web-player/simple-api.html).
 
 ## Examples
 
