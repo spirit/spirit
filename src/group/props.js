@@ -4,7 +4,7 @@ import { convert, is } from '../utils'
 
 class Props extends List {
   duplicates = { prop: 'name' }
-  sortOn = (a, b) => b.name < a.name
+  sortOn = (a, b) => a.name.localeCompare(b.name)
   linkedList = true
 
   _mappings = []

@@ -167,7 +167,18 @@ class List extends Emitter {
 
     // sort on property
     if (typeof so === 'string') {
-      this._list = this._list.sort((a, b) => a[so] - b[so])
+      this._list = this._list.sort(
+        (a, b) => {
+          const valA = a[so]
+          const valB = b[so]
+
+          if (is.isNumeric(valA)) {
+            return valA - valB
+          }
+
+          String(valA).localeCompare(String(valB))
+        }
+      )
     }
 
     // sort on function
