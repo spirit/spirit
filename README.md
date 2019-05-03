@@ -28,18 +28,13 @@
   <sub>Play your animations on the web<sub>
 </p>
 
-## ❯ Getting Started:
+### Getting Started:
 
 * [Spirit Homepage](https://spiritapp.io)
 * [Get Started](https://spiritapp.io/getstarted)
 * [Documentation](https://docs.spiritapp.io)
 
-## ❯ Install
-
-* [Documentation - What is Spirit](https://docs.spiritapp.io/spirit.html)
-* [Documentation - Install Web Player](https://docs.spiritapp.io/web-player/install.html)
-* [Documentation - Simple Usage](https://docs.spiritapp.io/web-player/simple-api.html)
-* [Documentation - Extended Usage](https://docs.spiritapp.io/web-player/extended-api/)
+### Install
 
 browser:
 
@@ -53,7 +48,7 @@ node:
 npm install spiritjs --save
 ```
 
-## ❯ Usage
+### Usage
 
 ```html
 <script src="https://unpkg.com/spiritjs/dist/spirit.js"></script>
@@ -66,7 +61,14 @@ npm install spiritjs --save
 
 For more info check out the [API Documentation](https://docs.spiritapp.io/web-player/simple-api.html).
 
-## Examples
+### Links
+
+* [Documentation - What is Spirit](https://docs.spiritapp.io/spirit.html)
+* [Documentation - Install Web Player](https://docs.spiritapp.io/web-player/install.html)
+* [Documentation - Simple Usage](https://docs.spiritapp.io/web-player/simple-api.html)
+* [Documentation - Extended Usage](https://docs.spiritapp.io/web-player/extended-api/)
+
+### Examples
 
 <p>
   <img src="https://user-images.githubusercontent.com/232559/33662370-d6898552-da8b-11e7-9909-73334a313217.gif" width="210" />
