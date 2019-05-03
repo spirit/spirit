@@ -1,10 +1,5 @@
 {
   "parser": "babel-eslint",
-  "ecmaFeatures": {
-    "modules": true,
-    "spread" : true,
-    "restParams" : true
-  },
   "parserOptions": {
     "sourceType": "module"
   },

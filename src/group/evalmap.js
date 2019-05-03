@@ -1,5 +1,4 @@
 class EvalMap {
-
   /**
    * Create an evaluable map
    *
@@ -17,7 +16,6 @@ class EvalMap {
 
     Object.assign(this, { regex, map })
   }
-
 }
 
 export default EvalMap

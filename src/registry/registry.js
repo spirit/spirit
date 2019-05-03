@@ -2,7 +2,6 @@ import List from '../list/list'
 import { Group } from '../group'
 
 class Registry extends List {
-
   constructor() {
     super([])
   }
@@ -48,7 +47,6 @@ class Registry extends List {
   groupNames() {
     return this.list.map(g => g.name)
   }
-
 }
 
 export default new Registry()

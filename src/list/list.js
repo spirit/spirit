@@ -460,7 +460,6 @@ class List extends Emitter {
       return a
     }, [])
   }
-
 }
 
 List.Events = [

@@ -3,7 +3,6 @@ import Keyframe from './keyframe'
 import { convert, is } from '../utils'
 
 class Keyframes extends List {
-
   duplicates = { prop: 'time' }
   sortOn = 'time'
   linkedList = true

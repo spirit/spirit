@@ -3,7 +3,6 @@ import Prop from './prop'
 import { convert, is } from '../utils'
 
 class Props extends List {
-
   duplicates = { prop: 'name' }
   sortOn = (a, b) => b.name < a.name
   linkedList = true
@@ -116,7 +115,6 @@ class Props extends List {
     this.each(prop => prop.destroy())
     this.removeAllListeners()
   }
-
 }
 
 Props.Events = [

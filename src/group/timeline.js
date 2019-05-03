@@ -8,7 +8,6 @@ import EvalMap from './evalmap'
  * Timeline.
  */
 class Timeline extends Emitter {
-
   /**
    * Timeline type.
    * Can be "dom" or "object"
@@ -142,7 +141,6 @@ class Timeline extends Emitter {
       this.props.each(tr => tr.destroy())
     }
   }
-
 }
 
 Timeline.fromObject = function(obj) {
