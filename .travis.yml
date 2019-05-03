@@ -7,4 +7,4 @@ node_js:
   - "stable"
 
 script:
-  - npm test
+  - yarn test
