@@ -1,10 +1,8 @@
 {
-  "extends": "standard",
-  "plugins": [
-    "standard",
-    "promise"
-  ],
   "parser": "babel-eslint",
+  "parserOptions": {
+    "sourceType": "module"
+  },
   "env": {
     "node": true,
     "mocha": true,

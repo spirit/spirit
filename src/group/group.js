@@ -9,7 +9,6 @@ import { Emitter } from '../utils/events'
  * Group.
  */
 class Group extends Emitter {
-
   _name = 'untitled'
   _timeScale = 1
   _timelines = new Timelines()
@@ -275,7 +274,6 @@ class Group extends Emitter {
     this.emit('construct', this.timeline)
     return this.timeline
   }
-
 }
 
 Group.fromObject = function(obj) {

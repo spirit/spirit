@@ -38,7 +38,6 @@ import { includes } from '../utils/polyfill'
 ])
 
 class Prop extends Emitter {
-
   _keyframes = null
   _list = null
 

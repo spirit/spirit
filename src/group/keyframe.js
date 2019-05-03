@@ -29,7 +29,6 @@ import { Emitter } from '../utils/events'
 @emitChange('ease', null)
 
 class Keyframe extends Emitter {
-
   _list = null
   _value = null
 

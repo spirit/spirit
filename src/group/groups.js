@@ -4,7 +4,6 @@ import { debug, gsap } from '../utils'
 import registry from '../registry/registry'
 
 class Groups extends List {
-
   rootEl = null
 
   /**
@@ -79,7 +78,6 @@ class Groups extends List {
   get(name) {
     return this.list.find(group => group.name === name)
   }
-
 }
 
 export default Groups

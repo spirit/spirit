@@ -2,7 +2,6 @@ import List from '../list/list'
 import Timeline from './timeline'
 
 class Timelines extends List {
-
   /**
    * Create timelines instance.
    *
@@ -21,7 +20,6 @@ class Timelines extends List {
   get(transformObject) {
     return this._list.find(tl => tl.transformObject === transformObject)
   }
-
 }
 
 export default Timelines

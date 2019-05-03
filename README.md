@@ -1,8 +1,8 @@
 <p align="center">
-  <img src="https://spiritapp.io/spirit.gif" alt="Spirit" width="100" height="64" />
+  <img src="https://spiritapp.io/banner.jpg" alt="Spirit" width="100%" />
 </p>
 
-<h1 align="center">Spirit - Player for the Web</h1>
+<h1 align="center">Spirit - web player</h1>
 
 <p align="center">
   <a href="https://npmjs.org/package/spiritjs">
@@ -23,22 +23,18 @@
 </p>
 
 <p align="center">
-  <b>Lightweight and easy to use</b></br>
-  <sub>Play your (with Spirit Studio) created animations directly on your web page<sub>
+  <b>Lightweight and easy to use</b>
+  <br />
+  <sub>Play your animations on the web<sub>
 </p>
 
-## ❯ Getting Started:
+### Getting Started:
 
 * [Spirit Homepage](https://spiritapp.io)
 * [Get Started](https://spiritapp.io/getstarted)
 * [Documentation](https://docs.spiritapp.io)
 
-## ❯ Install
-
-* [Documentation - What is Spirit](https://docs.spiritapp.io/spirit.html)
-* [Documentation - Install Web Player](https://docs.spiritapp.io/web-player/install.html)
-* [Documentation - Simple Usage](https://docs.spiritapp.io/web-player/simple-api.html)
-* [Documentation - Extended Usage](https://docs.spiritapp.io/web-player/extended-api/)
+### Install
 
 browser:
 
@@ -49,56 +45,30 @@ browser:
 node:
 
 ```bash
-# with npm
 npm install spiritjs --save
-
-# or yarn
-yarn add spiritjs
 ```
 
-## ❯ Usage
+### Usage
 
 ```html
-<!--include the runtime-->
 <script src="https://unpkg.com/spiritjs/dist/spirit.js"></script>
-
-<!--script to play the created animation-->
 <script>
-
-  // Basic Usage
-
-  // note: use `path` or `animationData`
-  // to determine how to load animation data
-
-  // load animation data
-  spirit.loadAnimation({
-    loop: true,
-    yoyo: true,
-    delay: 0,
-    autoPlay: true,
-    path: './animation.json',
-    animationData: data
-  }).then(
-    // play it
+  spirit.loadAnimation({ path: './animation.json' }).then(
     timeline => timeline.play()
   )
-
-  // Extended Usage
-
-// load GSAP from CDN
-  spirit.setup().then(() => {
-    // load animation data
-    spirit.load('animation.json').then(groups => {
-      // construct first group and play it
-      groups.at(0).construct().play()
-    })
-  })
 </script>
 ```
 
-Head over to the [API Documentation](https://docs.spiritapp.io/web-player/simple-api.html) for more information.
+For more info check out the [API Documentation](https://docs.spiritapp.io/web-player/simple-api.html).
 
-## Examples
+### Links
+
+* [Documentation - What is Spirit](https://docs.spiritapp.io/spirit.html)
+* [Documentation - Install Web Player](https://docs.spiritapp.io/web-player/install.html)
+* [Documentation - Simple Usage](https://docs.spiritapp.io/web-player/simple-api.html)
+* [Documentation - Extended Usage](https://docs.spiritapp.io/web-player/extended-api/)
+
+### Examples
 
 <p>
   <img src="https://user-images.githubusercontent.com/232559/33662370-d6898552-da8b-11e7-9909-73334a313217.gif" width="210" />

@@ -54,7 +54,7 @@ describe('load-animation', () => {
         expect(result).to.be.an.instanceOf(config.gsap.timeline)
         expect(registry).to.have.lengthOf(1)
         expect(registry.at(0)).to.have.property('name', 'a')
-        expect(registry.at(0)).to.have.deep.property('_list.rootEl', document.body)
+        expect(registry.at(0)).to.have.nested.property('_list.rootEl', document.body)
       })
 
       it('should create animations from array', async () => {
@@ -63,7 +63,7 @@ describe('load-animation', () => {
         expect(result).to.be.an.instanceOf(config.gsap.timeline)
         expect(registry).to.have.lengthOf(1)
         expect(registry.at(0)).to.have.property('name', 'b')
-        expect(registry.at(0)).to.have.deep.property('_list.rootEl', document.body)
+        expect(registry.at(0)).to.have.nested.property('_list.rootEl', document.body)
       })
 
       it('should create animations from multi array', async () => {
@@ -80,11 +80,11 @@ describe('load-animation', () => {
 
         expect(registry).to.have.lengthOf(3)
         expect(registry.at(0)).to.have.property('name', 'a')
-        expect(registry.at(0)).to.have.deep.property('_list.rootEl', document.body)
+        expect(registry.at(0)).to.have.nested.property('_list.rootEl', document.body)
         expect(registry.at(1)).to.have.property('name', 'b')
-        expect(registry.at(1)).to.have.deep.property('_list.rootEl', document.body)
+        expect(registry.at(1)).to.have.nested.property('_list.rootEl', document.body)
         expect(registry.at(2)).to.have.property('name', 'c')
-        expect(registry.at(2)).to.have.deep.property('_list.rootEl', document.body)
+        expect(registry.at(2)).to.have.nested.property('_list.rootEl', document.body)
       })
 
       it('should create animations assigned to container', async () => {
@@ -94,7 +94,7 @@ describe('load-animation', () => {
         })
 
         expect(result).to.be.an.instanceOf(config.gsap.timeline)
-        expect(registry.at(0)).to.have.deep.property('_list.rootEl', div)
+        expect(registry.at(0)).to.have.nested.property('_list.rootEl', div)
       })
 
       it('should create groups with parsed root', async () => {
@@ -107,7 +107,7 @@ describe('load-animation', () => {
         })
 
         expect(result).to.be.an.instanceOf(config.gsap.timeline)
-        expect(registry.at(0)).to.have.deep.property('_list.rootEl', containers[0])
+        expect(registry.at(0)).to.have.nested.property('_list.rootEl', containers[0])
       })
 
       it('should create multiple groups with parsed roots', async () => {
@@ -124,9 +124,9 @@ describe('load-animation', () => {
         expect(result).to.be.an('object')
         expect(result).to.have.all.keys('a', 'b', 'c')
 
-        expect(registry.at(0)).deep.have.deep.property('_list.rootEl', containers[0])
-        expect(registry.at(1)).deep.have.deep.property('_list.rootEl', containers[1])
-        expect(registry.at(2)).deep.have.deep.property('_list.rootEl', containers[2])
+        expect(registry.at(0)).deep.have.nested.property('_list.rootEl', containers[0])
+        expect(registry.at(1)).deep.have.nested.property('_list.rootEl', containers[1])
+        expect(registry.at(2)).deep.have.nested.property('_list.rootEl', containers[2])
       })
 
       it('should throw error on invalid animation data', async () => {
@@ -143,7 +143,7 @@ describe('load-animation', () => {
       let sandbox
 
       beforeEach(() => {
-        sandbox = sinon.sandbox.create()
+        sandbox = sinon.createSandbox()
       })
 
       afterEach(() => {
@@ -160,7 +160,7 @@ describe('load-animation', () => {
         expect(result).to.be.an.instanceOf(config.gsap.timeline)
         expect(registry).to.have.lengthOf(1)
         expect(registry.at(0)).to.have.property('name', 'a')
-        expect(registry.at(0)).to.have.deep.property('_list.rootEl', document.body)
+        expect(registry.at(0)).to.have.nested.property('_list.rootEl', document.body)
       })
 
       it('should create animations from array', async () => {
@@ -171,7 +171,7 @@ describe('load-animation', () => {
         expect(result).to.be.an.instanceOf(config.gsap.timeline)
         expect(registry).to.have.lengthOf(1)
         expect(registry.at(0)).to.have.property('name', 'b')
-        expect(registry.at(0)).to.have.deep.property('_list.rootEl', document.body)
+        expect(registry.at(0)).to.have.nested.property('_list.rootEl', document.body)
       })
 
       it('should create animations from multi array', async () => {
@@ -190,11 +190,11 @@ describe('load-animation', () => {
 
         expect(registry).to.have.lengthOf(3)
         expect(registry.at(0)).to.have.property('name', 'a')
-        expect(registry.at(0)).to.have.deep.property('_list.rootEl', document.body)
+        expect(registry.at(0)).to.have.nested.property('_list.rootEl', document.body)
         expect(registry.at(1)).to.have.property('name', 'b')
-        expect(registry.at(1)).to.have.deep.property('_list.rootEl', document.body)
+        expect(registry.at(1)).to.have.nested.property('_list.rootEl', document.body)
         expect(registry.at(2)).to.have.property('name', 'c')
-        expect(registry.at(2)).to.have.deep.property('_list.rootEl', document.body)
+        expect(registry.at(2)).to.have.nested.property('_list.rootEl', document.body)
       })
 
       it('should create animations assigned to container', async () => {
@@ -206,7 +206,7 @@ describe('load-animation', () => {
         })
 
         expect(result).to.be.an.instanceOf(config.gsap.timeline)
-        expect(registry.at(0)).to.have.deep.property('_list.rootEl', div)
+        expect(registry.at(0)).to.have.nested.property('_list.rootEl', div)
       })
 
       it('should create groups with parsed root', async () => {
@@ -221,7 +221,7 @@ describe('load-animation', () => {
         const result = await loadAnimation({ path: 'animation.json' })
 
         expect(result).to.be.an.instanceOf(config.gsap.timeline)
-        expect(registry.at(0)).to.have.deep.property('_list.rootEl', containers[0])
+        expect(registry.at(0)).to.have.nested.property('_list.rootEl', containers[0])
       })
 
       it('should create multiple groups with parsed roots', async () => {
@@ -239,9 +239,9 @@ describe('load-animation', () => {
         expect(result).to.be.an('object')
         expect(result).to.have.all.keys('a', 'b', 'c')
 
-        expect(registry.at(0)).deep.have.deep.property('_list.rootEl', containers[0])
-        expect(registry.at(1)).deep.have.deep.property('_list.rootEl', containers[1])
-        expect(registry.at(2)).deep.have.deep.property('_list.rootEl', containers[2])
+        expect(registry.at(0)).deep.have.nested.property('_list.rootEl', containers[0])
+        expect(registry.at(1)).deep.have.nested.property('_list.rootEl', containers[1])
+        expect(registry.at(2)).deep.have.nested.property('_list.rootEl', containers[2])
       })
 
     })
@@ -256,8 +256,8 @@ describe('load-animation', () => {
     })
 
     before(() => {
-      sandbox = sinon.sandbox.create()
-      sandbox.stub(is, 'isSVG', element => ['SVG', 'G', 'RECT'].includes(element.nodeName))
+      sandbox = sinon.createSandbox()
+      sandbox.stub(is, 'isSVG').callsFake(element => ['SVG', 'G', 'RECT'].includes(element.nodeName));
     })
 
     after(() => {

@@ -9,3 +9,7 @@ export function isSVG(element) {
 export function isFunction(fn) {
   return typeof fn === 'function'
 }
+
+export function isNumeric(n) {
+  return !isNaN(n);
+}

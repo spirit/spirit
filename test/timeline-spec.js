@@ -68,7 +68,7 @@ describe('timeline', () => {
 
   describe('parse', () => {
     it('should parse properties by array', () => {
-      const tl = new Timeline('object', el, [
+      const tl = new Timeline('object', {}, [
         {
           'opacity': {
             '0s': { value: 0 },
@@ -110,7 +110,7 @@ describe('timeline', () => {
         { y: { '0s': { value: 0 }, '2s': { value: 100, ease: 'Power3.easeOut' } } }
       ])
 
-      const tl = new Timeline('object', el, props)
+      const tl = new Timeline('object', {}, props)
 
       expect(tl.props).to.be.an.instanceOf(Props)
       expect(tl.props.toObject()).to.deep.equal({
@@ -180,9 +180,11 @@ describe('timeline', () => {
       })
 
       it('should create a timeline with properties', () => {
+        const obj = { value: 0 };
+
         const tl = Timeline.fromObject({
           type: 'object',
-          transformObject: el,
+          transformObject: obj,
           props: {
             'x': {
               '0s': { value: 10 },
@@ -196,7 +198,7 @@ describe('timeline', () => {
           }
         })
 
-        expect(tl.toObject()).to.have.property('transformObject', el)
+        expect(tl.toObject()).to.have.property('transformObject', obj)
         expect(tl.toObject()).to.have.property('props').to.deep.equal({
           x: {
             '0s': { value: 10, ease: null },
@@ -302,13 +304,13 @@ describe('timeline', () => {
         })
 
         expect(tl.props.mappings).to.have.lengthOf(1)
-        expect(tl.props.mappings).to.have.deep.property('[0].map', elA)
+        expect(tl.props.mappings).to.have.nested.property('[0].map', elA)
         expect(tl.props.get('x').keyframes.get(0)).to.have.property('value', 10)
 
         tl.transformObject = elB
 
         expect(tl.props.mappings).to.have.lengthOf(1)
-        expect(tl.props.mappings).to.have.deep.property('[0].map', elB)
+        expect(tl.props.mappings).to.have.nested.property('[0].map', elB)
         expect(tl.props.get('x').keyframes.get(0)).to.have.property('value', 20)
       })
 
@@ -324,7 +326,7 @@ describe('timeline', () => {
           }
         }, 'div[0]')
 
-        expect(tl.toObject()).to.have.deep.property('props.x.0s.value', '100px')
+        expect(tl.toObject()).to.have.nested.property('props.x.0s.value', '100px')
       })
     })
   })
