@@ -3,7 +3,7 @@ import Keyframes from '../src/group/keyframes'
 import Keyframe from '../src/group/keyframe'
 import EvalMap from '../src/group/evalmap'
 
-describe('property', () => {
+describe('prop', () => {
 
   it('should create an empty property', () => {
     const prop = new Prop('x')

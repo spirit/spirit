@@ -4,7 +4,7 @@ import Keyframes from '../src/group/keyframes'
 import Keyframe from '../src/group/keyframe'
 import EvalMap from '../src/group/evalmap'
 
-describe('properties', () => {
+describe('props', () => {
 
   it('should have empty properties', () => {
     expect(new Props()).to.have.lengthOf(0)
@@ -193,18 +193,18 @@ describe('properties', () => {
 
     it('should apply mappings for properties to add', () => {
       expect(props.add(new Prop('scale')))
-        .to.have.deep.property('keyframes.mappings')
+        .to.have.nested.property('keyframes.mappings')
         .to.deep.equal(props.mappings)
     })
 
     it('should remove mappings on properties removal', () => {
       expect(props.remove(props.get('x')))
-        .to.have.deep.property('keyframes.mappings')
+        .to.have.nested.property('keyframes.mappings')
         .to.deep.equal([])
 
       props.remove([props.get('y'), props.get('z')]).forEach(prop => {
         expect(prop)
-          .to.have.deep.property('keyframes.mappings')
+          .to.have.nested.property('keyframes.mappings')
           .to.deep.equal([])
       })
     })
@@ -216,7 +216,7 @@ describe('properties', () => {
       }
 
       expect(props.get('x'))
-        .to.have.deep.property('keyframes.mappings')
+        .to.have.nested.property('keyframes.mappings')
         .to.deep.equal(props.mappings)
     })
   })
@@ -252,13 +252,13 @@ describe('properties', () => {
 
     it('should get property', () => {
       expect(properties.get('x')).to.be.an.instanceOf(Prop)
-      expect(properties.get('x')).to.have.deep.property('keyframes.list[0].value', 10)
+      expect(properties.get('x')).to.have.nested.property('keyframes.list[0].value', 10)
 
       expect(properties.get('y')).to.be.an.instanceOf(Prop)
-      expect(properties.get('y')).to.have.deep.property('keyframes.list[0].value', 100)
+      expect(properties.get('y')).to.have.nested.property('keyframes.list[0].value', 100)
 
       expect(properties.get('z')).to.be.an.instanceOf(Prop)
-      expect(properties.get('z')).to.have.deep.property('keyframes.list[0].value', 1000)
+      expect(properties.get('z')).to.have.nested.property('keyframes.list[0].value', 1000)
     })
 
     it('should get undefined', () => {
@@ -644,11 +644,11 @@ describe('properties', () => {
 
       const expectSpy = spy => {
         expect(spy.callCount).to.equal(2)
-        expect(spy.getCall(0).args[0]).to.have.deep.property('changed.from', 'x')
-        expect(spy.getCall(0).args[0]).to.have.deep.property('changed.to', 'renamed')
+        expect(spy.getCall(0).args[0]).to.have.nested.property('changed.from', 'x')
+        expect(spy.getCall(0).args[0]).to.have.nested.property('changed.to', 'renamed')
 
-        expect(spy.getCall(1).args[0]).to.have.deep.property('changed.from', 'renamed')
-        expect(spy.getCall(1).args[0]).to.have.deep.property('changed.to', 'x')
+        expect(spy.getCall(1).args[0]).to.have.nested.property('changed.from', 'renamed')
+        expect(spy.getCall(1).args[0]).to.have.nested.property('changed.to', 'x')
       }
 
       expectSpy(spy)
@@ -668,12 +668,12 @@ describe('properties', () => {
 
       const expectSpy = spy => {
         expect(spy.callCount).to.equal(1)
-        expect(spy.getCall(0).args[0]).to.have.deep.property('changed.from').to.deep.equal([
+        expect(spy.getCall(0).args[0]).to.have.nested.property('changed.from').to.deep.equal([
           { '0s': { value: 0, ease: null } },
           { '1s': { value: 100, ease: null } },
           { '2s': { value: 1000, ease: null } }
         ])
-        expect(spy.getCall(0).args[0]).to.have.deep.property('changed.to').to.deep.equal({
+        expect(spy.getCall(0).args[0]).to.have.nested.property('changed.to').to.deep.equal({
           '0s': { value: 0, ease: null },
           '1s': { value: 0, ease: null }
         })
@@ -705,10 +705,10 @@ describe('properties', () => {
       const expectSpy = spy => {
         expect(spy.callCount).to.equal(2)
 
-        expect(spy.getCall(0).args[0]).to.have.deep.property('changed.from').to.equal(0)
-        expect(spy.getCall(0).args[0]).to.have.deep.property('changed.to').to.equal(50)
-        expect(spy.getCall(1).args[0]).to.have.deep.property('changed.from').to.equal(100)
-        expect(spy.getCall(1).args[0]).to.have.deep.property('changed.to').to.equal(200)
+        expect(spy.getCall(0).args[0]).to.have.nested.property('changed.from').to.equal(0)
+        expect(spy.getCall(0).args[0]).to.have.nested.property('changed.to').to.equal(50)
+        expect(spy.getCall(1).args[0]).to.have.nested.property('changed.from').to.equal(100)
+        expect(spy.getCall(1).args[0]).to.have.nested.property('changed.to').to.equal(200)
       }
 
       expectSpy(spy)
@@ -727,10 +727,10 @@ describe('properties', () => {
       const expectSpy = spy => {
         expect(spy.callCount).to.equal(2)
 
-        expect(spy.getCall(0).args[0]).to.have.deep.property('changed.from').to.equal(0)
-        expect(spy.getCall(0).args[0]).to.have.deep.property('changed.to').to.equal(50)
-        expect(spy.getCall(1).args[0]).to.have.deep.property('changed.from').to.equal(1)
-        expect(spy.getCall(1).args[0]).to.have.deep.property('changed.to').to.equal(200)
+        expect(spy.getCall(0).args[0]).to.have.nested.property('changed.from').to.equal(0)
+        expect(spy.getCall(0).args[0]).to.have.nested.property('changed.to').to.equal(50)
+        expect(spy.getCall(1).args[0]).to.have.nested.property('changed.from').to.equal(1)
+        expect(spy.getCall(1).args[0]).to.have.nested.property('changed.to').to.equal(200)
       }
 
       expectSpy(spy)
@@ -749,10 +749,10 @@ describe('properties', () => {
       const expectSpy = spy => {
         expect(spy.callCount).to.equal(2)
 
-        expect(spy.getCall(0).args[0]).to.have.deep.property('changed.from').to.equal(null)
-        expect(spy.getCall(0).args[0]).to.have.deep.property('changed.to').to.equal('Power3.easeOut')
-        expect(spy.getCall(1).args[0]).to.have.deep.property('changed.from').to.equal(null)
-        expect(spy.getCall(1).args[0]).to.have.deep.property('changed.to').to.equal('Strong.easeInOut')
+        expect(spy.getCall(0).args[0]).to.have.nested.property('changed.from').to.equal(null)
+        expect(spy.getCall(0).args[0]).to.have.nested.property('changed.to').to.equal('Power3.easeOut')
+        expect(spy.getCall(1).args[0]).to.have.nested.property('changed.from').to.equal(null)
+        expect(spy.getCall(1).args[0]).to.have.nested.property('changed.to').to.equal('Strong.easeInOut')
       }
 
       expectSpy(spy)

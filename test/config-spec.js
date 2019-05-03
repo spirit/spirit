@@ -11,7 +11,7 @@ describe('config', () => {
   beforeEach(() => {
     config.gsap.autoInjectUrl = 'test/fixtures/gsap.js'
 
-    sandbox = sinon.sandbox.create()
+    sandbox = sinon.createSandbox()
     sandbox.spy(gsap, 'ensure')
     sandbox.spy(gsap, 'loadFromCDN')
   })
@@ -27,8 +27,8 @@ describe('config', () => {
   })
 
   it('should load gsap from CDN on setup()', async () => {
-    expect(config).to.have.deep.property('gsap.tween', null)
-    expect(config).to.have.deep.property('gsap.timeline', null)
+    expect(config).to.have.nested.property('gsap.tween', null)
+    expect(config).to.have.nested.property('gsap.timeline', null)
     expect(gsap.ensure.callCount).to.equal(0)
     expect(gsap.loadFromCDN.callCount).to.equal(0)
 
@@ -37,13 +37,13 @@ describe('config', () => {
     expect(gsap.ensure.callCount).to.equal(1)
     expect(gsap.loadFromCDN.callCount).to.equal(1)
 
-    expect(config).to.have.deep.property('gsap.tween').to.be.a('function')
-    expect(config).to.have.deep.property('gsap.timeline').to.be.a('function')
+    expect(config).to.have.nested.property('gsap.tween').to.be.a('function')
+    expect(config).to.have.nested.property('gsap.timeline').to.be.a('function')
   })
 
   it('should load gsap from CDN on invalid gsap params', async () => {
-    expect(config).to.have.deep.property('gsap.tween', null)
-    expect(config).to.have.deep.property('gsap.timeline', null)
+    expect(config).to.have.nested.property('gsap.tween', null)
+    expect(config).to.have.nested.property('gsap.timeline', null)
     expect(gsap.ensure.callCount).to.equal(0)
     expect(gsap.loadFromCDN.callCount).to.equal(0)
 
@@ -51,13 +51,13 @@ describe('config', () => {
 
     expect(gsap.ensure.callCount).to.equal(1)
     expect(gsap.loadFromCDN.callCount).to.equal(1)
-    expect(config).to.have.deep.property('gsap.tween').to.be.a('function')
-    expect(config).to.have.deep.property('gsap.timeline').to.be.a('function')
+    expect(config).to.have.nested.property('gsap.tween').to.be.a('function')
+    expect(config).to.have.nested.property('gsap.timeline').to.be.a('function')
   })
 
   it('should setup gsap through instances', async () => {
-    expect(config).to.have.deep.property('gsap.tween', null)
-    expect(config).to.have.deep.property('gsap.timeline', null)
+    expect(config).to.have.nested.property('gsap.tween', null)
+    expect(config).to.have.nested.property('gsap.timeline', null)
     expect(gsap.ensure.callCount).to.equal(0)
     expect(gsap.loadFromCDN.callCount).to.equal(0)
 
@@ -65,16 +65,16 @@ describe('config', () => {
 
     expect(gsap.ensure.callCount).to.equal(1)
     expect(gsap.loadFromCDN.callCount).to.equal(0)
-    expect(config).to.have.deep.property('gsap.tween').to.be.a('function')
-    expect(config).to.have.deep.property('gsap.timeline').to.be.a('function')
+    expect(config).to.have.nested.property('gsap.tween').to.be.a('function')
+    expect(config).to.have.nested.property('gsap.timeline').to.be.a('function')
   })
 
   it('should setup gsap from window object (using *Max)', async () => {
     window.TweenMax = () => {}
     window.TimelineMax = () => {}
 
-    expect(config).to.have.deep.property('gsap.tween', null)
-    expect(config).to.have.deep.property('gsap.timeline', null)
+    expect(config).to.have.nested.property('gsap.tween', null)
+    expect(config).to.have.nested.property('gsap.timeline', null)
     expect(gsap.ensure.callCount).to.equal(0)
     expect(gsap.loadFromCDN.callCount).to.equal(0)
 
@@ -82,16 +82,16 @@ describe('config', () => {
 
     expect(gsap.ensure.callCount).to.equal(1)
     expect(gsap.loadFromCDN.callCount).to.equal(0)
-    expect(config).to.have.deep.property('gsap.tween').to.be.a('function')
-    expect(config).to.have.deep.property('gsap.timeline').to.be.a('function')
+    expect(config).to.have.nested.property('gsap.tween').to.be.a('function')
+    expect(config).to.have.nested.property('gsap.timeline').to.be.a('function')
   })
 
   it('should setup gsap from window object (using *Lite)', async () => {
     window.TweenLite = () => {}
     window.TimelineLite = () => {}
 
-    expect(config).to.have.deep.property('gsap.tween', null)
-    expect(config).to.have.deep.property('gsap.timeline', null)
+    expect(config).to.have.nested.property('gsap.tween', null)
+    expect(config).to.have.nested.property('gsap.timeline', null)
     expect(gsap.ensure.callCount).to.equal(0)
     expect(gsap.loadFromCDN.callCount).to.equal(0)
 
@@ -99,8 +99,8 @@ describe('config', () => {
 
     expect(gsap.ensure.callCount).to.equal(1)
     expect(gsap.loadFromCDN.callCount).to.equal(0)
-    expect(config).to.have.deep.property('gsap.tween').to.be.a('function')
-    expect(config).to.have.deep.property('gsap.timeline').to.be.a('function')
+    expect(config).to.have.nested.property('gsap.tween').to.be.a('function')
+    expect(config).to.have.nested.property('gsap.timeline').to.be.a('function')
   })
 
 })

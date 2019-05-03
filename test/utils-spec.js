@@ -28,7 +28,7 @@ const gsapConfig = { ...config.gsap }
 describe('utils', () => {
 
   before(() => {
-    sinon.stub(is, 'isSVG', element => ['SVG', 'G', 'RECT'].includes(element.nodeName))
+    sinon.stub(is, 'isSVG').callsFake(element => ['SVG', 'G', 'RECT'].includes(element.nodeName))
   })
 
   after(() => {
@@ -70,7 +70,7 @@ describe('utils', () => {
     let sandbox
 
     beforeEach(() => {
-      sandbox = sinon.sandbox.create()
+      sandbox = sinon.createSandbox()
       Object.keys(jsonloaderReq).forEach(key => delete jsonloaderReq[key])
       Object.keys(jsonloaderCache).forEach(key => delete jsonloaderCache[key])
     })
@@ -298,7 +298,7 @@ describe('utils', () => {
             transformOrigin: { '0s': '0% 0%' }
           }, 'div[0]')).getChildren().map(c => c.vars)
 
-          expect(vars[0]).to.have.deep.property('css.transformOrigin', '0% 0%')
+          expect(vars[0]).to.have.nested.property('css.transformOrigin', '0% 0%')
         })
 
         it('should add default transform origin for time(0) is origins length > 0 but not starting at 0', () => {
@@ -439,8 +439,8 @@ describe('utils', () => {
           const vars = timeline.getChildren().map(c => c.vars)
 
           expect(vars).to.have.lengthOf(2)
-          expect(vars[0]).to.have.deep.property('attr.cx', 0)
-          expect(vars[1]).to.have.deep.property('attr.cx', 100)
+          expect(vars[0]).to.have.nested.property('attr.cx', 0)
+          expect(vars[1]).to.have.nested.property('attr.cx', 100)
         })
 
         it('should construct dot value property into recursive object', () => {
@@ -455,8 +455,8 @@ describe('utils', () => {
           const vars = timeline.getChildren().map(c => c.vars)
 
           expect(vars).to.have.lengthOf(2)
-          expect(vars[0]).to.have.deep.property('some.foo.bar', 0)
-          expect(vars[1]).to.have.deep.property('some.foo.bar', 100)
+          expect(vars[0]).to.have.nested.property('some.foo.bar', 0)
+          expect(vars[1]).to.have.nested.property('some.foo.bar', 100)
         })
 
       })
@@ -485,8 +485,8 @@ describe('utils', () => {
         })
 
         it('should have gsTransform values', () => {
-          expect(div).to.have.deep.property('_gsTransform.x', 1000)
-          expect(div).to.have.deep.property('_gsTransform.y', 100)
+          expect(div).to.have.nested.property('_gsTransform.x', 1000)
+          expect(div).to.have.nested.property('_gsTransform.y', 100)
         })
 
         it('should have cleared gsTransform values', () => {

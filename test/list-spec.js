@@ -11,7 +11,7 @@ describe('list', () => {
   })
 
   it('should execute model with default args', () => {
-    const sandbox = sinon.sandbox.create()
+    const sandbox = sinon.createSandbox();
     const spy = sandbox.spy()
 
     class Model {
@@ -393,12 +393,12 @@ describe('list', () => {
       })
 
       it('should return removed value', () => {
-        expect(list.remove(list.at(0))).to.be.an.instanceof(Model).to.have.deep.property('obj.a', 'b')
+        expect(list.remove(list.at(0))).to.be.an.instanceof(Model).to.have.nested.property('obj.a', 'b')
 
         const removed = list.remove([list.at(0), list.at(2)])
         expect(removed).to.be.an('array')
-        expect(removed[0]).to.be.an.instanceOf(Model).to.have.deep.property('obj.b', 'c')
-        expect(removed[1]).to.be.an.instanceOf(Model).to.have.deep.property('obj.d', 'e')
+        expect(removed[0]).to.be.an.instanceOf(Model).to.have.nested.property('obj.b', 'c')
+        expect(removed[1]).to.be.an.instanceOf(Model).to.have.nested.property('obj.d', 'e')
       })
     })
   })

@@ -525,7 +525,6 @@ describe('keyframes', () => {
       keyframe.ease = null
 
       const expectSpy = spy => {
-        console.log(spy.callCount)
         expect(spy.calledTwice).to.be.true
         expect(spy.getCall(0).args[0]).to.deep.equal({
           previous: { '20s': { value: 400, ease: null } },

@@ -37,7 +37,7 @@ describe('parser', () => {
   let sandbox
 
   before(() => {
-    sinon.stub(is, 'isSVG', element => ['SVG', 'G', 'RECT'].includes(element.nodeName))
+    sinon.stub(is, 'isSVG').callsFake(element => ['SVG', 'G', 'RECT'].includes(element.nodeName))
   })
 
   after(() => {
@@ -45,7 +45,7 @@ describe('parser', () => {
   })
 
   beforeEach(() => {
-    sandbox = sinon.sandbox.create()
+    sandbox = sinon.createSandbox()
   })
 
   afterEach(() => {
