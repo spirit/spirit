@@ -1,8 +1,8 @@
 <p align="center">
-  <img src="https://spiritapp.io/spirit.gif" alt="Spirit" width="100" height="64" />
+  <img src="https://spiritapp.io/banner.jpg" alt="Spirit" width="100%" />
 </p>
 
-<h1 align="center">Spirit - Player for the Web</h1>
+<h1 align="center">Spirit - Web Player</h1>
 
 <p align="center">
   <a href="https://npmjs.org/package/spiritjs">
@@ -23,8 +23,9 @@
 </p>
 
 <p align="center">
-  <b>Lightweight and easy to use</b></br>
-  <sub>Play your (with Spirit Studio) created animations directly on your web page<sub>
+  <b>Lightweight and easy to use</b>
+  <br />
+  <sub>Play your animations on the web<sub>
 </p>
 
 ## ❯ Getting Started:
