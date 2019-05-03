@@ -1,8 +1,5 @@
 'use strict'
 
-// use babel modules
-process.env.BABEL_ENV = 'modules'
-
 module.exports = function(wallaby) {
 
   return {
@@ -26,7 +23,13 @@ module.exports = function(wallaby) {
       type: 'node'
     },
 
-    workers: { recycle: true },
+    workers: {
+      initial: 1,
+      regular: 1,
+      recycle: true,
+    },
+
+    testFramework: 'mocha',
 
     middleware: function middleware(app, express) {
       app.use('/test/fixtures', express.static(
@@ -38,7 +41,6 @@ module.exports = function(wallaby) {
       const mocha = wallaby.testFramework
       mocha.timeout(5000)
 
-      process.env.NODE_ENV = 'test'
       require('./test/bootstrap')
     }
 
