@@ -1,5 +1,5 @@
 /*!
- * Spirit.js v2.4.0
+ * Spirit.js v2.4.1
  * 
  * (c) 2019 Patrick Brouwer
  * Released under the MIT License.
@@ -2335,7 +2335,7 @@ __webpack_require__.r(__webpack_exports__);
 
 /* harmony import */ var _utils_debug__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./utils/debug */ "./src/utils/debug.js");
 
-var version = "2.4.0";
+var version = "2.4.1";
 
 
 
@@ -2343,7 +2343,7 @@ var version = "2.4.0";
 
 
 
-/* harmony default export */ __webpack_exports__["default"] = ({
+var spirit = {
   config: _config_config__WEBPACK_IMPORTED_MODULE_1__["default"],
   version: version,
   setup: _config_setup__WEBPACK_IMPORTED_MODULE_2__["default"],
@@ -2351,9 +2351,15 @@ var version = "2.4.0";
   create: _data_parser__WEBPACK_IMPORTED_MODULE_4__["create"],
   load: _data_parser__WEBPACK_IMPORTED_MODULE_4__["load"],
   loadAnimation: _loadAnimation__WEBPACK_IMPORTED_MODULE_5__["default"]
-});
+};
+/* harmony default export */ __webpack_exports__["default"] = (spirit);
 
 if (_utils__WEBPACK_IMPORTED_MODULE_0__["context"].isBrowser()) {
+  if (window !== undefined) {
+    // add to global namespace so Spirit Studio can reach it
+    window.spirit = spirit;
+  }
+
   if (Object(_utils_debug__WEBPACK_IMPORTED_MODULE_6__["default"])()) {
     console.warn("You are running the development build of Spirit v".concat(version, "."));
   }
