@@ -19,7 +19,7 @@ export {
   loadAnimation
 }
 
-export default {
+const spirit = {
   config,
   version,
   setup,
@@ -27,9 +27,16 @@ export default {
   create,
   load,
   loadAnimation
-}
+};
+
+export default spirit;
 
 if (context.isBrowser()) {
+  if (window !== undefined) {
+    // add to global namespace so Spirit Studio can reach it
+    window.spirit = spirit;
+  }
+
   if (debug()) {
     console.warn(`You are running the development build of Spirit v${version}.`)
   }
