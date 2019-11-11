@@ -1,5 +1,5 @@
 /*!
- * Spirit.js v2.4.1
+ * Spirit.js v2.4.2
  * 
  * (c) 2019 Patrick Brouwer
  * Released under the MIT License.
@@ -2343,7 +2343,7 @@ __webpack_require__.r(__webpack_exports__);
 
 /* harmony import */ var _utils_debug__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./utils/debug */ "./src/utils/debug.js");
 
-var version = "2.4.1";
+var version = "2.4.2";
 
 
 
