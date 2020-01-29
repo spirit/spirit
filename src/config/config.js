@@ -5,10 +5,9 @@ class Config {
   overwriteAnimations = true
 
   gsap = {
-    tween: null,
-    timeline: null,
+    instance: null,
     autoInject: true,
-    autoInjectUrl: 'https://unpkg.com/gsap@2.1.3/umd/TweenMax.js'
+    autoInjectUrl: 'https://unpkg.com/gsap@3.1.1/dist/gsap.min.js'
   }
 }
 

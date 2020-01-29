@@ -2,8 +2,9 @@ import config from '../config/config'
 import loadscript from './loadscript'
 import Timeline from '../group/timeline'
 import debug from './debug'
-import { isFunction } from './is'
+import {isFunction, isGSAPInstance} from './is'
 import { isBrowser } from './context'
+import {gsap} from "./index";
 
 /**
  * Check on GSAP presence
@@ -11,7 +12,7 @@ import { isBrowser } from './context'
  * @returns {boolean}
  */
 export function has() {
-  return isFunction(config.gsap.tween) && isFunction(config.gsap.timeline)
+  return isGSAPInstance(config.gsap.instance);
 }
 
 /**
@@ -25,14 +26,8 @@ export function ensure() {
     return Promise.resolve()
   }
 
-  // has gsap on window object?
-  const wTween = window.TweenMax || window.TweenLite
-  const wTimeline = window.TimelineMax || window.TimelineLite
-
-  if (isBrowser() && isFunction(wTween) && isFunction(wTimeline)) {
-    config.gsap.tween = wTween
-    config.gsap.timeline = wTimeline
-
+  if (isBrowser() && isGSAPInstance(window.gsap)) {
+    config.gsap.instance = window.gsap;
     return Promise.resolve()
   }
 
@@ -40,17 +35,17 @@ export function ensure() {
   if (!config.gsap.autoInject) {
     if (debug()) {
       console.warn(`
-      
+
         It seems that you've disabled autoInject. GSAP cannot be found or loaded by Spirit.
         Please make sure you provide the tween and timeline to Spirit:
-      
+
         spirit.setup({
           tween: TweenMax,
           timeline: TimelineMax
         })
-        
+
         Or enable the autoInject "spirit.config.gsap.autoInject = true".
-        
+
       `)
     }
 
@@ -59,19 +54,19 @@ export function ensure() {
 
   if (debug()) {
     console.warn(`
-      
+
       GSAP is being fetched from CDN: ${config.gsap.autoInjectUrl}.
       If you already have GSAP installed, please provide it to Spirit:
-      
+
         spirit.setup({
           tween: TweenMax,
           timeline: TimelineMax
         })
-      
+
       You want to use another cdn? Change it here:
-       
+
         spirit.config.gsap.autoInjectUrl = 'https://cdn.xxx'
-      
+
     `)
   }
 
@@ -86,9 +81,10 @@ export function ensure() {
 export function loadFromCDN() {
   return loadscript(config.gsap.autoInjectUrl)
     .then(() => {
-      config.gsap.tween = window.TweenMax
-      config.gsap.timeline = window.TimelineMax
-
+      if (!isGSAPInstance(window.gsap)) {
+        return Promise.reject(new Error('GSAP could not be loaded from CDN: ' + config.gsap.autoInjectUrl))
+      }
+      config.gsap.instance = window.gsap
       return Promise.resolve()
     }).catch(err => {
       return Promise.reject(err)
@@ -143,7 +139,8 @@ export function generateTimeline(timeline) {
     throw new Error('GSAP not set. Please make sure GSAP is available.')
   }
 
-  const tl = new config.gsap.timeline({ paused: true }) // eslint-disable-line new-cap
+  // create new timeline
+  const tl = config.gsap.instance.timeline({ paused: true }) // eslint-disable-line new-cap
 
   const origins = transformOrigins(timeline)
   let origin = origins.current
@@ -158,11 +155,10 @@ export function generateTimeline(timeline) {
     while (keyframe) {
       const { value, ease, time } = keyframe
       const prev = keyframe.prev()
-
       const start = prev ? prev.time : 0
       const duration = prev ? time - prev.time : time
 
-      let props = { ease: ease || 'Linear.easeNone' }
+      let props = { ease: ease || 'none' }
       let property = { [prop.name]: value }
 
       // parse dots into recursive object
@@ -183,7 +179,7 @@ export function generateTimeline(timeline) {
         property = o
       }
 
-      props = { ...props, ...property }
+      props = { ...props, ...property, duration }
 
       if (time === 0) {
         props.immediateRender = true
@@ -194,7 +190,7 @@ export function generateTimeline(timeline) {
         origin = origins.next().current
       }
 
-      tl.to(timeline.transformObject, duration, props, start)
+      tl.to(timeline.transformObject, props, start)
 
       keyframe = keyframe.next()
     }
@@ -211,33 +207,38 @@ export function generateTimeline(timeline) {
  */
 export function killTimeline(gsapTimeline) {
   if (isTimeline(gsapTimeline)) {
-    gsapTimeline.eventCallback('onComplete', null)
-    gsapTimeline.eventCallback('onUpdate', null)
-    gsapTimeline.eventCallback('onStart', null)
+    if (gsapTimeline.eventCallback) {
+      gsapTimeline.eventCallback('onComplete', null)
+      gsapTimeline.eventCallback('onUpdate', null)
+      gsapTimeline.eventCallback('onStart', null)
+      gsapTimeline.eventCallback('onReverseComplete', null)
+      gsapTimeline.eventCallback('onRepeat', null)
+    }
 
-    const targets = gsapTimeline.getChildren()
+    const targets = gsapTimeline.getChildren ? gsapTimeline.getChildren() : []
     gsapTimeline.kill()
 
     for (let i = 0; i < targets.length; i++) {
-      if (isTimeline(targets[i])) {
-        killTimeline(targets[i])
-        continue
+      if (targets[i]._targets) {
+        for (const el of targets[i]._targets) {
+          config.gsap.instance.set(el, { clearProps: 'all' })
+          delete el._gsap;
+        }
       }
 
-      if (targets[i].target !== null) {
-        config.gsap.tween.set(targets[i].target, { clearProps: 'all' })
+      if (isTimeline(targets[i])) {
+        killTimeline(targets[i])
       }
     }
-    gsapTimeline.clear()
+
+    if (gsapTimeline.clear) {
+      gsapTimeline.clear()
+    }
   }
 
   return gsapTimeline
 }
 
 export function isTimeline(timeline) {
-  return timeline && isFunction(config.gsap.timeline) && timeline instanceof config.gsap.timeline
-}
-
-export function isTween(tween) {
-  return tween && isFunction(config.gsap.tween) && tween instanceof config.gsap.tween
+  return timeline && config.gsap.instance && timeline instanceof config.gsap.instance.core.Animation
 }

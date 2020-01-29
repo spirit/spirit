@@ -13,3 +13,7 @@ export function isFunction(fn) {
 export function isNumeric(n) {
   return !isNaN(n);
 }
+
+export function isGSAPInstance(n) {
+  return (isObject(n) && isFunction(n.to) && isFunction(n.timeline))
+}
