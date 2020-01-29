@@ -106,7 +106,8 @@ export default function(manifest) {
           let timeline = timelines[i];
 
           if (options.loop) {
-            timeline.repeat(-1);
+            const loopCount = typeof options.loop === 'boolean' ? -1 : options.loop;
+            timeline.repeat(loopCount);
           }
 
           if (options.yoyo) {
