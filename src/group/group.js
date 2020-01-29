@@ -1,19 +1,20 @@
-import config from '../config/config'
-import { gsap, debug, resolver, xpath } from '../utils'
-import Timelines from './timelines'
-import { emitChange } from '../utils/emitter'
-import { TimelineError } from '../utils/errors'
-import { Emitter } from '../utils/events'
+import config from '../config/config';
+import { gsap, debug, resolver, xpath, is } from '../utils';
+import Timelines from './timelines';
+import { emitChange } from '../utils/emitter';
+import { TimelineError } from '../utils/errors';
+import { Emitter } from '../utils/events';
+import { isGSAPTimeline } from '../utils/gsap';
 
 /**
  * Group.
  */
 class Group extends Emitter {
-  _name = 'untitled'
-  _timeScale = 1
-  _timelines = new Timelines()
+  _name = 'untitled';
+  _timeScale = 1;
+  _timelines = new Timelines();
 
-  timeline = null
+  timeline = null;
 
   /**
    * Create a group instance.
@@ -21,22 +22,22 @@ class Group extends Emitter {
    * @param {object} props
    */
   constructor(props = {}) {
-    super()
+    super();
 
     if (!props.name || typeof props.name !== 'string' || props.name.trim() === '') {
-      throw new Error('Cannot create group without a name.')
+      throw new Error('Cannot create group without a name.');
     }
 
     const defaults = {
       name: 'untitled',
       timeScale: 1,
-      timelines: new Timelines()
-    }
+      timelines: new Timelines(),
+    };
 
     Object.assign(this, {
       ...defaults,
-      ...props
-    })
+      ...props,
+    });
   }
 
   /**
@@ -45,7 +46,7 @@ class Group extends Emitter {
    * @returns {Timelines}
    */
   get timelines() {
-    return this._timelines
+    return this._timelines;
   }
 
   /**
@@ -54,9 +55,9 @@ class Group extends Emitter {
    * @returns {Timelines}
    */
   get unresolved() {
-    let timelines = new Timelines()
-    this.timelines.each(tl => !tl.transformObject && timelines.add(tl))
-    return timelines
+    let timelines = new Timelines();
+    this.timelines.each(tl => !tl.transformObject && timelines.add(tl));
+    return timelines;
   }
 
   /**
@@ -65,9 +66,9 @@ class Group extends Emitter {
    * @returns {Timelines}
    */
   get resolved() {
-    let timelines = new Timelines()
-    this.timelines.each(tl => !!tl.transformObject && timelines.add(tl))
-    return timelines
+    let timelines = new Timelines();
+    this.timelines.each(tl => !!tl.transformObject && timelines.add(tl));
+    return timelines;
   }
 
   /**
@@ -78,9 +79,9 @@ class Group extends Emitter {
   @emitChange()
   set timelines(timelines) {
     if (!(timelines instanceof Timelines)) {
-      timelines = new Timelines(Array.from(timelines))
+      timelines = new Timelines(Array.from(timelines));
     }
-    this._timelines = timelines
+    this._timelines = timelines;
   }
 
   /**
@@ -89,7 +90,7 @@ class Group extends Emitter {
    * @returns {number}
    */
   get timeScale() {
-    return this._timeScale
+    return this._timeScale;
   }
 
   /**
@@ -99,15 +100,15 @@ class Group extends Emitter {
    */
   @emitChange()
   set timeScale(scale) {
-    if (!(typeof scale === 'number' && isFinite(scale))) {
-      throw new Error('timeScale needs to be a number')
+    if (!(typeof scale === 'number' && Number.isFinite(scale))) {
+      throw new Error('timeScale needs to be a number');
     }
 
-    if (this.timeline && this.timeline instanceof config.gsap.timeline) {
-      this.timeline.timeScale(scale)
+    if (isGSAPTimeline(this.timeline)) {
+      this.timeline.timeScale(scale);
     }
 
-    this._timeScale = scale
+    this._timeScale = scale;
   }
 
   /**
@@ -117,7 +118,7 @@ class Group extends Emitter {
    * @returns {number}
    */
   get duration() {
-    return this.timeline ? this.timeline.duration() : 0
+    return this.timeline ? this.timeline.duration() : 0;
   }
 
   /**
@@ -128,10 +129,10 @@ class Group extends Emitter {
    */
   @emitChange()
   set duration(val) {
-    if (this.timeline && this.timeline instanceof config.gsap.timeline) {
-      this.timeline.duration(val)
-      this.timeScale = this.timeline.timeScale()
-      this._duration = this.timeline.duration()
+    if (isGSAPTimeline(this.timeline)) {
+      this.timeline.duration(val);
+      this.timeScale = this.timeline.timeScale();
+      this._duration = this.timeline.duration();
     }
   }
 
@@ -141,7 +142,7 @@ class Group extends Emitter {
    * @returns {string}
    */
   get name() {
-    return this._name
+    return this._name;
   }
 
   /**
@@ -152,9 +153,9 @@ class Group extends Emitter {
   @emitChange()
   set name(name) {
     if (typeof name !== 'string') {
-      throw new Error('Name needs to be a string')
+      throw new Error('Name needs to be a string');
     }
-    this._name = name
+    this._name = name;
   }
 
   /**
@@ -163,27 +164,27 @@ class Group extends Emitter {
    * @returns {object}
    */
   toObject() {
-    const name = this.name
-    const timeScale = this.timeScale
-    const timelines = this.timelines.toArray()
+    const name = this.name;
+    const timeScale = this.timeScale;
+    const timelines = this.timelines.toArray();
 
-    return { name, timeScale, timelines }
+    return { name, timeScale, timelines };
   }
 
   reset() {
-    let killed = false
+    let killed = false;
     if (this.timeline) {
-      killed = true
-      gsap.killTimeline(this.timeline)
+      killed = true;
+      gsap.killTimeline(this.timeline);
 
       // reset styles
       this.timelines.each(tl => {
         if (tl.type === 'dom' && tl.transformObject instanceof window.Element) {
-          tl._style && tl.transformObject.setAttribute('style', tl._style)
+          tl._style && tl.transformObject.setAttribute('style', tl._style);
         }
-      })
+      });
     }
-    return killed
+    return killed;
   }
 
   /**
@@ -192,92 +193,99 @@ class Group extends Emitter {
    * @returns {Group}
    */
   resolve() {
-    this.reset()
+    this.reset();
 
-    const root = (this._list && this._list.rootEl)
-      ? this._list.rootEl
-      : null
+    const root = this._list && this._list.rootEl ? this._list.rootEl : null;
 
     if (!root) {
-      return this
+      return this;
     }
 
-    let hasUnresolved = false
+    let hasUnresolved = false;
 
     this.timelines.each(timeline => {
       if (timeline.type === 'dom') {
-        timeline.transformObject = !root ? null : resolver.resolveElement(root, timeline)
+        timeline.transformObject = !root ? null : resolver.resolveElement(root, timeline);
 
         if (timeline.transformObject) {
-          timeline.path = xpath.getExpression(timeline.transformObject, root)
+          timeline.path = xpath.getExpression(timeline.transformObject, root);
         }
 
         if (!hasUnresolved && !timeline.transformObject) {
-          hasUnresolved = true
+          hasUnresolved = true;
         }
       }
-    })
+    });
 
     this.emit('resolve', {
       resolved: this.resolved,
-      unresolved: this.unresolved
-    })
+      unresolved: this.unresolved,
+    });
 
     if (hasUnresolved) {
       if (debug()) {
-        console.warn(`Could not resolve all elements for group ${this.name}`, this.unresolved)
+        console.warn(
+          `Could not resolve all elements for group ${this.name}`,
+          this.unresolved
+        );
       }
-      this.emit('unresolve', this.unresolved)
+      this.emit('unresolve', this.unresolved);
     }
 
-    return this
+    return this;
   }
 
   /**
    * Construct GSAP timeline
    *
    * @param   {boolean} resolve elements
-   * @returns {TimelineMax|TimelineLite}
+   * @returns {gsap.timeline}
    */
   construct(resolve = false) {
     try {
       if (!gsap.has()) {
         if (debug()) {
-          console.warn(`Cannot construct group ${this.name}. GSAP not found.`)
+          console.warn(`Cannot construct group ${this.name}. GSAP not found.`);
         }
-        throw new Error('GSAP cannot be found')
+        throw new Error('GSAP cannot be found');
       }
 
-      resolve && this.resolve()
+      if (resolve) {
+        this.resolve();
+      }
 
       if (!this.reset()) {
-        this.timeline = new config.gsap.timeline({ paused: true }) // eslint-disable-line new-cap
+        const tl = config.gsap.instance.timeline({ paused: true }); // eslint-disable-line new-cap
+        this.timeline = tl;
       }
 
       this.resolved.each(timeline => {
-        if (timeline.type === 'dom' && timeline.transformObject instanceof window.Element) {
+        if (
+          timeline.type === 'dom' &&
+          timeline.transformObject instanceof window.Element
+        ) {
           try {
-            this.timeline.add(gsap.generateTimeline(timeline).play(), 0, 'start')
+            this.timeline.add(gsap.generateTimeline(timeline).play(), 0, 'start');
           } catch (err) {
-            throw new TimelineError(err.message, timeline.transformObject, err.stack)
+            throw new TimelineError(err.message, timeline.transformObject, err.stack);
           }
         }
-      })
+      });
 
-      this.timeline.timeScale(this.timeScale)
-      this._duration = this.timeline.duration()
+      this.timeline.timeScale(this.timeScale);
+      this._duration = this.timeline.duration();
     } catch (err) {
-      err.message = `Could not construct timeline: ${err.message}`
-      throw err
+      err.message = `Could not construct timeline: ${err.message}`;
+      throw err;
     }
 
-    this.emit('construct', this.timeline)
-    return this.timeline
+    this.emit('construct', this.timeline);
+    return this.timeline;
   }
 }
 
 Group.fromObject = function(obj) {
-  return new Group(obj)
-}
+  return new Group(obj);
+};
 
-export default Group
+export default Group;

@@ -1,4 +1,4 @@
-import { isBrowser } from './context'
+import { isBrowser } from './context';
 
 /**
  * Load script into web page context
@@ -8,24 +8,24 @@ import { isBrowser } from './context'
  */
 export default function loadScript(src) {
   if (!isBrowser()) {
-    return Promise.reject(new Error(`Script can only be loaded in the browser: ${src}`))
+    return Promise.reject(new Error(`Script can only be loaded in the browser: ${src}`));
   }
 
   return new Promise((resolve, reject) => {
-    const s = document.createElement('script')
-    s.src = src
-    s.async = true
+    const s = document.createElement('script');
+    s.src = src;
+    s.async = true;
 
     s.onload = function() {
-      document.body.removeChild(s)
-      resolve()
-    }
+      document.body.removeChild(s);
+      resolve();
+    };
 
     s.onerror = function() {
-      document.body.removeChild(s)
-      reject(new Error(`Could not load script ${src}`))
-    }
+      document.body.removeChild(s);
+      reject(new Error(`Could not load script ${src}`));
+    };
 
-    document.body.appendChild(s)
-  })
+    document.body.appendChild(s);
+  });
 }

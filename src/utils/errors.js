@@ -1,17 +1,17 @@
 export class TimelineError extends Error {
-  transformObject = null
+  transformObject = null;
 
   constructor(message, transformObject, stack = null) {
-    super(message)
+    super(message);
 
     if (stack) {
-      this.stack = stack
+      this.stack = stack;
     } else {
-      Error.captureStackTrace(this, TimelineError)
+      Error.captureStackTrace(this, TimelineError);
     }
 
-    this.transformObject = transformObject
-    this.name = 'TimelineError'
-    this.message = message
+    this.transformObject = transformObject;
+    this.name = 'TimelineError';
+    this.message = message;
   }
 }

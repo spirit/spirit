@@ -1,6 +1,6 @@
-import { is } from '../utils'
-import { emitChange } from '../utils/emitter'
-import { Emitter } from '../utils/events'
+import { is } from '../utils';
+import { emitChange } from '../utils/emitter';
+import { Emitter } from '../utils/events';
 
 /**
  * -------------------------------------------
@@ -25,14 +25,15 @@ import { Emitter } from '../utils/events'
  * -------------------------------------------
  */
 
-@emitChange('time', null, [{ validator: val => typeof val === 'number', message: 'Time must be a number' }])
+@emitChange('time', null, [
+  { validator: val => typeof val === 'number', message: 'Time must be a number' },
+])
 @emitChange('ease', null)
-
 class Keyframe extends Emitter {
-  _list = null
-  _value = null
+  _list = null;
+  _value = null;
 
-  mappings = []
+  mappings = [];
 
   /**
    * Keyframe.
@@ -42,10 +43,10 @@ class Keyframe extends Emitter {
    * @param {string}  ease    easing value (optional)
    */
   constructor(time, value, ease = null) {
-    super()
+    super();
 
-    ease = ease || null
-    Object.assign(this, { time, value, ease })
+    ease = ease || null;
+    Object.assign(this, { time, value, ease });
   }
 
   /**
@@ -54,7 +55,7 @@ class Keyframe extends Emitter {
    * @returns {Keyframe|null}
    */
   next() {
-    return this._next
+    return this._next;
   }
 
   /**
@@ -63,7 +64,7 @@ class Keyframe extends Emitter {
    * @returns {Keyframe|null}
    */
   prev() {
-    return this._prev
+    return this._prev;
   }
 
   /**
@@ -76,37 +77,37 @@ class Keyframe extends Emitter {
       // create available mappings for current value
       const mappings = this.mappings.reduce((result, mapping) => {
         if (mapping.regex.global) {
-          mapping.regex.lastIndex = 0
+          mapping.regex.lastIndex = 0;
         }
 
         if (mapping.regex.test(this._value)) {
-          result[mapping.regex] = mapping
+          result[mapping.regex] = mapping;
         }
 
-        return result
-      }, {})
+        return result;
+      }, {});
 
       // apply mappings
-      let val = this._value
+      let val = this._value;
 
       for (let mapping in mappings) {
-        val = val.replace(mappings[mapping].regex, `mappings[${mapping}].map`)
+        val = val.replace(mappings[mapping].regex, `mappings[${mapping}].map`);
       }
 
-      let res
+      let res;
 
       try {
-        res = eval(val) // eslint-disable-line no-eval
+        res = eval(val); // eslint-disable-line no-eval
       } catch (err) {
         if (this.mappings.length > 0) {
-          throw err
+          throw err;
         }
       }
 
-      return res
+      return res;
     }
 
-    return this._value
+    return this._value;
   }
 
   /**
@@ -116,7 +117,7 @@ class Keyframe extends Emitter {
    */
   @emitChange()
   set value(val) {
-    this._value = val
+    this._value = val;
   }
 
   /**
@@ -125,7 +126,7 @@ class Keyframe extends Emitter {
    * @returns {Keyframes|null}
    */
   get list() {
-    return this._list
+    return this._list;
   }
 
   /**
@@ -134,7 +135,7 @@ class Keyframe extends Emitter {
    * @returns {boolean}
    */
   isEval() {
-    return /{(.*?)}/.test(this._value)
+    return /{(.*?)}/.test(this._value);
   }
 
   /**
@@ -144,24 +145,24 @@ class Keyframe extends Emitter {
    * @returns {object} { "0.2s": { value: 10, ease: "Linear.easeNone" }}
    */
   toObject(ignoreEval = false) {
-    let value
+    let value;
 
     try {
-      value = ignoreEval ? this._value : this.value
+      value = ignoreEval ? this._value : this.value;
     } catch (err) {
-      value = this._value
+      value = this._value;
     }
 
     return {
-      [`${this.time}s`]: { value, ease: this.ease }
-    }
+      [`${this.time}s`]: { value, ease: this.ease },
+    };
   }
 
   /**
    * Destroy events
    */
   destroy() {
-    this.removeAllListeners()
+    this.removeAllListeners();
   }
 }
 
@@ -174,41 +175,39 @@ class Keyframe extends Emitter {
  */
 Keyframe.fromObject = function(obj) {
   if (!is.isObject(obj)) {
-    throw new Error('Object is invalid')
+    throw new Error('Object is invalid');
   }
 
-  const keys = Object.keys(obj)
+  const keys = Object.keys(obj);
 
   if (keys.length === 0 || keys.length > 1) {
-    throw new Error('Object is invalid')
+    throw new Error('Object is invalid');
   }
 
-  let time = keys[0]
-  let { value, ease } = obj[time]
+  let time = keys[0];
+  let { value, ease } = obj[time];
 
-  if (!is.isObject(obj[time]) && (typeof obj[time] === 'string' || typeof obj[time] === 'number')) {
-    value = obj[time]
-    ease = null
+  if (
+    !is.isObject(obj[time]) &&
+    (typeof obj[time] === 'string' || typeof obj[time] === 'number')
+  ) {
+    value = obj[time];
+    ease = null;
   }
 
-  time = parseFloat(time)
+  time = parseFloat(time);
 
   if (isNaN(time)) {
-    throw new Error('Object is invalid. Invalid time object { `1s`: ... }')
+    throw new Error('Object is invalid. Invalid time object { `1s`: ... }');
   }
 
   if (value === undefined || value === null) {
-    throw new Error('Object is invalid. No value found: {value}')
+    throw new Error('Object is invalid. No value found: {value}');
   }
 
-  return new Keyframe(time, value, ease)
-}
+  return new Keyframe(time, value, ease);
+};
 
-Keyframe.Events = [
-  'change',
-  'change:time',
-  'change:value',
-  'change:ease'
-]
+Keyframe.Events = ['change', 'change:time', 'change:value', 'change:ease'];
 
-export default Keyframe
+export default Keyframe;

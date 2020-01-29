@@ -1,1 +1,1 @@
-window.someGlobal = function(){};
+window.someGlobal = function() {};

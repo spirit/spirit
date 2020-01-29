@@ -1,9 +1,9 @@
-import List from '../list/list'
-import { Group } from '../group'
+import List from '../list/list';
+import { Group } from '../group';
 
 class Registry extends List {
   constructor() {
-    super([])
+    super([]);
   }
 
   /**
@@ -13,9 +13,9 @@ class Registry extends List {
    */
   add(group) {
     if (!(group instanceof Group)) {
-      throw new Error('Invalid group. Only Group instances allowed.')
+      throw new Error('Invalid group. Only Group instances allowed.');
     }
-    super.add(group)
+    super.add(group);
   }
 
   /**
@@ -25,8 +25,8 @@ class Registry extends List {
    * @returns {Group}
    */
   remove(group) {
-    group.reset()
-    return super.remove(group)
+    group.reset();
+    return super.remove(group);
   }
 
   /**
@@ -36,7 +36,7 @@ class Registry extends List {
    * @returns {Group}
    */
   get(name) {
-    return this.list.find(g => g.name === name)
+    return this.list.find(g => g.name === name);
   }
 
   /**
@@ -45,8 +45,8 @@ class Registry extends List {
    * @returns {Array}
    */
   groupNames() {
-    return this.list.map(g => g.name)
+    return this.list.map(g => g.name);
   }
 }
 
-export default new Registry()
+export default new Registry();

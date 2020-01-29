@@ -1,8 +1,8 @@
-import Props from './props'
-import { context, convert, is } from '../utils'
-import { emitChange } from '../utils/emitter'
-import { Emitter } from '../utils/events'
-import EvalMap from './evalmap'
+import Props from './props';
+import { context, convert, is } from '../utils';
+import { emitChange } from '../utils/emitter';
+import { Emitter } from '../utils/events';
+import EvalMap from './evalmap';
 
 /**
  * Timeline.
@@ -14,7 +14,7 @@ class Timeline extends Emitter {
    *
    * @type {string}
    */
-  type = 'dom'
+  type = 'dom';
 
   /**
    * Object to apply transforms on.
@@ -22,14 +22,14 @@ class Timeline extends Emitter {
    *
    * @type {HTMLElement|Object}
    */
-  _transformObject = null
+  _transformObject = null;
 
   /**
    * Defined label representing this timeline node.
    *
    * @type {string|null}
    */
-  label = null
+  label = null;
 
   /**
    * XPath of element, normalized by group element.
@@ -37,7 +37,7 @@ class Timeline extends Emitter {
    *
    * @type {string|null}
    */
-  path = null
+  path = null;
 
   /**
    * Identifier to select element. Override the path for resolving transformObject.
@@ -45,14 +45,14 @@ class Timeline extends Emitter {
    *
    * @type {string|null}
    */
-  id = null
+  id = null;
 
   /**
    * Properties for this timeline.
    *
    * @type {Props}
    */
-  props = null
+  props = null;
 
   /**
    * Create new Timeline instance
@@ -64,42 +64,51 @@ class Timeline extends Emitter {
    * @param {string|null}         id
    * @param {string|null}         label
    */
-  constructor(type = 'dom', transformObject = null, props = new Props(), path = null, id = null, label = null) {
-    super()
+  constructor(
+    type = 'dom',
+    transformObject = null,
+    props = new Props(),
+    path = null,
+    id = null,
+    label = null
+  ) {
+    super();
 
     Object.assign(this, {
       type,
-      props: (props instanceof Props) ? props : new Props(props),
+      props: props instanceof Props ? props : new Props(props),
       label,
       path,
-      id
-    })
+      id,
+    });
 
-    this.transformObject = transformObject
+    this.transformObject = transformObject;
   }
 
   @emitChange()
   set transformObject(transformObject) {
-    this._transformObject = transformObject
-    this.validate()
+    this._transformObject = transformObject;
+    this.validate();
 
     if (transformObject && this.props instanceof Props) {
-      const thisMapper = this.props.mappings.find(mapping => String(mapping.regex) === '/this/g')
+      const thisMapper = this.props.mappings.find(
+        mapping => String(mapping.regex) === '/this/g'
+      );
 
       thisMapper
         ? (thisMapper.map = transformObject)
-        : this.props.mappings.push(new EvalMap(/this/g, transformObject))
+        : this.props.mappings.push(new EvalMap(/this/g, transformObject));
 
-      this.props.mappings = [...this.props.mappings]
+      this.props.mappings = [...this.props.mappings];
     }
 
     if (this.type === 'dom' && transformObject instanceof window.Element) {
-      this._style = transformObject.getAttribute('style')
+      this._style = transformObject.getAttribute('style');
     }
   }
 
   get transformObject() {
-    return this._transformObject
+    return this._transformObject;
   }
 
   validate() {
@@ -109,11 +118,15 @@ class Timeline extends Emitter {
       this.transformObject &&
       !(this.transformObject instanceof window.Element)
     ) {
-      throw new Error('transformObject needs to be an element')
+      throw new Error('transformObject needs to be an element');
     }
 
-    if (this.type === 'object' && this.transformObject && !is.isObject(this.transformObject)) {
-      throw new Error('transformObject needs to be an object')
+    if (
+      this.type === 'object' &&
+      this.transformObject &&
+      !is.isObject(this.transformObject)
+    ) {
+      throw new Error('transformObject needs to be an object');
     }
   }
 
@@ -124,36 +137,36 @@ class Timeline extends Emitter {
       props: this.props.toObject(ignoreEval),
       label: this.label,
       path: this.path,
-      id: this.id
-    }
+      id: this.id,
+    };
 
     Object.keys(obj).forEach(key => {
       if (!obj[key]) {
-        delete obj[key]
+        delete obj[key];
       }
-    })
+    });
 
-    return obj
+    return obj;
   }
 
   destroy() {
     if (this.props instanceof Props) {
-      this.props.each(tr => tr.destroy())
+      this.props.each(tr => tr.destroy());
     }
   }
 }
 
 Timeline.fromObject = function(obj) {
   if (!is.isObject(obj)) {
-    throw new Error('Object is invalid.')
+    throw new Error('Object is invalid.');
   }
 
-  let args = convert.objectToArray(obj).filter(arg => arg !== undefined)
+  let args = convert.objectToArray(obj).filter(arg => arg !== undefined);
   args = {
     type: args.type || 'dom',
     props: {},
-    ...convert.arrayToObject(args)
-  }
+    ...convert.arrayToObject(args),
+  };
 
   return new Timeline(
     args.type,
@@ -162,7 +175,7 @@ Timeline.fromObject = function(obj) {
     args.path || undefined,
     args.id || undefined,
     args.label || undefined
-  )
-}
+  );
+};
 
-export default Timeline
+export default Timeline;

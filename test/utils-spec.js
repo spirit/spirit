@@ -1,9 +1,9 @@
-import config from '../src/config/config'
-import Timeline from '../src/group/timeline'
-import List from '../src/list/list'
-import { Emitter } from '../src/utils/events'
+import config from '../src/config/config';
+import Timeline from '../src/group/timeline';
+import List from '../src/list/list';
+import { Emitter } from '../src/utils/events';
 
-import { post } from './fixtures/group/dom'
+import { post } from './fixtures/group/dom';
 
 import {
   context,
@@ -15,488 +15,562 @@ import {
   convert,
   xpath,
   is,
-  emitter
-} from '../src/utils'
+  emitter,
+} from '../src/utils';
 
-import {
-  req as jsonloaderReq,
-  cache as jsonloaderCache
-} from '../src/utils/jsonloader'
+import { req as jsonloaderReq, cache as jsonloaderCache } from '../src/utils/jsonloader';
 
-const gsapConfig = { ...config.gsap }
+const gsapConfig = { ...config.gsap };
 
 describe('utils', () => {
-
   before(() => {
-    sinon.stub(is, 'isSVG').callsFake(element => ['SVG', 'G', 'RECT'].includes(element.nodeName))
-  })
+    sinon
+      .stub(is, 'isSVG')
+      .callsFake(element => ['SVG', 'G', 'RECT'].includes(element.nodeName));
+  });
 
   after(() => {
-    is.isSVG.restore()
-  })
+    is.isSVG.restore();
+  });
 
   it('should has window context', () => {
-    expect(context.isBrowser()).to.be.ok
-  })
+    expect(context.isBrowser()).to.be.ok;
+  });
 
   describe('loadscript', () => {
-
     it('should reject when context is not browser', async () => {
-      sinon.stub(context, 'isBrowser').returns(false)
+      sinon.stub(context, 'isBrowser').returns(false);
 
-      const err = await resolvePromise(loadscript('anything.js'))
-      expect(err).to.be.an('error').match(/can only be loaded in the browser/)
+      const err = await resolvePromise(loadscript('anything.js'));
+      expect(err)
+        .to.be.an('error')
+        .match(/can only be loaded in the browser/);
 
-      context.isBrowser.restore()
-    })
+      context.isBrowser.restore();
+    });
 
     it('should reject invalid request', async () => {
-      const err = await resolvePromise(loadscript('invalid.js'))
-      expect(err).to.be.an('error').match(/Could not load/)
-    })
+      const err = await resolvePromise(loadscript('invalid.js'));
+      expect(err)
+        .to.be.an('error')
+        .match(/Could not load/);
+    });
 
     it('should load script into window', async () => {
-      expect(window.someGlobal).to.be.undefined
-      await loadscript('test/fixtures/loadscript.js')
-      expect(window.someGlobal).to.be.a('function')
+      expect(window.someGlobal).to.be.undefined;
+      await loadscript('test/fixtures/loadscript.js');
+      expect(window.someGlobal).to.be.a('function');
 
-      delete window.someGlobal // restore
-    })
-
-  })
+      delete window.someGlobal; // restore
+    });
+  });
 
   describe('jsonloader', () => {
-
-    let sandbox
+    let sandbox;
 
     beforeEach(() => {
-      sandbox = sinon.createSandbox()
-      Object.keys(jsonloaderReq).forEach(key => delete jsonloaderReq[key])
-      Object.keys(jsonloaderCache).forEach(key => delete jsonloaderCache[key])
-    })
+      sandbox = sinon.createSandbox();
+      Object.keys(jsonloaderReq).forEach(key => delete jsonloaderReq[key]);
+      Object.keys(jsonloaderCache).forEach(key => delete jsonloaderCache[key]);
+    });
 
     afterEach(() => {
-      sandbox.restore()
-    })
+      sandbox.restore();
+    });
 
     it('should reject when context is not browser', async () => {
-      sinon.stub(context, 'isBrowser').returns(false)
+      sinon.stub(context, 'isBrowser').returns(false);
 
-      const err = await resolvePromise(jsonloader('file.json'))
-      expect(err).to.be.an('error').match(/Invalid context/)
+      const err = await resolvePromise(jsonloader('file.json'));
+      expect(err)
+        .to.be.an('error')
+        .match(/Invalid context/);
 
-      context.isBrowser.restore()
-    })
+      context.isBrowser.restore();
+    });
 
     it('should retrieve from cache', async () => {
-      jsonloaderCache['temp.json'] = { foo: 'bar' }
-      expect(await jsonloader('temp.json')).to.deep.equal({ foo: 'bar' })
-    })
+      jsonloaderCache['temp.json'] = { foo: 'bar' };
+      expect(await jsonloader('temp.json')).to.deep.equal({ foo: 'bar' });
+    });
 
     it('should serve from queued request', async () => {
-      jsonloaderReq['temp.json'] = new Promise((resolve) => resolve({ foo: 'bar' }))
-      expect(await jsonloader('temp.json')).to.deep.equal({ foo: 'bar' })
-    })
+      jsonloaderReq['temp.json'] = new Promise(resolve => resolve({ foo: 'bar' }));
+      expect(await jsonloader('temp.json')).to.deep.equal({ foo: 'bar' });
+    });
 
     it('should reject as invalid request', async () => {
       stubXhr(sandbox, {
         open: () => {
-          throw new Error('Invalid')
-        }
-      })
+          throw new Error('Invalid');
+        },
+      });
 
-      const err = await resolvePromise(jsonloader('invalid-file.js'))
-      expect(err).to.be.an('error').match(/Could not open request/)
-    })
+      const err = await resolvePromise(jsonloader('invalid-file.js'));
+      expect(err)
+        .to.be.an('error')
+        .match(/Could not open request/);
+    });
 
     it('should resolve json', async () => {
-      stubXhr(sandbox, { responseText: `{"foo": "bar"}` })
-      expect(await jsonloader('test.json')).to.deep.equal({ foo: 'bar' })
-    })
+      stubXhr(sandbox, { responseText: `{"foo": "bar"}` });
+      expect(await jsonloader('test.json')).to.deep.equal({ foo: 'bar' });
+    });
 
     it('should reject invalid json', async () => {
-      stubXhr(sandbox, { responseText: `{foo": "bar"}` })
+      stubXhr(sandbox, { responseText: `{foo": "bar"}` });
 
-      const err = await resolvePromise(jsonloader('invalid-json.json'))
-      expect(err).to.be.an('error').match(/Invalid json/)
-    })
-
-  })
+      const err = await resolvePromise(jsonloader('invalid-json.json'));
+      expect(err)
+        .to.be.an('error')
+        .match(/Invalid json/);
+    });
+  });
 
   describe('gsap', () => {
-
     beforeEach(() => {
-      config.gsap.autoInjectUrl = 'test/fixtures/gsap.js'
-    })
+      config.gsap.autoInjectUrl = 'test/fixtures/gsap.js';
+    });
 
     afterEach(() => {
-      config.gsap = { ...gsapConfig }
+      config.gsap = { ...gsapConfig };
       delete window.gsap;
-    })
+    });
 
     describe('ensure', () => {
-
       it('should not contain any gsap', () => {
-        expect(gsap.has()).to.be.false
-      })
+        expect(gsap.has()).to.be.false;
+      });
 
       it('should ensure gsap', async () => {
-        config.gsap.autoInjectUrl = 'test/fixtures/gsap.js'
+        config.gsap.autoInjectUrl = 'test/fixtures/gsap.js';
 
-        expect(gsap.has()).to.be.false
+        expect(gsap.has()).to.be.false;
 
-        await gsap.ensure()
+        await gsap.ensure();
 
-        expect(window.gsap).to.have.property('to').to.be.a('function')
-        expect(window.gsap).to.have.property('timeline').to.be.a('function')
+        expect(window.gsap)
+          .to.have.property('to')
+          .to.be.a('function');
+        expect(window.gsap)
+          .to.have.property('timeline')
+          .to.be.a('function');
         expect(config.gsap.instance).to.eq(window.gsap);
-        expect(gsap.has()).to.be.true
-      })
+        expect(gsap.has()).to.be.true;
+      });
 
       it('should resolve if already has gsap', async () => {
-        config.gsap.autoInject = false
+        config.gsap.autoInject = false;
 
         config.gsap.instance = {
           to: () => {},
-          timeline: () => {}
-        }
+          timeline: () => {},
+        };
 
-        await gsap.ensure()
-        expect(gsap.has()).to.be.true
-      })
+        await gsap.ensure();
+        expect(gsap.has()).to.be.true;
+      });
 
       it('should reject ensure() when autoInject is false', async () => {
-        config.gsap.autoInject = false
+        config.gsap.autoInject = false;
 
-        const err = await resolvePromise(gsap.ensure())
-        expect(err).to.be.an('error').match(/GSAP not found/)
-      })
-
-    })
+        const err = await resolvePromise(gsap.ensure());
+        expect(err)
+          .to.be.an('error')
+          .match(/GSAP not found/);
+      });
+    });
 
     describe('generate timeline', () => {
-      const div = document.createElement('div')
+      const div = document.createElement('div');
 
       it('should fail on invalid data', () => {
-        expect(() => gsap.generateTimeline()).to.throw(/Need valid timeline/)
-        expect(() => gsap.generateTimeline([])).to.throw(/Need valid timeline/)
-        expect(() => gsap.generateTimeline({})).to.throw(/Need valid timeline/)
-      })
+        expect(() => gsap.generateTimeline()).to.throw(/Need valid timeline/);
+        expect(() => gsap.generateTimeline([])).to.throw(/Need valid timeline/);
+        expect(() => gsap.generateTimeline({})).to.throw(/Need valid timeline/);
+      });
 
       it('should fail if gsap timeline is not set', () => {
-        expect(() => gsap.generateTimeline(new Timeline('dom', div, [], 'div[0]'))).to.throw(/GSAP not set/)
-      })
+        expect(() =>
+          gsap.generateTimeline(new Timeline('dom', div, [], 'div[0]'))
+        ).to.throw(/GSAP not set/);
+      });
 
       it('should fail if provided timeline is not of type "dom"', () => {
-        config.gsap.timeline = function() {}
-        expect(() => gsap.generateTimeline(new Timeline('object', {})))
-          .to.throw(/Timeline invalid. Needs a timeline with type of dom/)
-      })
+        config.gsap.timeline = function() {};
+        expect(() => gsap.generateTimeline(new Timeline('object', {}))).to.throw(
+          /Timeline invalid. Needs a timeline with type of dom/
+        );
+      });
 
       describe('transform origin', () => {
-
         beforeEach(async () => {
-          config.gsap.autoInjectUrl = 'test/fixtures/gsap.js'
-          await gsap.ensure()
-        })
+          config.gsap.autoInjectUrl = 'test/fixtures/gsap.js';
+          await gsap.ensure();
+        });
 
         it('should iterate over origins', () => {
-          const iterator = gsap.transformOrigins(new Timeline('dom', div, {
-            x: {
-              '0s': -100,
-              '5s': 100,
-              '10s': -100
-            },
-            transformOrigin: {
-              '7s': 'left bottom',
-              '9s': 'right bottom',
-              '12s': 'center center'
-            }
-          }, 'div[0]'))
+          const iterator = gsap.transformOrigins(
+            new Timeline(
+              'dom',
+              div,
+              {
+                x: {
+                  '0s': -100,
+                  '5s': 100,
+                  '10s': -100,
+                },
+                transformOrigin: {
+                  '7s': 'left bottom',
+                  '9s': 'right bottom',
+                  '12s': 'center center',
+                },
+              },
+              'div[0]'
+            )
+          );
 
-          let val = iterator.current
-          expect(val).to.deep.equal({ time: 0, value: '50% 50%' })
+          let val = iterator.current;
+          expect(val).to.deep.equal({ time: 0, value: '50% 50%' });
 
-          val = iterator.next().current
-          expect(val).to.deep.equal({ time: 7, value: 'left bottom' })
+          val = iterator.next().current;
+          expect(val).to.deep.equal({ time: 7, value: 'left bottom' });
 
-          val = iterator.next().current
-          expect(val).to.deep.equal({ time: 9, value: 'right bottom' })
+          val = iterator.next().current;
+          expect(val).to.deep.equal({ time: 9, value: 'right bottom' });
 
-          val = iterator.next().current
-          expect(val).to.deep.equal({ time: 12, value: 'center center' })
+          val = iterator.next().current;
+          expect(val).to.deep.equal({ time: 12, value: 'center center' });
 
-          val = iterator.next().current
-          expect(val).to.deep.equal(null)
-        })
+          val = iterator.next().current;
+          expect(val).to.deep.equal(null);
+        });
 
         it('should return default origin at time(0) if transformOrigins are not defined', () => {
-          const iterator = gsap.transformOrigins(new Timeline('dom', div, {
-            x: {
-              '0s': -100,
-              '5s': 100,
-              '10s': -100
-            },
-          }, 'div[0]'))
+          const iterator = gsap.transformOrigins(
+            new Timeline(
+              'dom',
+              div,
+              {
+                x: {
+                  '0s': -100,
+                  '5s': 100,
+                  '10s': -100,
+                },
+              },
+              'div[0]'
+            )
+          );
 
-          expect(iterator.current).to.deep.equal({ time: 0, value: '50% 50%' })
-          expect(iterator.next().current).to.equal(null)
-          expect(iterator.next().current).to.equal(null)
-        })
+          expect(iterator.current).to.deep.equal({ time: 0, value: '50% 50%' });
+          expect(iterator.next().current).to.equal(null);
+          expect(iterator.next().current).to.equal(null);
+        });
 
         it('should add default transform origin if prop is a css-transform', () => {
-          const tl = gsap.generateTimeline(new Timeline('dom', div, {
-            rotation: {
-              '0s': -180,
-              '5s': 180,
-              '10s': -180
-            }
-          }, 'div[0]'));
+          const tl = gsap.generateTimeline(
+            new Timeline(
+              'dom',
+              div,
+              {
+                rotation: {
+                  '0s': -180,
+                  '5s': 180,
+                  '10s': -180,
+                },
+              },
+              'div[0]'
+            )
+          );
 
-          expect(tl.duration()).to.eq(10)
+          expect(tl.duration()).to.eq(10);
 
-          const vars = tl.getChildren().map(c => c.vars)
+          const vars = tl.getChildren().map(c => c.vars);
 
           expect(vars[0]).to.deep.include({
             ease: 'none',
             rotation: -180,
             duration: 0,
             transformOrigin: '50% 50%',
-            immediateRender: true
-          })
+            immediateRender: true,
+          });
 
-          expect(vars[1]).to.deep.include({ ease: 'none', duration: 5, rotation: 180 })
-          expect(vars[2]).to.deep.include({ ease: 'none', duration: 5, rotation: -180 })
-        })
+          expect(vars[1]).to.deep.include({ ease: 'none', duration: 5, rotation: 180 });
+          expect(vars[2]).to.deep.include({ ease: 'none', duration: 5, rotation: -180 });
+        });
 
         it('should add transform origin by "transformOrigin" prop last know keyframe', () => {
-          const tl = gsap.generateTimeline(new Timeline('dom', div, {
-            rotation: {
-              '0s': -180,
-              '5s': 180,
-              '10s': -180
-            },
-            transformOrigin: {
-              '0s': '0% 0%',
-              '5s': '0% 50%'
-            }
-          }, 'div[0]'));
+          const tl = gsap.generateTimeline(
+            new Timeline(
+              'dom',
+              div,
+              {
+                rotation: {
+                  '0s': -180,
+                  '5s': 180,
+                  '10s': -180,
+                },
+                transformOrigin: {
+                  '0s': '0% 0%',
+                  '5s': '0% 50%',
+                },
+              },
+              'div[0]'
+            )
+          );
 
-          expect(tl.duration()).to.eq(10)
+          expect(tl.duration()).to.eq(10);
 
-          const vars = tl.getChildren().map(c => c.vars)
+          const vars = tl.getChildren().map(c => c.vars);
 
           expect(vars[0]).to.deep.include({
             ease: 'none',
             immediateRender: true,
             rotation: -180,
-            transformOrigin: '0% 0%'
-          })
+            transformOrigin: '0% 0%',
+          });
 
           expect(vars[1]).to.deep.include({
             ease: 'none',
             rotation: 180,
-            transformOrigin: '0% 50%'
-          })
+            transformOrigin: '0% 50%',
+          });
 
           expect(vars[2]).to.deep.include({
             ease: 'none',
-            rotation: -180
-          })
-        })
+            rotation: -180,
+          });
+        });
 
         it('should set transform origin at first frame with no duration at all', () => {
-          const vars = gsap.generateTimeline(new Timeline('dom', div, {
-            rotation: { '0s': -180 },
-            transformOrigin: { '0s': '0% 0%' }
-          }, 'div[0]')).getChildren().map(c => c.vars)
+          const vars = gsap
+            .generateTimeline(
+              new Timeline(
+                'dom',
+                div,
+                {
+                  rotation: { '0s': -180 },
+                  transformOrigin: { '0s': '0% 0%' },
+                },
+                'div[0]'
+              )
+            )
+            .getChildren()
+            .map(c => c.vars);
 
-          expect(vars[0]).to.have.property('transformOrigin', '0% 0%')
-        })
+          expect(vars[0]).to.have.property('transformOrigin', '0% 0%');
+        });
 
         it('should add default transform origin for time(0) is origins length > 0 but not starting at 0', () => {
-          const vars = gsap.generateTimeline(new Timeline('dom', div, {
-            rotation: {
-              '0.5s': 360,
-              '2s': 0,
-              '8s': -180
-            },
-            transformOrigin: {
-              '4s': 'left top'
-            }
-          }, 'div[0]')).getChildren().map(c => c.vars)
+          const vars = gsap
+            .generateTimeline(
+              new Timeline(
+                'dom',
+                div,
+                {
+                  rotation: {
+                    '0.5s': 360,
+                    '2s': 0,
+                    '8s': -180,
+                  },
+                  transformOrigin: {
+                    '4s': 'left top',
+                  },
+                },
+                'div[0]'
+              )
+            )
+            .getChildren()
+            .map(c => c.vars);
 
           expect(vars[0]).to.deep.include({
             ease: 'none',
             rotation: 360,
-            transformOrigin: '50% 50%'
-          })
+            transformOrigin: '50% 50%',
+          });
 
-          expect(vars[1]).to.deep.include({ ease: 'none', rotation: 0 })
-          expect(vars[2]).to.deep.include({ ease: 'none', rotation: -180, transformOrigin: 'left top' })
-        })
-
-      })
+          expect(vars[1]).to.deep.include({ ease: 'none', rotation: 0 });
+          expect(vars[2]).to.deep.include({
+            ease: 'none',
+            rotation: -180,
+            transformOrigin: 'left top',
+          });
+        });
+      });
 
       describe('on generated', () => {
-
-        let timeline
+        let timeline;
 
         beforeEach(async () => {
-          config.gsap.autoInjectUrl = 'test/fixtures/gsap.js'
-          await gsap.ensure()
+          config.gsap.autoInjectUrl = 'test/fixtures/gsap.js';
+          await gsap.ensure();
 
-          const tl = new Timeline('dom', div, {
-            x: {
-              '0s': { value: 100 },
-              '3.333s': { value: 1000 }
+          const tl = new Timeline(
+            'dom',
+            div,
+            {
+              x: {
+                '0s': { value: 100 },
+                '3.333s': { value: 1000 },
+              },
+              y: {
+                '0s': { value: 100 },
+              },
+              rotationX: {
+                '0s': { value: 300 },
+                '1.666s': { value: 500, ease: 'power3.out' },
+                '5s': { value: -300 },
+              },
             },
-            y: {
-              '0s': { value: 100 }
-            },
-            rotationX: {
-              '0s': { value: 300 },
-              '1.666s': { value: 500, ease: 'power3.out' },
-              '5s': { value: -300 }
-            }
-          }, 'div[0]')
+            'div[0]'
+          );
 
-          timeline = gsap.generateTimeline(tl)
-        })
+          timeline = gsap.generateTimeline(tl);
+        });
 
         it('should have _gsTransform and _gsTweenID added to div', () => {
-          timeline.progress(0.5)
-          expect(div._gsap).to.be.an('object')
-          expect(div._gsap.constructor.name).to.eq('GSCache')
-        })
+          timeline.progress(0.5);
+          expect(div._gsap).to.be.an('object');
+          expect(div._gsap.constructor.name).to.eq('GSCache');
+        });
 
         it('should have a gsap timeline with correct duration', () => {
-          expect(timeline.duration()).to.eq(5)
-        })
+          expect(timeline.duration()).to.eq(5);
+        });
 
         it('should be paused', () => {
-          expect(timeline.vars).to.deep.equal({ paused: true })
-        })
+          expect(timeline.vars).to.deep.equal({ paused: true });
+        });
 
         describe('children', () => {
-
           it('should have children', () => {
-            expect(timeline.getChildren()).to.have.lengthOf(6)
-          })
+            expect(timeline.getChildren()).to.have.lengthOf(6);
+          });
 
           it('should have parent timeline', () => {
-            const children = timeline.getChildren()
+            const children = timeline.getChildren();
             children.forEach(child => {
               expect(child.parent).to.equal(timeline);
-            })
-          })
+            });
+          });
 
           it('should have correct transitions', () => {
-            const vars = timeline.getChildren().map(c => c.vars)
+            const vars = timeline.getChildren().map(c => c.vars);
 
             expect(vars[0]).to.deep.include({
               ease: 'none',
               immediateRender: true,
               rotationX: 300,
               transformOrigin: '50% 50%',
-            })
-            expect(vars[1]).to.deep.include({ rotationX: 500, ease: 'power3.out' })
+            });
+            expect(vars[1]).to.deep.include({ rotationX: 500, ease: 'power3.out' });
             expect(vars[2]).to.deep.include({
               ease: 'none',
               immediateRender: true,
               x: 100,
-            })
-            expect(vars[3]).to.deep.include({ x: 1000, ease: 'none' })
+            });
+            expect(vars[3]).to.deep.include({ x: 1000, ease: 'none' });
             expect(vars[4]).to.deep.include({
               immediateRender: true,
               y: 100,
-              ease: 'none'
-            })
-            expect(vars[5]).to.deep.include({ rotationX: -300, ease: 'none' })
-          })
+              ease: 'none',
+            });
+            expect(vars[5]).to.deep.include({ rotationX: -300, ease: 'none' });
+          });
 
           it('should have the correct offset (start time)', () => {
-            const time = timeline.getChildren().map(c => c.startTime())
+            const time = timeline.getChildren().map(c => c.startTime());
 
-            expect(time[0]).to.equal(0)
-            expect(time[1]).to.equal(0)
+            expect(time[0]).to.equal(0);
+            expect(time[1]).to.equal(0);
 
-            expect(time[2]).to.equal(0)
-            expect(time[3]).to.equal(0)
+            expect(time[2]).to.equal(0);
+            expect(time[3]).to.equal(0);
 
-            expect(time[4]).to.equal(0)
-            expect(time[5]).to.equal(1.666)
-          })
-
-        })
-
-      })
+            expect(time[4]).to.equal(0);
+            expect(time[5]).to.equal(1.666);
+          });
+        });
+      });
 
       describe('dot values', () => {
-
         beforeEach(async () => {
-          config.gsap.autoInjectUrl = 'test/fixtures/gsap.js'
-          await gsap.ensure()
-        })
+          config.gsap.autoInjectUrl = 'test/fixtures/gsap.js';
+          await gsap.ensure();
+        });
 
         it('should construct dot value property', () => {
-          let circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle')
+          let circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
 
-          const tl = new Timeline('dom', circle, {
-            'attr.cx': {
-              '0s': 0,
-              '1s': 100
-            }
-          }, 'circle[0]')
+          const tl = new Timeline(
+            'dom',
+            circle,
+            {
+              'attr.cx': {
+                '0s': 0,
+                '1s': 100,
+              },
+            },
+            'circle[0]'
+          );
 
-          const timeline = gsap.generateTimeline(tl)
-          const vars = timeline.getChildren().map(c => c.vars)
+          const timeline = gsap.generateTimeline(tl);
+          const vars = timeline.getChildren().map(c => c.vars);
 
-          expect(vars).to.have.lengthOf(2)
-          expect(vars[0]).to.have.nested.property('attr.cx', 0)
-          expect(vars[1]).to.have.nested.property('attr.cx', 100)
-        })
+          expect(vars).to.have.lengthOf(2);
+          expect(vars[0]).to.have.nested.property('attr.cx', 0);
+          expect(vars[1]).to.have.nested.property('attr.cx', 100);
+        });
 
         it('should construct dot value property into recursive object', () => {
-          const tl = new Timeline('dom', div, {
-            'some.foo.bar': {
-              '1s': 0,
-              '2s': 100
-            }
-          }, 'div[0]')
+          const tl = new Timeline(
+            'dom',
+            div,
+            {
+              'some.foo.bar': {
+                '1s': 0,
+                '2s': 100,
+              },
+            },
+            'div[0]'
+          );
 
-          const timeline = gsap.generateTimeline(tl)
-          const vars = timeline.getChildren().map(c => c.vars)
+          const timeline = gsap.generateTimeline(tl);
+          const vars = timeline.getChildren().map(c => c.vars);
 
-          expect(vars).to.have.lengthOf(2)
-          expect(vars[0]).to.have.nested.property('some.foo.bar', 0)
-          expect(vars[1]).to.have.nested.property('some.foo.bar', 100)
-        })
-
-      })
-    })
+          expect(vars).to.have.lengthOf(2);
+          expect(vars[0]).to.have.nested.property('some.foo.bar', 0);
+          expect(vars[1]).to.have.nested.property('some.foo.bar', 100);
+        });
+      });
+    });
 
     describe('kill timeline', () => {
-      const div = document.createElement('div')
+      const div = document.createElement('div');
 
       beforeEach(async () => {
-        await gsap.ensure()
-      })
+        await gsap.ensure();
+      });
 
       describe('flat timeline', () => {
-        let timeline
+        let timeline;
 
         beforeEach(() => {
           timeline = gsap.generateTimeline(
-            new Timeline('dom', div, {
-              x: { '3.333s': 1000 },
-              y: { '0s': 100 },
-              left: { '0s': -100 }
-            }, 'div[0]')
-          )
+            new Timeline(
+              'dom',
+              div,
+              {
+                x: { '3.333s': 1000 },
+                y: { '0s': 100 },
+                left: { '0s': -100 },
+              },
+              'div[0]'
+            )
+          );
 
-          timeline.seek(3.333)
-        })
+          timeline.seek(3.333);
+        });
 
         it('should have _gsap values', () => {
           expect(window.gsap.getProperty(div, 'x')).to.eq(1000);
@@ -504,457 +578,500 @@ describe('utils', () => {
 
           expect(window.gsap.getProperty(div, 'y')).to.eq(100);
           expect(div._gsap.get(div, 'y')).to.eq('100px');
-        })
+        });
 
         it('should have cleared gsTransform values', () => {
-          expect(div).to.have.property('_gsap')
-          gsap.killTimeline(timeline)
-          expect(div).to.not.have.property('_gsap')
-        })
+          expect(div).to.have.property('_gsap');
+          gsap.killTimeline(timeline);
+          expect(div).to.not.have.property('_gsap');
+        });
 
         it('should have style attribute', () => {
-          expect(div.style.getPropertyValue('left')).to.equal('-100px')
-        })
+          expect(div.style.getPropertyValue('left')).to.equal('-100px');
+        });
 
         it('should have removed style attribute', () => {
-          gsap.killTimeline(timeline)
+          gsap.killTimeline(timeline);
 
-          div.style.getPropertyValue('left') //?
+          div.style.getPropertyValue('left'); //?
 
-          expect(div.style.getPropertyValue('left')).to.equal('')
-          expect(div.getAttribute('style')).to.equal('')
-        })
-      })
-    })
-  })
+          expect(div.style.getPropertyValue('left')).to.equal('');
+          expect(div.getAttribute('style')).to.equal('');
+        });
+      });
+    });
+  });
 
   describe('autobind', () => {
-
     class A {
-      exec() { this.fn.call(this) }
+      exec() {
+        this.fn.call(this);
+      }
     }
 
     it('should not autobind method', () => {
       class B {
         constructor() {
-          let a = new A()
-          a.fn = this.executed
-          a.exec()
+          let a = new A();
+          a.fn = this.executed;
+          a.exec();
         }
 
         executed() {
-          expect(this).to.be.instanceOf(A)
+          expect(this).to.be.instanceOf(A);
         }
       }
 
-      new B()
-    })
+      new B();
+    });
 
     it('should autobind method', () => {
       class B {
         constructor() {
-          let a = new A()
-          a.fn = this.executed
-          a.exec()
+          let a = new A();
+          a.fn = this.executed;
+          a.exec();
         }
 
         @autobind
         executed() {
-          expect(this).to.be.instanceOf(B)
+          expect(this).to.be.instanceOf(B);
         }
       }
 
-      new B()
-    })
+      new B();
+    });
 
     it('should not autobind class', () => {
       class B {
         constructor() {
-          let a = new A()
-          a.fn = this.executed
-          a.exec()
+          let a = new A();
+          a.fn = this.executed;
+          a.exec();
         }
 
         executed() {
-          expect(this).to.be.instanceOf(A)
+          expect(this).to.be.instanceOf(A);
         }
       }
 
-      new B()
-    })
+      new B();
+    });
 
     it('should autobind class', () => {
       @autobind
       class B {
         constructor() {
-          let a = new A()
-          a.fn = this.executed
-          a.exec()
+          let a = new A();
+          a.fn = this.executed;
+          a.exec();
         }
 
         executed() {
-          expect(this).to.be.instanceOf(B)
+          expect(this).to.be.instanceOf(B);
         }
       }
 
-      new B()
-    })
-
-  })
+      new B();
+    });
+  });
 
   describe('emitter', () => {
-
     describe('for class', () => {
       it('should have added property for emitting', () => {
         @emitter.emitChange('label')
         class A extends Emitter {}
 
-        const ins = new A()
+        const ins = new A();
 
-        expect(ins).to.have.property('_label')
-        expect(ins).to.have.property('label')
-      })
+        expect(ins).to.have.property('_label');
+        expect(ins).to.have.property('label');
+      });
 
       it('should add getters and setters with defaults', async () => {
         @emitter.emitChange('label', 'untitled')
         @emitter.emitChange('song')
         class Album extends Emitter {}
 
-        const album = new Album()
-        expect(album).to.have.property('label', 'untitled')
-        expect(album).to.have.property('song', null)
+        const album = new Album();
+        expect(album).to.have.property('label', 'untitled');
+        expect(album).to.have.property('song', null);
 
-        const spy = sinon.spy()
-        const spyLabel = sinon.spy()
-        const spySong = sinon.spy()
+        const spy = sinon.spy();
+        const spyLabel = sinon.spy();
+        const spySong = sinon.spy();
 
-        album.on('change', spy)
-        album.on('change:label', spyLabel)
-        album.on('change:song', spySong)
+        album.on('change', spy);
+        album.on('change:label', spyLabel);
+        album.on('change:song', spySong);
 
-        album.label = 'Summer'
+        album.label = 'Summer';
 
-        album.song = 'Hot'
-        album.song = 'Cold'
-        album.song = 'Warm'
+        album.song = 'Hot';
+        album.song = 'Cold';
+        album.song = 'Warm';
 
-        album.label = 'Winter'
+        album.label = 'Winter';
 
-        expect(album).to.have.property('label', 'Winter')
-        expect(album).to.have.property('song', 'Warm')
+        expect(album).to.have.property('label', 'Winter');
+        expect(album).to.have.property('song', 'Warm');
 
-        expect(spy.callCount).to.equal(5)
-        expect(spy.getCall(0).args[0].changed).to.deep.equal({ type: 'label', from: 'untitled', to: 'Summer' })
-        expect(spy.getCall(1).args[0].changed).to.deep.equal({ type: 'song', from: null, to: 'Hot' })
-        expect(spy.getCall(2).args[0].changed).to.deep.equal({ type: 'song', from: 'Hot', to: 'Cold' })
-        expect(spy.getCall(3).args[0].changed).to.deep.equal({ type: 'song', from: 'Cold', to: 'Warm' })
-        expect(spy.getCall(4).args[0].changed).to.deep.equal({ type: 'label', from: 'Summer', to: 'Winter' })
+        expect(spy.callCount).to.equal(5);
+        expect(spy.getCall(0).args[0].changed).to.deep.equal({
+          type: 'label',
+          from: 'untitled',
+          to: 'Summer',
+        });
+        expect(spy.getCall(1).args[0].changed).to.deep.equal({
+          type: 'song',
+          from: null,
+          to: 'Hot',
+        });
+        expect(spy.getCall(2).args[0].changed).to.deep.equal({
+          type: 'song',
+          from: 'Hot',
+          to: 'Cold',
+        });
+        expect(spy.getCall(3).args[0].changed).to.deep.equal({
+          type: 'song',
+          from: 'Cold',
+          to: 'Warm',
+        });
+        expect(spy.getCall(4).args[0].changed).to.deep.equal({
+          type: 'label',
+          from: 'Summer',
+          to: 'Winter',
+        });
 
-        expect(spyLabel.callCount).to.equal(2)
-        expect(spyLabel.getCall(0).args[0].changed).to.deep.equal({ type: 'label', from: 'untitled', to: 'Summer' })
-        expect(spyLabel.getCall(1).args[0].changed).to.deep.equal({ type: 'label', from: 'Summer', to: 'Winter' })
+        expect(spyLabel.callCount).to.equal(2);
+        expect(spyLabel.getCall(0).args[0].changed).to.deep.equal({
+          type: 'label',
+          from: 'untitled',
+          to: 'Summer',
+        });
+        expect(spyLabel.getCall(1).args[0].changed).to.deep.equal({
+          type: 'label',
+          from: 'Summer',
+          to: 'Winter',
+        });
 
-        expect(spySong.callCount).to.equal(3)
-        expect(spySong.getCall(0).args[0].changed).to.deep.equal({ type: 'song', from: null, to: 'Hot' })
-        expect(spySong.getCall(1).args[0].changed).to.deep.equal({ type: 'song', from: 'Hot', to: 'Cold' })
-        expect(spySong.getCall(2).args[0].changed).to.deep.equal({ type: 'song', from: 'Cold', to: 'Warm' })
-      })
+        expect(spySong.callCount).to.equal(3);
+        expect(spySong.getCall(0).args[0].changed).to.deep.equal({
+          type: 'song',
+          from: null,
+          to: 'Hot',
+        });
+        expect(spySong.getCall(1).args[0].changed).to.deep.equal({
+          type: 'song',
+          from: 'Hot',
+          to: 'Cold',
+        });
+        expect(spySong.getCall(2).args[0].changed).to.deep.equal({
+          type: 'song',
+          from: 'Cold',
+          to: 'Warm',
+        });
+      });
 
       it('should fail if has duplicates', () => {
         @emitter.emitChange('label')
         class Item extends Emitter {
-
           constructor(label) {
-            super()
-            this.label = label
+            super();
+            this.label = label;
           }
 
           toObject() {
-            return { 'label': this.label }
+            return { label: this.label };
           }
         }
 
         class Items extends List {
-          duplicates = { prop: 'label' }
+          duplicates = { prop: 'label' };
 
           constructor() {
-            super([], Item)
+            super([], Item);
           }
         }
 
-        const items = new Items()
-        items.add(new Item('foo'))
-        items.add(new Item('bar'))
+        const items = new Items();
+        items.add(new Item('foo'));
+        items.add(new Item('bar'));
 
-        const item = items.at(0)
-        expect(() => item.label = 'bar').to.throw(/List has duplicates/)
-      })
-    })
+        const item = items.at(0);
+        expect(() => (item.label = 'bar')).to.throw(/List has duplicates/);
+      });
+    });
 
     describe('for setter', () => {
-
       it('should throw error if class is not an instance of event emitter', () => {
         expect(() => {
           class A {
             @emitter.emitChange()
             emit(val) {}
           }
-        }).to.throw(/can only be applied to event emitters/)
-      })
+        }).to.throw(/can only be applied to event emitters/);
+      });
 
       describe('valid emitter', () => {
-        let ins, cb
+        let ins, cb;
 
         class A extends Emitter {
-          _item = 123
+          _item = 123;
 
-          get item() { return this._item }
+          get item() {
+            return this._item;
+          }
 
           @emitter.emitChange()
-          set item(val) { this._item = val }
+          set item(val) {
+            this._item = val;
+          }
         }
 
         beforeEach(async () => {
-          ins = new A()
-          cb = sinon.spy()
+          ins = new A();
+          cb = sinon.spy();
 
-          ins.on('change', cb)
-        })
+          ins.on('change', cb);
+        });
 
         afterEach(async () => {
-          ins.removeListener('change', cb)
-        })
+          ins.removeListener('change', cb);
+        });
 
         it('should not emit change if value is same', () => {
-          expect(cb.callCount).to.equal(0)
-          ins.item = 123
-          expect(cb.callCount).to.equal(0)
-        })
+          expect(cb.callCount).to.equal(0);
+          ins.item = 123;
+          expect(cb.callCount).to.equal(0);
+        });
 
         it('should emit change if value is changed', () => {
-          expect(cb.callCount).to.equal(0)
-          ins.item = 456
-          expect(cb.callCount).to.equal(1)
+          expect(cb.callCount).to.equal(0);
+          ins.item = 456;
+          expect(cb.callCount).to.equal(1);
 
-          const args = cb.firstCall.args[0]
-          expect(args).to.have.property('previous').to.deep.equal({ item: 123 })
-          expect(args).to.have.property('current').to.deep.equal({ item: 456 })
-          expect(args).to.have.property('changed').to.deep.equal({ type: 'item', from: 123, to: 456 })
-        })
+          const args = cb.firstCall.args[0];
+          expect(args)
+            .to.have.property('previous')
+            .to.deep.equal({ item: 123 });
+          expect(args)
+            .to.have.property('current')
+            .to.deep.equal({ item: 456 });
+          expect(args)
+            .to.have.property('changed')
+            .to.deep.equal({ type: 'item', from: 123, to: 456 });
+        });
 
         it('should use toObject() if defined', () => {
           ins.toObject = function() {
-            return { item: 'to-' + this.item }
-          }
+            return { item: 'to-' + this.item };
+          };
 
-          expect(cb.callCount).to.equal(0)
-          ins.item = 456
-          expect(cb.callCount).to.equal(1)
+          expect(cb.callCount).to.equal(0);
+          ins.item = 456;
+          expect(cb.callCount).to.equal(1);
 
-          const args = cb.firstCall.args[0]
-          expect(args).to.have.property('previous').to.deep.equal({ item: 'to-123' })
-          expect(args).to.have.property('current').to.deep.equal({ item: 'to-456' })
-          expect(args).to.have.property('changed').to.deep.equal({ type: 'item', from: 123, to: 456 })
-        })
+          const args = cb.firstCall.args[0];
+          expect(args)
+            .to.have.property('previous')
+            .to.deep.equal({ item: 'to-123' });
+          expect(args)
+            .to.have.property('current')
+            .to.deep.equal({ item: 'to-456' });
+          expect(args)
+            .to.have.property('changed')
+            .to.deep.equal({ type: 'item', from: 123, to: 456 });
+        });
 
         describe('_list', () => {
-
           it('should emit if is event emitter', () => {
             class B extends Emitter {}
 
-            ins._list = new B()
+            ins._list = new B();
 
-            const spy = sinon.spy()
-            ins._list.on('change:item', spy)
+            const spy = sinon.spy();
+            ins._list.on('change:item', spy);
 
-            expect(spy.callCount).to.equal(0)
-            ins.item = 456
-            expect(spy.callCount).to.equal(1)
+            expect(spy.callCount).to.equal(0);
+            ins.item = 456;
+            expect(spy.callCount).to.equal(1);
 
-            const args = spy.firstCall.args[0]
-            expect(args).to.have.property('previous').to.deep.equal({ item: 123 })
-            expect(args).to.have.property('current').to.deep.equal({ item: 456 })
-            expect(args).to.have.property('changed').to.deep.equal({ type: 'item', from: 123, to: 456 })
-          })
+            const args = spy.firstCall.args[0];
+            expect(args)
+              .to.have.property('previous')
+              .to.deep.equal({ item: 123 });
+            expect(args)
+              .to.have.property('current')
+              .to.deep.equal({ item: 456 });
+            expect(args)
+              .to.have.property('changed')
+              .to.deep.equal({ type: 'item', from: 123, to: 456 });
+          });
 
           it('should not emit if is not event emitter', () => {
-            ins._list = { on: () => {} }
+            ins._list = { on: () => {} };
 
-            const spy = sinon.spy()
-            ins._list.on('change:item', spy)
+            const spy = sinon.spy();
+            ins._list.on('change:item', spy);
 
-            expect(spy.callCount).to.equal(0)
-            ins.item = 456
-            expect(spy.callCount).to.equal(0)
-          })
-        })
-
-      })
-
-    })
-
-  })
+            expect(spy.callCount).to.equal(0);
+            ins.item = 456;
+            expect(spy.callCount).to.equal(0);
+          });
+        });
+      });
+    });
+  });
 
   describe('events', () => {
-
     describe('bubbleEvent', () => {
-
       it('should fail when setting invalid scope', () => {
-        expect(() => events.bubbleEvent('change', {})).to.throw(/Scope needs to be an emitter./)
-      })
+        expect(() => events.bubbleEvent('change', {})).to.throw(
+          /Scope needs to be an emitter./
+        );
+      });
 
       it('should bubble event', () => {
         class MyEmitter extends Emitter {}
 
-        const spy = sinon.spy()
-        const myEmitter = new MyEmitter()
-        myEmitter.on('update', spy)
+        const spy = sinon.spy();
+        const myEmitter = new MyEmitter();
+        myEmitter.on('update', spy);
 
-        const fn = events.bubbleEvent('update', myEmitter)
-        const arg = { a: 200 }
+        const fn = events.bubbleEvent('update', myEmitter);
+        const arg = { a: 200 };
 
-        fn(arg)
+        fn(arg);
 
-        expect(spy.withArgs(arg).calledOnce).to.be.true
-      })
-    })
+        expect(spy.withArgs(arg).calledOnce).to.be.true;
+      });
+    });
 
     describe('create event object for model', () => {
-
       class Model {
-        frame = 0
+        frame = 0;
 
         constructor(obj = {}) {
-          Object.assign(this, obj)
+          Object.assign(this, obj);
         }
       }
 
-      Model.fromObject = (obj) => new Model(obj)
+      Model.fromObject = obj => new Model(obj);
 
       it('should create a valid event object for model', () => {
-        const m = new Model()
-        const evtObj = events.createEventObjectForModel(Model, m, 'frame', 0, 1)
+        const m = new Model();
+        const evtObj = events.createEventObjectForModel(Model, m, 'frame', 0, 1);
 
         expect(evtObj).to.deep.equal({
           prevModel: { frame: 0 },
           model: { frame: 1 },
-          changed: { type: 'frame', from: 0, to: 1 }
-        })
-      })
-
-    })
-
-  })
+          changed: { type: 'frame', from: 0, to: 1 },
+        });
+      });
+    });
+  });
 
   describe('convert', () => {
-
     it('should convert object to array', () => {
       expect(convert.objectToArray({ a: 'a', b: 'b', c: 'c' })).to.deep.equal([
         { a: 'a' },
         { b: 'b' },
-        { c: 'c' }
-      ])
-    })
+        { c: 'c' },
+      ]);
+    });
 
     it('should convert array to object', () => {
       expect(convert.arrayToObject([{ a: 'a' }, { b: 'b' }, { c: 'c' }])).to.deep.equal({
         a: 'a',
         b: 'b',
-        c: 'c'
-      })
-    })
-
-  })
+        c: 'c',
+      });
+    });
+  });
 
   describe('xpath', () => {
-
-    let container,
-        post1,
-        post2
+    let container, post1, post2;
 
     beforeEach(() => {
-      container = document.createElement('div')
-      container.setAttribute('id', 'container')
-      document.body.appendChild(container)
+      container = document.createElement('div');
+      container.setAttribute('id', 'container');
+      document.body.appendChild(container);
 
-      post1 = post()
-      post2 = post()
+      post1 = post();
+      post2 = post();
 
-      container.appendChild(post1)
-      container.appendChild(post2)
-    })
+      container.appendChild(post1);
+      container.appendChild(post2);
+    });
 
     afterEach(() => {
-      document.body.removeChild(container)
-    })
+      document.body.removeChild(container);
+    });
 
     describe('get expression', () => {
-
       it('should get xpath string relative to html', () => {
-        const a = xpath.getExpression(post2.querySelector('.post-date'))
-        const b = xpath.getExpression(post2.querySelector('.post-args'))
+        const a = xpath.getExpression(post2.querySelector('.post-date'));
+        const b = xpath.getExpression(post2.querySelector('.post-args'));
 
-        expect(a).to.equal('/html[1]/body[1]/div[1]/div[2]/div[1]/div[1]/span[1]')
-        expect(b).to.equal('/html[1]/body[1]/div[1]/div[2]/div[1]/div[1]/span[2]')
-      })
+        expect(a).to.equal('/html[1]/body[1]/div[1]/div[2]/div[1]/div[1]/span[1]');
+        expect(b).to.equal('/html[1]/body[1]/div[1]/div[2]/div[1]/div[1]/span[2]');
+      });
 
       it('should get xpath relative to parent element', () => {
-        const a = xpath.getExpression(post2.querySelector('.post-date'), container)
-        const b = xpath.getExpression(post2.querySelector('.post-args'), container)
+        const a = xpath.getExpression(post2.querySelector('.post-date'), container);
+        const b = xpath.getExpression(post2.querySelector('.post-args'), container);
 
-        expect(a).to.equal('div[2]/div[1]/div[1]/span[1]')
-        expect(b).to.equal('div[2]/div[1]/div[1]/span[2]')
-      })
+        expect(a).to.equal('div[2]/div[1]/div[1]/span[1]');
+        expect(b).to.equal('div[2]/div[1]/div[1]/span[2]');
+      });
 
       it('should get null', () => {
-        expect(xpath.getExpression('div[3]', container)).to.equal(null)
-        expect(xpath.getExpression('div[3]/div[2]/span[1]', container)).to.equal(null)
-      })
+        expect(xpath.getExpression('div[3]', container)).to.equal(null);
+        expect(xpath.getExpression('div[3]/div[2]/span[1]', container)).to.equal(null);
+      });
 
       describe('svg', () => {
-        let svg
+        let svg;
 
         beforeEach(() => {
           // add svg element with nested rect
-          svg = document.createElement('svg')
+          svg = document.createElement('svg');
 
-          let g    = document.createElement('g'),
-              rect = document.createElement('rect')
+          let g = document.createElement('g'),
+            rect = document.createElement('rect');
 
-          g.appendChild(rect)
-          svg.appendChild(g)
-          container.querySelector('.entry').appendChild(svg)
-        })
+          g.appendChild(rect);
+          svg.appendChild(g);
+          container.querySelector('.entry').appendChild(svg);
+        });
 
         it('should get xpath string relative to html', () => {
           expect(xpath.getExpression(svg.querySelector('rect'))).to.equal(
             `/html[1]/body[1]/div[1]/div[1]/div[1]/*[local-name()='svg'][1]/*[local-name()='g'][1]/*[local-name()='rect'][1]`
-          )
-        })
+          );
+        });
 
         it('should get xpath relative to parent element', () => {
           expect(xpath.getExpression(svg.querySelector('rect'), container)).to.equal(
             `div[1]/div[1]/*[local-name()='svg'][1]/*[local-name()='g'][1]/*[local-name()='rect'][1]`
-          )
-        })
-      })
-
-    })
+          );
+        });
+      });
+    });
 
     describe('get element', () => {
-
       it('should get element by expression from html', () => {
-        const element = xpath.getElement('/html[1]/body[1]/div[1]/div[2]/div[1]/div[1]/span[1]')
-        expect(element).to.equal(post2.querySelector('.post-date'))
-      })
+        const element = xpath.getElement(
+          '/html[1]/body[1]/div[1]/div[2]/div[1]/div[1]/span[1]'
+        );
+        expect(element).to.equal(post2.querySelector('.post-date'));
+      });
 
       it('should get element by expression relative to parent element', () => {
-        const element = xpath.getElement('div[1]/div[1]/div[1]/span[2]', container)
-        expect(element).to.equal(post1.querySelector('.post-args'))
-      })
-
-    })
-
-  })
-
-})
+        const element = xpath.getElement('div[1]/div[1]/div[1]/span[2]', container);
+        expect(element).to.equal(post1.querySelector('.post-args'));
+      });
+    });
+  });
+});

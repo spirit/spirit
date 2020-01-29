@@ -1,8 +1,8 @@
-import Keyframes from './keyframes'
-import { is, events } from '../utils'
-import { emitChange } from '../utils/emitter'
-import { Emitter } from '../utils/events'
-import { includes } from '../utils/polyfill'
+import Keyframes from './keyframes';
+import { is, events } from '../utils';
+import { emitChange } from '../utils/emitter';
+import { Emitter } from '../utils/events';
+import { includes } from '../utils/polyfill';
 
 /**
  * -------------------------------------------
@@ -34,12 +34,11 @@ import { includes } from '../utils/polyfill'
 
 @emitChange('name', null, [
   { validator: val => typeof val === 'string', message: 'Name must be a string' },
-  { validator: val => !/^\d+\.?\d*?$/.test(val), message: 'Name must be a string' }
+  { validator: val => !/^\d+\.?\d*?$/.test(val), message: 'Name must be a string' },
 ])
-
 class Prop extends Emitter {
-  _keyframes = null
-  _list = null
+  _keyframes = null;
+  _list = null;
 
   /**
    * Property.
@@ -48,15 +47,15 @@ class Prop extends Emitter {
    * @param {object|Keyframes|Array} keyframes
    */
   constructor(name, keyframes = new Keyframes()) {
-    super()
+    super();
 
     if (!(keyframes instanceof Keyframes)) {
-      keyframes = new Keyframes(keyframes)
+      keyframes = new Keyframes(keyframes);
     }
 
-    name = name || null
+    name = name || null;
 
-    Object.assign(this, { name, keyframes })
+    Object.assign(this, { name, keyframes });
   }
 
   /**
@@ -65,7 +64,7 @@ class Prop extends Emitter {
    * @returns {Prop|null}
    */
   next() {
-    return this._next
+    return this._next;
   }
 
   /**
@@ -74,7 +73,7 @@ class Prop extends Emitter {
    * @returns {Prop|null}
    */
   prev() {
-    return this._prev
+    return this._prev;
   }
 
   /**
@@ -83,7 +82,7 @@ class Prop extends Emitter {
    * @returns {Props|null}
    */
   get list() {
-    return this._list
+    return this._list;
   }
 
   /**
@@ -92,7 +91,7 @@ class Prop extends Emitter {
    * @returns {Keyframes|object|Array}
    */
   get keyframes() {
-    return this._keyframes
+    return this._keyframes;
   }
 
   /**
@@ -103,21 +102,21 @@ class Prop extends Emitter {
   @emitChange()
   set keyframes(kf) {
     if (!(kf instanceof Keyframes)) {
-      kf = new Keyframes(kf)
+      kf = new Keyframes(kf);
     }
 
-    let mappings = []
+    let mappings = [];
 
     if (this._keyframes) {
-      mappings = this._keyframes.mappings
-      this._keyframes.removeAllListeners()
-      this._keyframes.clear()
+      mappings = this._keyframes.mappings;
+      this._keyframes.removeAllListeners();
+      this._keyframes.clear();
     }
 
-    this._keyframes = kf
-    this._keyframes.mappings = mappings
+    this._keyframes = kf;
+    this._keyframes.mappings = mappings;
 
-    this.setupBubbleEvents()
+    this.setupBubbleEvents();
   }
 
   /**
@@ -125,19 +124,19 @@ class Prop extends Emitter {
    */
   setupBubbleEvents() {
     if (this._keyframes instanceof Keyframes) {
-      this._keyframes.removeAllListeners()
+      this._keyframes.removeAllListeners();
 
       const evt = (from, to) => {
-        this._keyframes.on(from, events.bubbleEvent(to, this))
-      }
+        this._keyframes.on(from, events.bubbleEvent(to, this));
+      };
 
-      evt('change:list', 'change:keyframes:list')
-      evt('change', 'change:keyframe')
-      evt('change:time', 'change:keyframe:time')
-      evt('change:value', 'change:keyframe:value')
-      evt('change:ease', 'change:keyframe:ease')
-      evt('add', 'add:keyframe')
-      evt('remove', 'remove:keyframe')
+      evt('change:list', 'change:keyframes:list');
+      evt('change', 'change:keyframe');
+      evt('change:time', 'change:keyframe:time');
+      evt('change:value', 'change:keyframe:value');
+      evt('change:ease', 'change:keyframe:ease');
+      evt('add', 'add:keyframe');
+      evt('remove', 'remove:keyframe');
     }
   }
 
@@ -149,8 +148,8 @@ class Prop extends Emitter {
    * @returns {object}
    */
   toObject(ignoreEval = false) {
-    const keyframes = this.keyframes ? this.keyframes.toObject(ignoreEval) : {}
-    return { [this.name]: keyframes }
+    const keyframes = this.keyframes ? this.keyframes.toObject(ignoreEval) : {};
+    return { [this.name]: keyframes };
   }
 
   /**
@@ -159,12 +158,23 @@ class Prop extends Emitter {
    * @returns {boolean}
    */
   isCSSTransform() {
-    return includes([
-      'x', 'y', 'z',
-      'rotation', 'rotationZ', 'rotationX', 'rotationY',
-      'skewX', 'skewY',
-      'scale', 'scaleX', 'scaleY'
-    ], this.name)
+    return includes(
+      [
+        'x',
+        'y',
+        'z',
+        'rotation',
+        'rotationZ',
+        'rotationX',
+        'rotationY',
+        'skewX',
+        'skewY',
+        'scale',
+        'scaleX',
+        'scaleY',
+      ],
+      this.name
+    );
   }
 
   /**
@@ -173,9 +183,9 @@ class Prop extends Emitter {
    */
   destroy() {
     if (this._keyframes) {
-      this._keyframes.destroy()
+      this._keyframes.destroy();
     }
-    this.removeAllListeners()
+    this.removeAllListeners();
   }
 }
 
@@ -187,24 +197,24 @@ class Prop extends Emitter {
  */
 Prop.fromObject = function(obj) {
   if (!is.isObject(obj)) {
-    throw new Error('Object is invalid')
+    throw new Error('Object is invalid');
   }
 
-  const keys = Object.keys(obj)
+  const keys = Object.keys(obj);
 
   if (keys.length === 0) {
-    throw new Error('Object is invalid')
+    throw new Error('Object is invalid');
   }
 
   for (let i in obj) {
     if (!is.isObject(obj[i])) {
-      throw new Error('Object is invalid')
+      throw new Error('Object is invalid');
     }
   }
 
-  const p = keys[0]
-  return new Prop(p, obj[p])
-}
+  const p = keys[0];
+  return new Prop(p, obj[p]);
+};
 
 /**
  * Prop Events
@@ -221,7 +231,7 @@ Prop.Events = [
   'change:keyframe:value',
   'change:keyframe:ease',
   'add:keyframe',
-  'remove:keyframe'
-]
+  'remove:keyframe',
+];
 
-export default Prop
+export default Prop;
