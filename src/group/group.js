@@ -255,8 +255,7 @@ class Group extends Emitter {
       }
 
       if (!this.reset()) {
-        const tl = config.gsap.instance.timeline({ paused: true }); // eslint-disable-line new-cap
-        this.timeline = tl;
+        this.timeline = config.gsap.instance.timeline({ paused: true }); // eslint-disable-line new-cap
       }
 
       this.resolved.each(timeline => {

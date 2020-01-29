@@ -127,7 +127,11 @@ export default function(manifest) {
         }
 
         if (timelines.length === 1) {
-          resolve(timelines[0]);
+          // remove promise behaviour
+          // else it can only be resolved when animation has completed
+          timelines[0].then = undefined;
+
+          resolve(timelines[0])
         }
 
         resolve(g);

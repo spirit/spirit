@@ -277,56 +277,55 @@ describe('load-animation', () => {
       createContainers(div, 3);
     });
 
-    // describe('autoPlay', () => {
-    //   it.only('should auto play single group', async () => {
-    //     const timeline = await loadAnimation({
-    //       autoPlay: false,
-    //       animationData: createSimpleGroup('a', 'div[1]'),
-    //     });
-    //     timeline.paused(); //?
-    //     expect(timeline.isActive()).to.be.true;
-    //   });
-    //
-    //   it('should not auto play single group', async () => {
-    //     const timeline = await loadAnimation({
-    //       autoPlay: false,
-    //       animationData: createSimpleGroup('a', 'div[1]'),
-    //     });
-    //     expect(timeline.isActive()).to.be.false;
-    //   });
-    //
-    //   it('should auto play all groups', async () => {
-    //     const groups = await loadAnimation({
-    //       autoPlay: true,
-    //       animationData: [
-    //         createSimpleGroup('a', 'div[1]/div[1]'),
-    //         createSimpleGroup('b', 'div[1]/div[2]'),
-    //         createSimpleGroup('c', 'div[1]/div[3]'),
-    //       ],
-    //     });
-    //     expect(Object.keys(groups).map(g => groups[g].isActive())).to.deep.equal([
-    //       true,
-    //       true,
-    //       true,
-    //     ]);
-    //   });
-    //
-    //   it('should not auto play all groups', async () => {
-    //     const groups = await loadAnimation({
-    //       autoPlay: false,
-    //       animationData: [
-    //         createSimpleGroup('a', 'div[1]/div[1]'),
-    //         createSimpleGroup('b', 'div[1]/div[2]'),
-    //         createSimpleGroup('c', 'div[1]/div[3]'),
-    //       ],
-    //     });
-    //     expect(Object.keys(groups).map(g => groups[g].isActive())).to.deep.equal([
-    //       false,
-    //       false,
-    //       false,
-    //     ]);
-    //   });
-    // });
+    describe('autoPlay', () => {
+      it('should auto play single group', async () => {
+        const timeline = await loadAnimation({
+          autoPlay: false,
+          animationData: createSimpleGroup('a', 'div[1]'),
+        });
+        expect(timeline.isActive()).to.be.false;
+      });
+
+      it('should not auto play single group', async () => {
+        const timeline = await loadAnimation({
+          autoPlay: false,
+          animationData: createSimpleGroup('a', 'div[1]'),
+        });
+        expect(timeline.isActive()).to.be.false;
+      });
+
+      it('should auto play all groups', async () => {
+        const groups = await loadAnimation({
+          autoPlay: true,
+          animationData: [
+            createSimpleGroup('a', 'div[1]/div[1]'),
+            createSimpleGroup('b', 'div[1]/div[2]'),
+            createSimpleGroup('c', 'div[1]/div[3]'),
+          ],
+        });
+        expect(Object.keys(groups).map(g => groups[g].isActive())).to.deep.equal([
+          true,
+          true,
+          true,
+        ]);
+      });
+
+      it('should not auto play all groups', async () => {
+        const groups = await loadAnimation({
+          autoPlay: false,
+          animationData: [
+            createSimpleGroup('a', 'div[1]/div[1]'),
+            createSimpleGroup('b', 'div[1]/div[2]'),
+            createSimpleGroup('c', 'div[1]/div[3]'),
+          ],
+        });
+        expect(Object.keys(groups).map(g => groups[g].isActive())).to.deep.equal([
+          false,
+          false,
+          false,
+        ]);
+      });
+    });
 
     describe('loop', () => {
       it('should not loop single group', async () => {
@@ -336,13 +335,13 @@ describe('load-animation', () => {
         expect(timeline.repeat()).to.equal(0);
       });
 
-      // it('should loop single group', async () => {
-      //   const timeline = await loadAnimation({
-      //     loop: true,
-      //     animationData: createSimpleGroup('a', 'div[1]'),
-      //   });
-      //   expect(timeline.repeat()).to.equal(-1);
-      // });
+      it('should loop single group', async () => {
+        const timeline = await loadAnimation({
+          loop: true,
+          animationData: createSimpleGroup('a', 'div[1]'),
+        });
+        expect(timeline.repeat()).to.equal(-1);
+      });
 
       it('should loop all groups', async () => {
         const groups = await loadAnimation({
@@ -371,17 +370,17 @@ describe('load-animation', () => {
         expect(Object.keys(groups).map(g => groups[g].repeat())).to.deep.equal([0, 0, 0]);
       });
 
-      // it('should loop x times', async () => {
-      //   const groups = await loadAnimation({
-      //     loop: 2,
-      //     animationData: [
-      //       createSimpleGroup('a', 'div[1]/div[1]'),
-      //       createSimpleGroup('b', 'div[1]/div[2]'),
-      //       createSimpleGroup('c', 'div[1]/div[3]'),
-      //     ],
-      //   });
-      //   expect(Object.keys(groups).map(g => groups[g].repeat())).to.deep.equal([2, 2, 2]);
-      // });
+      it('should loop x times', async () => {
+        const groups = await loadAnimation({
+          loop: 2,
+          animationData: [
+            createSimpleGroup('a', 'div[1]/div[1]'),
+            createSimpleGroup('b', 'div[1]/div[2]'),
+            createSimpleGroup('c', 'div[1]/div[3]'),
+          ],
+        });
+        expect(Object.keys(groups).map(g => groups[g].repeat())).to.deep.equal([2, 2, 2]);
+      });
     });
 
     describe('yoyo', () => {
