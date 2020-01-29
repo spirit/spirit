@@ -1,7 +1,7 @@
 /*!
  * Spirit.js v2.4.3
  * 
- * (c) 2019 Patrick Brouwer
+ * (c) 2020 Patrick Brouwer
  * Released under the MIT License.
  */
 var spirit =
@@ -221,10 +221,9 @@ var Config = function Config() {
   this.debug =  true && Object(_utils_context__WEBPACK_IMPORTED_MODULE_0__["isBrowser"])();
   this.overwriteAnimations = true;
   this.gsap = {
-    tween: null,
-    timeline: null,
+    instance: null,
     autoInject: true,
-    autoInjectUrl: 'https://unpkg.com/gsap@2.1.3/umd/TweenMax.js'
+    autoInjectUrl: 'https://unpkg.com/gsap@3.1.1/dist/gsap.min.js'
   };
 };
 
@@ -244,21 +243,23 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "default", function() { return setup; });
 /* harmony import */ var _utils__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../utils */ "./src/utils/index.js");
 /* harmony import */ var _config__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./config */ "./src/config/config.js");
+/* harmony import */ var _utils_gsap__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../utils/gsap */ "./src/utils/gsap.js");
+
 
 
 /**
  * Setup Spirit GSAP
  *
- * @param {object} conf
+ * @param {object} gsapInstance
  */
 
 function setup() {
-  var conf = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+  var gsapInstance = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : null;
   return new Promise(function (resolve, reject) {
-    _utils__WEBPACK_IMPORTED_MODULE_0__["is"].isObject(conf) && Object.keys(conf).forEach(function (k) {
-      var obj = _config__WEBPACK_IMPORTED_MODULE_1__["default"].gsap.hasOwnProperty(k) && _utils__WEBPACK_IMPORTED_MODULE_0__["is"].isFunction(conf[k]) ? _config__WEBPACK_IMPORTED_MODULE_1__["default"].gsap : _config__WEBPACK_IMPORTED_MODULE_1__["default"];
-      obj[k] = conf[k];
-    });
+    if (Object(_utils_gsap__WEBPACK_IMPORTED_MODULE_2__["isGSAPInstance"])(gsapInstance)) {
+      _config__WEBPACK_IMPORTED_MODULE_1__["default"].gsap.instance = gsapInstance;
+    }
+
     _utils__WEBPACK_IMPORTED_MODULE_0__["gsap"].ensure().then(resolve)["catch"](reject);
   });
 }
@@ -464,6 +465,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _utils_emitter__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../utils/emitter */ "./src/utils/emitter.js");
 /* harmony import */ var _utils_errors__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../utils/errors */ "./src/utils/errors.js");
 /* harmony import */ var _utils_events__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../utils/events */ "./src/utils/events.js");
+/* harmony import */ var _utils_gsap__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../utils/gsap */ "./src/utils/gsap.js");
 var _dec, _dec2, _dec3, _dec4, _class, _temp;
 
 function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
@@ -491,6 +493,7 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
 
 function _applyDecoratedDescriptor(target, property, decorators, descriptor, context) { var desc = {}; Object.keys(descriptor).forEach(function (key) { desc[key] = descriptor[key]; }); desc.enumerable = !!desc.enumerable; desc.configurable = !!desc.configurable; if ('value' in desc || desc.initializer) { desc.writable = true; } desc = decorators.slice().reverse().reduce(function (desc, decorator) { return decorator(target, property, desc) || desc; }, desc); if (context && desc.initializer !== void 0) { desc.value = desc.initializer ? desc.initializer.call(context) : void 0; desc.initializer = undefined; } if (desc.initializer === void 0) { Object.defineProperty(target, property, desc); desc = null; } return desc; }
+
 
 
 
@@ -629,7 +632,7 @@ function (_Emitter) {
      * Construct GSAP timeline
      *
      * @param   {boolean} resolve elements
-     * @returns {TimelineMax|TimelineLite}
+     * @returns {gsap.timeline}
      */
 
   }, {
@@ -648,10 +651,12 @@ function (_Emitter) {
           throw new Error('GSAP cannot be found');
         }
 
-        resolve && this.resolve();
+        if (resolve) {
+          this.resolve();
+        }
 
         if (!this.reset()) {
-          this.timeline = new _config_config__WEBPACK_IMPORTED_MODULE_0__["default"].gsap.timeline({
+          this.timeline = _config_config__WEBPACK_IMPORTED_MODULE_0__["default"].gsap.instance.timeline({
             paused: true
           }); // eslint-disable-line new-cap
         }
@@ -741,11 +746,11 @@ function (_Emitter) {
      */
     ,
     set: function set(scale) {
-      if (!(typeof scale === 'number' && isFinite(scale))) {
+      if (!(typeof scale === 'number' && Number.isFinite(scale))) {
         throw new Error('timeScale needs to be a number');
       }
 
-      if (this.timeline && this.timeline instanceof _config_config__WEBPACK_IMPORTED_MODULE_0__["default"].gsap.timeline) {
+      if (Object(_utils_gsap__WEBPACK_IMPORTED_MODULE_6__["isGSAPTimeline"])(this.timeline)) {
         this.timeline.timeScale(scale);
       }
 
@@ -771,7 +776,7 @@ function (_Emitter) {
      */
     ,
     set: function set(val) {
-      if (this.timeline && this.timeline instanceof _config_config__WEBPACK_IMPORTED_MODULE_0__["default"].gsap.timeline) {
+      if (Object(_utils_gsap__WEBPACK_IMPORTED_MODULE_6__["isGSAPTimeline"])(this.timeline)) {
         this.timeline.duration(val);
         this.timeScale = this.timeline.timeScale();
         this._duration = this.timeline.duration();
@@ -2964,16 +2969,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _config_setup__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./config/setup */ "./src/config/setup.js");
 /* harmony import */ var _data_parser__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./data/parser */ "./src/data/parser.js");
 /* harmony import */ var _utils_is__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./utils/is */ "./src/utils/is.js");
-/* harmony import */ var _config_config__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./config/config */ "./src/config/config.js");
-/* harmony import */ var _registry_registry__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./registry/registry */ "./src/registry/registry.js");
-function _slicedToArray(arr, i) { return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _nonIterableRest(); }
-
-function _nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance"); }
-
-function _iterableToArrayLimit(arr, i) { if (!(Symbol.iterator in Object(arr) || Object.prototype.toString.call(arr) === "[object Arguments]")) { return; } var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"] != null) _i["return"](); } finally { if (_d) throw _e; } } return _arr; }
-
-function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
-
+/* harmony import */ var _registry_registry__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./registry/registry */ "./src/registry/registry.js");
 function _toConsumableArray(arr) { return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _nonIterableSpread(); }
 
 function _nonIterableSpread() { throw new TypeError("Invalid attempt to spread non-iterable instance"); }
@@ -2982,12 +2978,19 @@ function _iterableToArray(iter) { if (Symbol.iterator in Object(iter) || Object.
 
 function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = new Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } }
 
+function _slicedToArray(arr, i) { return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _nonIterableRest(); }
+
+function _nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance"); }
+
+function _iterableToArrayLimit(arr, i) { if (!(Symbol.iterator in Object(arr) || Object.prototype.toString.call(arr) === "[object Arguments]")) { return; } var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"] != null) _i["return"](); } finally { if (_d) throw _e; } } return _arr; }
+
+function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
+
 function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
 
 function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(Object(source), true).forEach(function (key) { _defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
 
 function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
-
 
 
 
@@ -3029,10 +3032,7 @@ function createFromData(data, container) {
 
 
 function loadFromPath(path, container) {
-  if (path && typeof path === 'string' && path.length > 0) {
-    return Object(_data_parser__WEBPACK_IMPORTED_MODULE_1__["load"])(path, container);
-  }
-
+  if (path && typeof path === 'string' && path.length > 0) return Object(_data_parser__WEBPACK_IMPORTED_MODULE_1__["load"])(path, container);
   return Promise.resolve([]);
 }
 /**
@@ -3055,13 +3055,6 @@ function loadFromPath(path, container) {
   }
 
   return new Promise(function (resolve, reject) {
-    var result = [];
-
-    var add = function add(coll) {
-      result = [].concat(_toConsumableArray(result), _toConsumableArray(Array.isArray(coll) ? _toConsumableArray(coll) : [coll]));
-    }; // setup gsap
-
-
     Object(_config_setup__WEBPACK_IMPORTED_MODULE_0__["default"])().then(function () {
       return Promise.all([createFromData(animationData, container), loadFromPath(path, container)]);
     }).then(function (_ref) {
@@ -3069,38 +3062,47 @@ function loadFromPath(path, container) {
           created = _ref2[0],
           loaded = _ref2[1];
 
+      var result = [];
+
+      function add(item) {
+        if (Array.isArray(item)) result.push.apply(result, _toConsumableArray(item));else result.push(item);
+      }
+
       add(created);
       add(loaded);
-    }).then(function () {
-      // one animation group, return it's timeline directly
-      if (result.length === 1 && result[0].length === 1) {
-        return result[0].at(0).construct();
-      } // multiple groups!
-
-
+      return result;
+    }).then(function (result) {
+      var timelines = [];
       var g = {};
-      result.forEach(function (groups) {
-        groups.each(function (group) {
-          g[group.name] = group.construct();
 
-          g[group.name].construct = function () {
-            var tl = _registry_registry__WEBPACK_IMPORTED_MODULE_4__["default"].get(group.name).construct();
-            tl.construct = this.construct;
-            return tl;
-          };
+      if (result.length === 1 && result[0].length === 1) {
+        // single group
+        timelines.push(result[0].at(0).construct());
+      } else {
+        // multi group
+        result.forEach(function (groups) {
+          groups.each(function (group) {
+            g[group.name] = group.construct();
+
+            g[group.name].construct = function () {
+              var tl = _registry_registry__WEBPACK_IMPORTED_MODULE_3__["default"].get(group.name).construct();
+              tl.construct = this.construct;
+              return tl;
+            };
+          });
         });
-      });
-      return g;
-    }).then(function (res) {
-      var timelines = res instanceof _config_config__WEBPACK_IMPORTED_MODULE_3__["default"].gsap.timeline ? [res] : Object.keys(res).map(function (k) {
-        return res[k];
-      });
+        timelines.push.apply(timelines, _toConsumableArray(Object.keys(g).map(function (k) {
+          return g[k];
+        })));
+      } // apply options
+
 
       for (var i = 0; i < timelines.length; i++) {
         var timeline = timelines[i];
 
         if (options.loop) {
-          timeline.repeat(options.loop);
+          var loopCount = typeof options.loop === 'boolean' ? -1 : options.loop;
+          timeline.repeat(loopCount);
         }
 
         if (options.yoyo) {
@@ -3118,10 +3120,16 @@ function loadFromPath(path, container) {
         if (options.autoPlay) {
           timeline.play(0);
         }
-      } // finally resolve res
+      }
 
+      if (timelines.length === 1) {
+        // remove promise behaviour
+        // else it can only be resolved when animation has completed
+        timelines[0].then = undefined;
+        resolve(timelines[0]);
+      }
 
-      resolve(res);
+      resolve(g);
     })["catch"](reject);
   });
 });
@@ -3814,7 +3822,7 @@ function () {
 /*!***************************!*\
   !*** ./src/utils/gsap.js ***!
   \***************************/
-/*! exports provided: has, ensure, loadFromCDN, transformOrigins, generateTimeline, killTimeline, isTimeline, isTween */
+/*! exports provided: has, ensure, loadFromCDN, transformOrigins, generateTimeline, killTimeline, isGSAPTimeline, isGSAPInstance */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -3825,19 +3833,21 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "transformOrigins", function() { return transformOrigins; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "generateTimeline", function() { return generateTimeline; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "killTimeline", function() { return killTimeline; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "isTimeline", function() { return isTimeline; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "isTween", function() { return isTween; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "isGSAPTimeline", function() { return isGSAPTimeline; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "isGSAPInstance", function() { return isGSAPInstance; });
 /* harmony import */ var _config_config__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../config/config */ "./src/config/config.js");
 /* harmony import */ var _loadscript__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./loadscript */ "./src/utils/loadscript.js");
 /* harmony import */ var _group_timeline__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../group/timeline */ "./src/group/timeline.js");
 /* harmony import */ var _debug__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./debug */ "./src/utils/debug.js");
 /* harmony import */ var _is__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./is */ "./src/utils/is.js");
 /* harmony import */ var _context__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./context */ "./src/utils/context.js");
+/* harmony import */ var _index__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./index */ "./src/utils/index.js");
 function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
 
 function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(Object(source), true).forEach(function (key) { _defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
 
 function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
 
 
 
@@ -3852,7 +3862,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
  */
 
 function has() {
-  return Object(_is__WEBPACK_IMPORTED_MODULE_4__["isFunction"])(_config_config__WEBPACK_IMPORTED_MODULE_0__["default"].gsap.tween) && Object(_is__WEBPACK_IMPORTED_MODULE_4__["isFunction"])(_config_config__WEBPACK_IMPORTED_MODULE_0__["default"].gsap.timeline);
+  return isGSAPInstance(_config_config__WEBPACK_IMPORTED_MODULE_0__["default"].gsap.instance);
 }
 /**
  * Ensure GSAP is loaded
@@ -3864,29 +3874,24 @@ function has() {
 function ensure() {
   if (has()) {
     return Promise.resolve();
-  } // has gsap on window object?
+  }
 
-
-  var wTween = window.TweenMax || window.TweenLite;
-  var wTimeline = window.TimelineMax || window.TimelineLite;
-
-  if (Object(_context__WEBPACK_IMPORTED_MODULE_5__["isBrowser"])() && Object(_is__WEBPACK_IMPORTED_MODULE_4__["isFunction"])(wTween) && Object(_is__WEBPACK_IMPORTED_MODULE_4__["isFunction"])(wTimeline)) {
-    _config_config__WEBPACK_IMPORTED_MODULE_0__["default"].gsap.tween = wTween;
-    _config_config__WEBPACK_IMPORTED_MODULE_0__["default"].gsap.timeline = wTimeline;
+  if (Object(_context__WEBPACK_IMPORTED_MODULE_5__["isBrowser"])() && isGSAPInstance(window.gsap)) {
+    _config_config__WEBPACK_IMPORTED_MODULE_0__["default"].gsap.instance = window.gsap;
     return Promise.resolve();
   } // load from cdn
 
 
   if (!_config_config__WEBPACK_IMPORTED_MODULE_0__["default"].gsap.autoInject) {
     if (Object(_debug__WEBPACK_IMPORTED_MODULE_3__["default"])()) {
-      console.warn("\n      \n        It seems that you've disabled autoInject. GSAP cannot be found or loaded by Spirit.\n        Please make sure you provide the tween and timeline to Spirit:\n      \n        spirit.setup({\n          tween: TweenMax,\n          timeline: TimelineMax\n        })\n        \n        Or enable the autoInject \"spirit.config.gsap.autoInject = true\".\n        \n      ");
+      console.warn("\n\n        It seems that you've disabled autoInject. GSAP cannot be found or loaded by Spirit.\n        Please make sure you provide the tween and timeline to Spirit:\n\n        spirit.setup({\n          tween: TweenMax,\n          timeline: TimelineMax\n        })\n\n        Or enable the autoInject \"spirit.config.gsap.autoInject = true\".\n\n      ");
     }
 
     return Promise.reject(new Error('GSAP not found.'));
   }
 
   if (Object(_debug__WEBPACK_IMPORTED_MODULE_3__["default"])()) {
-    console.warn("\n      \n      GSAP is being fetched from CDN: ".concat(_config_config__WEBPACK_IMPORTED_MODULE_0__["default"].gsap.autoInjectUrl, ".\n      If you already have GSAP installed, please provide it to Spirit:\n      \n        spirit.setup({\n          tween: TweenMax,\n          timeline: TimelineMax\n        })\n      \n      You want to use another cdn? Change it here:\n       \n        spirit.config.gsap.autoInjectUrl = 'https://cdn.xxx'\n      \n    "));
+    console.warn("\n\n      GSAP is being fetched from CDN: ".concat(_config_config__WEBPACK_IMPORTED_MODULE_0__["default"].gsap.autoInjectUrl, ".\n      If you already have GSAP installed, please provide it to Spirit:\n\n        spirit.setup({\n          tween: TweenMax,\n          timeline: TimelineMax\n        })\n\n      You want to use another cdn? Change it here:\n\n        spirit.config.gsap.autoInjectUrl = 'https://cdn.xxx'\n\n    "));
   }
 
   return this.loadFromCDN();
@@ -3899,8 +3904,11 @@ function ensure() {
 
 function loadFromCDN() {
   return Object(_loadscript__WEBPACK_IMPORTED_MODULE_1__["default"])(_config_config__WEBPACK_IMPORTED_MODULE_0__["default"].gsap.autoInjectUrl).then(function () {
-    _config_config__WEBPACK_IMPORTED_MODULE_0__["default"].gsap.tween = window.TweenMax;
-    _config_config__WEBPACK_IMPORTED_MODULE_0__["default"].gsap.timeline = window.TimelineMax;
+    if (!isGSAPInstance(window.gsap)) {
+      return Promise.reject(new Error('GSAP could not be loaded from CDN: ' + _config_config__WEBPACK_IMPORTED_MODULE_0__["default"].gsap.autoInjectUrl));
+    }
+
+    _config_config__WEBPACK_IMPORTED_MODULE_0__["default"].gsap.instance = window.gsap;
     return Promise.resolve();
   })["catch"](function (err) {
     return Promise.reject(err);
@@ -3964,9 +3972,10 @@ function generateTimeline(timeline) {
 
   if (!has()) {
     throw new Error('GSAP not set. Please make sure GSAP is available.');
-  }
+  } // create new timeline
 
-  var tl = new _config_config__WEBPACK_IMPORTED_MODULE_0__["default"].gsap.timeline({
+
+  var tl = _config_config__WEBPACK_IMPORTED_MODULE_0__["default"].gsap.instance.timeline({
     paused: true
   }); // eslint-disable-line new-cap
 
@@ -3988,7 +3997,7 @@ function generateTimeline(timeline) {
       var start = prev ? prev.time : 0;
       var duration = prev ? time - prev.time : time;
       var props = {
-        ease: ease || 'Linear.easeNone'
+        ease: ease || 'none'
       };
 
       var property = _defineProperty({}, prop.name, value); // parse dots into recursive object
@@ -4010,7 +4019,9 @@ function generateTimeline(timeline) {
         property = o;
       }
 
-      props = _objectSpread({}, props, {}, property);
+      props = _objectSpread({}, props, {}, property, {
+        duration: duration
+      });
 
       if (time === 0) {
         props.immediateRender = true;
@@ -4021,7 +4032,7 @@ function generateTimeline(timeline) {
         origin = origins.next().current;
       }
 
-      tl.to(timeline.transformObject, duration, props, start);
+      tl.to(timeline.transformObject, props, start);
       keyframe = keyframe.next();
     }
   });
@@ -4035,36 +4046,65 @@ function generateTimeline(timeline) {
  */
 
 function killTimeline(gsapTimeline) {
-  if (isTimeline(gsapTimeline)) {
-    gsapTimeline.eventCallback('onComplete', null);
-    gsapTimeline.eventCallback('onUpdate', null);
-    gsapTimeline.eventCallback('onStart', null);
-    var targets = gsapTimeline.getChildren();
+  if (isGSAPTimeline(gsapTimeline)) {
+    if (gsapTimeline.eventCallback) {
+      gsapTimeline.eventCallback('onComplete', null);
+      gsapTimeline.eventCallback('onUpdate', null);
+      gsapTimeline.eventCallback('onStart', null);
+      gsapTimeline.eventCallback('onReverseComplete', null);
+      gsapTimeline.eventCallback('onRepeat', null);
+    }
+
+    var targets = gsapTimeline.getChildren ? gsapTimeline.getChildren() : [];
     gsapTimeline.kill();
 
     for (var i = 0; i < targets.length; i++) {
-      if (isTimeline(targets[i])) {
-        killTimeline(targets[i]);
-        continue;
+      if (targets[i]._targets) {
+        var _iteratorNormalCompletion = true;
+        var _didIteratorError = false;
+        var _iteratorError = undefined;
+
+        try {
+          for (var _iterator = targets[i]._targets[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+            var el = _step.value;
+            _config_config__WEBPACK_IMPORTED_MODULE_0__["default"].gsap.instance.set(el, {
+              clearProps: 'all'
+            });
+            delete el._gsap;
+          }
+        } catch (err) {
+          _didIteratorError = true;
+          _iteratorError = err;
+        } finally {
+          try {
+            if (!_iteratorNormalCompletion && _iterator["return"] != null) {
+              _iterator["return"]();
+            }
+          } finally {
+            if (_didIteratorError) {
+              throw _iteratorError;
+            }
+          }
+        }
       }
 
-      if (targets[i].target !== null) {
-        _config_config__WEBPACK_IMPORTED_MODULE_0__["default"].gsap.tween.set(targets[i].target, {
-          clearProps: 'all'
-        });
+      if (isGSAPTimeline(targets[i])) {
+        killTimeline(targets[i]);
       }
     }
 
-    gsapTimeline.clear();
+    if (gsapTimeline.clear) {
+      gsapTimeline.clear();
+    }
   }
 
   return gsapTimeline;
 }
-function isTimeline(timeline) {
-  return timeline && Object(_is__WEBPACK_IMPORTED_MODULE_4__["isFunction"])(_config_config__WEBPACK_IMPORTED_MODULE_0__["default"].gsap.timeline) && timeline instanceof _config_config__WEBPACK_IMPORTED_MODULE_0__["default"].gsap.timeline;
+function isGSAPTimeline(timeline) {
+  return timeline && _config_config__WEBPACK_IMPORTED_MODULE_0__["default"].gsap.instance && timeline instanceof _config_config__WEBPACK_IMPORTED_MODULE_0__["default"].gsap.instance.core.Animation;
 }
-function isTween(tween) {
-  return tween && Object(_is__WEBPACK_IMPORTED_MODULE_4__["isFunction"])(_config_config__WEBPACK_IMPORTED_MODULE_0__["default"].gsap.tween) && tween instanceof _config_config__WEBPACK_IMPORTED_MODULE_0__["default"].gsap.tween;
+function isGSAPInstance(n) {
+  return Object(_is__WEBPACK_IMPORTED_MODULE_4__["isObject"])(n) && Object(_is__WEBPACK_IMPORTED_MODULE_4__["isFunction"])(n.to) && Object(_is__WEBPACK_IMPORTED_MODULE_4__["isFunction"])(n.timeline);
 }
 
 /***/ }),
