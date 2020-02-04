@@ -1,5 +1,5 @@
-import List from '../list/list'
-import mitt from 'mitt'
+import List from '../list/list';
+import mitt from 'mitt';
 
 /**
  * Bubble events.
@@ -10,16 +10,16 @@ import mitt from 'mitt'
  */
 export function bubbleEvent(evt, scope) {
   if (!(scope instanceof Emitter)) {
-    throw new Error('Scope needs to be an emitter.')
+    throw new Error('Scope needs to be an emitter.');
   }
 
   return function() {
-    this.emit(evt, ...arguments)
+    this.emit(evt, ...arguments);
 
     if (this._list instanceof List) {
-      this._list.emit(evt, ...arguments)
+      this._list.emit(evt, ...arguments);
     }
-  }.bind(scope)
+  }.bind(scope);
 }
 
 /**
@@ -47,40 +47,40 @@ export function createEventObjectForModel(model, obj, prop, prevVal, nextVal) {
     changed: {
       type: prop,
       from: prevVal,
-      to: nextVal
-    }
-  }
+      to: nextVal,
+    },
+  };
 
-  return evt
+  return evt;
 }
 
 /**
  * Minimal event emitter
  */
 export class Emitter {
-  _events = {}
-  _emitter = mitt(this._events)
+  _events = {};
+  _emitter = mitt(this._events);
 
   eventNames() {
-    return Object.keys(this._events)
+    return Object.keys(this._events);
   }
 
   emit(eventName, ...args) {
-    this._emitter.emit(eventName, ...args)
+    this._emitter.emit(eventName, ...args);
   }
 
   on(event, listener) {
-    this._emitter.on(event, listener)
+    this._emitter.on(event, listener);
   }
 
   removeListener(event, listener) {
-    this._emitter.off(event, listener)
+    this._emitter.off(event, listener);
   }
 
   removeAllListeners() {
     Object.keys(this._events).forEach(evt => {
-      const listeners = this._events[evt]
-      listeners.forEach(listener => this._emitter.off(evt, listener))
-    })
+      const listeners = this._events[evt];
+      listeners.forEach(listener => this._emitter.off(evt, listener));
+    });
   }
 }

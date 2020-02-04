@@ -1,5 +1,5 @@
-import debug from './debug'
-import * as xpath from './xpath'
+import debug from './debug';
+import * as xpath from './xpath';
 
 /**
  * Resolve element relative to root
@@ -9,28 +9,28 @@ import * as xpath from './xpath'
  * @param {boolean}       throwException
  */
 export function resolveElement(root, data, throwException = false) {
-  let transformObject = null
-  let { path, id } = data
+  let transformObject = null;
+  let { path, id } = data;
 
   if (id) {
-    transformObject = root.querySelector(`[data-spirit-id="${id}"]`)
+    transformObject = root.querySelector(`[data-spirit-id="${id}"]`);
   }
 
   if (!transformObject && path) {
-    transformObject = xpath.getElement(path, root === document.body ? undefined : root)
+    transformObject = xpath.getElement(path, root === document.body ? undefined : root);
   }
 
   if (!transformObject) {
     if (debug()) {
-      console.group('Unable to resolve element')
-      console.warn('Timeline: ', data)
-      console.groupEnd()
+      console.group('Unable to resolve element');
+      console.warn('Timeline: ', data);
+      console.groupEnd();
     }
 
     if (throwException) {
-      throw new Error('Cannot find element.')
+      throw new Error('Cannot find element.');
     }
   }
 
-  return transformObject
+  return transformObject;
 }

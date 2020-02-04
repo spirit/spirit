@@ -1,13 +1,13 @@
-import List from '../list/list'
-import Prop from './prop'
-import { convert, is } from '../utils'
+import List from '../list/list';
+import Prop from './prop';
+import { convert, is } from '../utils';
 
 class Props extends List {
-  duplicates = { prop: 'name' }
-  sortOn = (a, b) => a.name.localeCompare(b.name)
-  linkedList = true
+  duplicates = { prop: 'name' };
+  sortOn = (a, b) => a.name.localeCompare(b.name);
+  linkedList = true;
 
-  _mappings = []
+  _mappings = [];
 
   /**
    * Create properties
@@ -17,9 +17,9 @@ class Props extends List {
    */
   constructor(props = []) {
     if (is.isObject(props)) {
-      props = convert.objectToArray(props)
+      props = convert.objectToArray(props);
     }
-    super(props, Prop, ['prop'])
+    super(props, Prop, ['prop']);
   }
 
   /**
@@ -28,7 +28,7 @@ class Props extends List {
    * @param {string} name
    */
   get(name) {
-    return this._list.find(p => p.name === name)
+    return this._list.find(p => p.name === name);
   }
 
   /**
@@ -37,7 +37,7 @@ class Props extends List {
    * @returns {Array}
    */
   get mappings() {
-    return this._mappings
+    return this._mappings;
   }
 
   /**
@@ -46,8 +46,10 @@ class Props extends List {
    * @param {Array} mappings
    */
   set mappings(mappings) {
-    this._mappings = mappings
-    this.each(prop => { prop.keyframes.mappings = [...mappings] })
+    this._mappings = mappings;
+    this.each(prop => {
+      prop.keyframes.mappings = [...mappings];
+    });
   }
 
   /**
@@ -58,17 +60,17 @@ class Props extends List {
    */
   add(prop) {
     if (is.isObject(prop) && !(prop instanceof Prop) && Object.keys(prop).length > 1) {
-      prop = convert.objectToArray(prop)
+      prop = convert.objectToArray(prop);
     }
 
-    const affected = super.add(prop)
-    const exec = (prop) => { prop.keyframes.mappings = [...this.mappings] }
+    const affected = super.add(prop);
+    const exec = prop => {
+      prop.keyframes.mappings = [...this.mappings];
+    };
 
-    Array.isArray(affected)
-      ? affected.forEach(exec)
-      : exec(affected)
+    Array.isArray(affected) ? affected.forEach(exec) : exec(affected);
 
-    return affected
+    return affected;
   }
 
   /**
@@ -78,14 +80,14 @@ class Props extends List {
    * @returns {Prop}
    */
   remove(prop) {
-    const affected = super.remove(prop)
-    const exec = (prop) => { prop.keyframes.mappings = [] }
+    const affected = super.remove(prop);
+    const exec = prop => {
+      prop.keyframes.mappings = [];
+    };
 
-    Array.isArray(affected)
-      ? affected.forEach(exec)
-      : exec(affected)
+    Array.isArray(affected) ? affected.forEach(exec) : exec(affected);
 
-    return affected
+    return affected;
   }
 
   /**
@@ -95,7 +97,7 @@ class Props extends List {
    * @returns {boolean}
    */
   haveProp(name) {
-    return !!this.get(name)
+    return !!this.get(name);
   }
 
   /**
@@ -105,15 +107,18 @@ class Props extends List {
    * @returns {object}
    */
   toObject(ignoreEval = false) {
-    return this.list.reduce((obj, prop) => ({ ...obj, ...prop.toObject(ignoreEval) }), {})
+    return this.list.reduce(
+      (obj, prop) => ({ ...obj, ...prop.toObject(ignoreEval) }),
+      {}
+    );
   }
 
   /**
    * Destroy events
    */
   destroy() {
-    this.each(prop => prop.destroy())
-    this.removeAllListeners()
+    this.each(prop => prop.destroy());
+    this.removeAllListeners();
   }
 }
 
@@ -130,7 +135,7 @@ Props.Events = [
   'change:keyframe:value',
   'change:keyframe:ease',
   'add:keyframe',
-  'remove:keyframe'
-]
+  'remove:keyframe',
+];
 
-export default Props
+export default Props;

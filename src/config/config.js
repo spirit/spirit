@@ -1,15 +1,14 @@
-import { isBrowser } from '../utils/context'
+import { isBrowser } from '../utils/context';
 
 class Config {
-  debug = process.env.NODE_ENV === 'development' && isBrowser()
-  overwriteAnimations = true
+  debug = process.env.NODE_ENV === 'development' && isBrowser();
+  overwriteAnimations = true;
 
   gsap = {
-    tween: null,
-    timeline: null,
+    instance: null,
     autoInject: true,
-    autoInjectUrl: 'https://unpkg.com/gsap@2.1.3/umd/TweenMax.js'
-  }
+    autoInjectUrl: 'https://unpkg.com/gsap@3.1.1/dist/gsap.min.js',
+  };
 }
 
-export default new Config()
+export default new Config();

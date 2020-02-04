@@ -1,13 +1,13 @@
 export function isObject(obj) {
-  return Object.prototype.toString.call(obj) === '[object Object]'
+  return Object.prototype.toString.call(obj) === '[object Object]';
 }
 
 export function isSVG(element) {
-  return element instanceof window.SVGElement
+  return element instanceof window.SVGElement;
 }
 
 export function isFunction(fn) {
-  return typeof fn === 'function'
+  return typeof fn === 'function';
 }
 
 export function isNumeric(n) {

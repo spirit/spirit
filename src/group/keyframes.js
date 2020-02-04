@@ -1,13 +1,13 @@
-import List from '../list/list'
-import Keyframe from './keyframe'
-import { convert, is } from '../utils'
+import List from '../list/list';
+import Keyframe from './keyframe';
+import { convert, is } from '../utils';
 
 class Keyframes extends List {
-  duplicates = { prop: 'time' }
-  sortOn = 'time'
-  linkedList = true
+  duplicates = { prop: 'time' };
+  sortOn = 'time';
+  linkedList = true;
 
-  _mappings = []
+  _mappings = [];
 
   /**
    * Create keyframes
@@ -17,9 +17,9 @@ class Keyframes extends List {
    */
   constructor(keyframes = []) {
     if (is.isObject(keyframes)) {
-      keyframes = convert.objectToArray(keyframes)
+      keyframes = convert.objectToArray(keyframes);
     }
-    super(keyframes, Keyframe, [0, 0])
+    super(keyframes, Keyframe, [0, 0]);
   }
 
   /**
@@ -29,18 +29,22 @@ class Keyframes extends List {
    * @returns {*}
    */
   add(keyframe) {
-    if (is.isObject(keyframe) && !(keyframe instanceof Keyframe) && Object.keys(keyframe).length > 1) {
-      keyframe = convert.objectToArray(keyframe)
+    if (
+      is.isObject(keyframe) &&
+      !(keyframe instanceof Keyframe) &&
+      Object.keys(keyframe).length > 1
+    ) {
+      keyframe = convert.objectToArray(keyframe);
     }
 
-    const affected = super.add(keyframe)
-    const exec = (keyframe) => { keyframe.mappings = [...this.mappings] }
+    const affected = super.add(keyframe);
+    const exec = keyframe => {
+      keyframe.mappings = [...this.mappings];
+    };
 
-    Array.isArray(affected)
-      ? affected.forEach(exec)
-      : exec(affected)
+    Array.isArray(affected) ? affected.forEach(exec) : exec(affected);
 
-    return affected
+    return affected;
   }
 
   /**
@@ -50,14 +54,14 @@ class Keyframes extends List {
    * @returns {Keyframe}
    */
   remove(keyframe) {
-    const affected = super.remove(keyframe)
-    const exec = (keyframe) => { keyframe.mappings = [] }
+    const affected = super.remove(keyframe);
+    const exec = keyframe => {
+      keyframe.mappings = [];
+    };
 
-    Array.isArray(affected)
-      ? affected.forEach(exec)
-      : exec(affected)
+    Array.isArray(affected) ? affected.forEach(exec) : exec(affected);
 
-    return affected
+    return affected;
   }
 
   /**
@@ -66,7 +70,7 @@ class Keyframes extends List {
    * @returns {Array}
    */
   get mappings() {
-    return this._mappings
+    return this._mappings;
   }
 
   /**
@@ -75,8 +79,10 @@ class Keyframes extends List {
    * @param {Array} mappings
    */
   set mappings(mappings) {
-    this._mappings = mappings
-    this.each(keyframe => { keyframe.mappings = [...mappings] })
+    this._mappings = mappings;
+    this.each(keyframe => {
+      keyframe.mappings = [...mappings];
+    });
   }
 
   /**
@@ -86,10 +92,10 @@ class Keyframes extends List {
    * @returns {Keyframe}
    */
   get(time) {
-    const t = parseFloat(time)
+    const t = parseFloat(time);
 
     // get keyframe at time
-    return this._list.find(p => p.time === t)
+    return this._list.find(p => p.time === t);
   }
 
   /**
@@ -99,15 +105,18 @@ class Keyframes extends List {
    * @returns {object}
    */
   toObject(ignoreEval = false) {
-    return this.list.reduce((obj, keyframe) => ({ ...obj, ...keyframe.toObject(ignoreEval) }), {})
+    return this.list.reduce(
+      (obj, keyframe) => ({ ...obj, ...keyframe.toObject(ignoreEval) }),
+      {}
+    );
   }
 
   /**
    * Destroy events
    */
   destroy() {
-    this.removeAllListeners()
-    this.each(keyframe => keyframe.destroy())
+    this.removeAllListeners();
+    this.each(keyframe => keyframe.destroy());
   }
 }
 
@@ -118,7 +127,7 @@ Keyframes.Events = [
   'change',
   'change:time',
   'change:value',
-  'change:ease'
-]
+  'change:ease',
+];
 
-export default Keyframes
+export default Keyframes;

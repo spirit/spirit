@@ -1,5 +1,5 @@
-import List from '../list/list'
-import Timeline from './timeline'
+import List from '../list/list';
+import Timeline from './timeline';
 
 class Timelines extends List {
   /**
@@ -8,7 +8,7 @@ class Timelines extends List {
    * @param {Array} timelines
    */
   constructor(timelines = []) {
-    super(timelines, Timeline, ['object', {}])
+    super(timelines, Timeline, ['object', {}]);
   }
 
   /**
@@ -18,8 +18,8 @@ class Timelines extends List {
    * @returns {Timeline}
    */
   get(transformObject) {
-    return this._list.find(tl => tl.transformObject === transformObject)
+    return this._list.find(tl => tl.transformObject === transformObject);
   }
 }
 
-export default Timelines
+export default Timelines;

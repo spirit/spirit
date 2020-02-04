@@ -1,23 +1,21 @@
-import { gsap, is } from '../utils'
-import config from './config'
+import { gsap, is } from '../utils';
+import config from './config';
+import { isGSAPInstance } from '../utils/gsap';
 
 /**
  * Setup Spirit GSAP
  *
- * @param {object} conf
+ * @param {object} gsapInstance
  */
-export default function setup(conf = {}) {
+export default function setup(gsapInstance = null) {
   return new Promise((resolve, reject) => {
-    is.isObject(conf) && Object.keys(conf).forEach(k => {
-      let obj = (config.gsap.hasOwnProperty(k) && is.isFunction(conf[k]))
-        ? config.gsap
-        : config
+    if (isGSAPInstance(gsapInstance)) {
+      config.gsap.instance = gsapInstance;
+    }
 
-      obj[k] = conf[k]
-    })
-    
-    gsap.ensure()
+    gsap
+      .ensure()
       .then(resolve)
-      .catch(reject)
-  })
+      .catch(reject);
+  });
 }
