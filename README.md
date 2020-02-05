@@ -12,7 +12,7 @@
     <img src="https://img.shields.io/npm/v/spiritjs.svg" alt="version" />
   </a>
   <a href="https://greensock.com/gsap">
-    <img src="https://img.shields.io/badge/gsap-v2.1.2-brightgreen.svg" alt="greensock" />
+    <img src="https://img.shields.io/badge/gsap-v3+-brightgreen.svg" alt="greensock" />
   </a>
   <a href="https://npmjs.org/package/spiritjs">
     <img src="https://img.shields.io/npm/dm/spiritjs.svg" alt="downloads" />
@@ -47,12 +47,12 @@
 
 <script src="https://unpkg.com/spiritjs/dist/spirit.min.js"></script>
 <script>
-  spirit.loadAnimation({ 
-    path: './animation.json',
-    container: dcument.getElementById('container') 
-  }).then(
-    timeline => timeline.play()
-  );
+  spirit
+    .loadAnimation({
+      path: './animation.json',
+      container: dcument.getElementById('container'),
+    })
+    .then(timeline => timeline.play());
 </script>
 ```
 
@@ -64,14 +64,25 @@ install:
 npm install spiritjs --save
 ```
 
-usage:
+Usage:
 
 ```js
+// load GSAP from CDN
+
 import spirit from 'spiritjs';
 
-spirit.loadAnimation({ path: './animation.json' }).then(
-  timeline => timeline.play()
-);
+spirit.loadAnimation({ path: './animation.json' }).then(timeline => timeline.play());
+```
+
+```js
+// use existing GSAP instance
+
+import gsap from 'gsap';
+import spirit from 'spiritjs';
+
+spirit.setup(gsap).then(() => {
+  spirit.loadAnimation({ path: './animation.json' }).then(timeline => timeline.play());
+});
 ```
 
 For more info check out the [API Documentation](https://docs.spiritapp.io/web-player/simple-api.html).
