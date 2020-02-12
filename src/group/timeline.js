@@ -103,7 +103,11 @@ class Timeline extends Emitter {
     }
 
     if (this.type === 'dom' && transformObject instanceof window.Element) {
-      this._style = transformObject.getAttribute('style');
+      if (!this._style) this._style = transformObject.getAttribute('style');
+      if (!this._transform) {
+        this._transform = transformObject.getAttribute('transform');
+        transformObject.removeAttribute('transform');
+      }
     }
   }
 

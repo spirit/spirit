@@ -180,7 +180,8 @@ class Group extends Emitter {
       // reset styles
       this.timelines.each(tl => {
         if (tl.type === 'dom' && tl.transformObject instanceof window.Element) {
-          tl._style && tl.transformObject.setAttribute('style', tl._style);
+          if (tl._style) tl.transformObject.setAttribute('style', tl._style);
+          if (tl._transform) tl.transformObject.setAttribute('transform', '');
         }
       });
     }

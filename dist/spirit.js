@@ -576,7 +576,8 @@ function (_Emitter) {
 
         this.timelines.each(function (tl) {
           if (tl.type === 'dom' && tl.transformObject instanceof window.Element) {
-            tl._style && tl.transformObject.setAttribute('style', tl._style);
+            if (tl._style) tl.transformObject.setAttribute('style', tl._style);
+            if (tl._transform) tl.transformObject.setAttribute('transform', '');
           }
         });
       }
@@ -2215,7 +2216,12 @@ function (_Emitter) {
       }
 
       if (this.type === 'dom' && transformObject instanceof window.Element) {
-        this._style = transformObject.getAttribute('style');
+        if (!this._style) this._style = transformObject.getAttribute('style');
+
+        if (!this._transform) {
+          this._transform = transformObject.getAttribute('transform');
+          transformObject.removeAttribute('transform');
+        }
       }
     },
     get: function get() {
@@ -3841,13 +3847,11 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _debug__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./debug */ "./src/utils/debug.js");
 /* harmony import */ var _is__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./is */ "./src/utils/is.js");
 /* harmony import */ var _context__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./context */ "./src/utils/context.js");
-/* harmony import */ var _index__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./index */ "./src/utils/index.js");
 function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
 
 function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(Object(source), true).forEach(function (key) { _defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
 
 function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
-
 
 
 
@@ -3891,7 +3895,7 @@ function ensure() {
   }
 
   if (Object(_debug__WEBPACK_IMPORTED_MODULE_3__["default"])()) {
-    console.warn("\n\n      GSAP is being fetched from CDN: ".concat(_config_config__WEBPACK_IMPORTED_MODULE_0__["default"].gsap.autoInjectUrl, ".\n      If you already have GSAP installed, please provide it to Spirit:\n\n        spirit.setup({\n          tween: TweenMax,\n          timeline: TimelineMax\n        })\n\n      You want to use another cdn? Change it here:\n\n        spirit.config.gsap.autoInjectUrl = 'https://cdn.xxx'\n\n    "));
+    console.warn("\n\n      GSAP is being fetched from CDN: ".concat(_config_config__WEBPACK_IMPORTED_MODULE_0__["default"].gsap.autoInjectUrl, ".\n      If you already have GSAP installed, please provide it to Spirit:\n\n        spirit.setup(gsap)\n\n      You want to use another cdn? Change it here:\n\n        spirit.config.gsap.autoInjectUrl = 'https://cdn.xxx'\n\n    "));
   }
 
   return this.loadFromCDN();
