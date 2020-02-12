@@ -1,207 +1,225 @@
-import { TweenLite, TweenMax, TimelineLite, TimelineMax } from 'gsap';
+import gsap from 'gsap';
 
 declare var spirit: spirit.SpiritStatic;
 
 export = spirit;
-
 export as namespace spirit;
 
 declare namespace spirit {
-    type gsapTween =  TweenLite | TweenMax;
+  type GSAP = typeof gsap;
 
-    type gsapTimeline = TimelineLite | TimelineMax;
+  interface SpiritStatic {
+    config: Config;
 
-    interface SpiritStatic {
-        config: Config;
+    version: string;
 
-        version: string;
+    setup(gsapInstance: GSAP): Promise<void>;
 
-        setup(config: ({ tween?: gsapTween, timeline?: gsapTimeline })): Promise<void>;
+    create(data: DataGroup | DataGroup[], element?: Element): Groups;
 
-        create(data: DataGroup | DataGroup[], element?: Element): Groups;
+    load(url: string, element?: Element): Promise<Groups>;
 
-        load(url: string, element?: Element): Promise<Groups>;
+    groups: Groups;
 
-        groups: Groups;
-    }
+    loadAnimation(
+      options: LoadAnimationOptions
+    ): Promise<{ [group: string]: gsap.core.Timeline } & gsap.core.Timeline>;
+  }
 
-    interface EvalMap {
-        regex: RegExp;
+  type LoadAnimationOptions = ({ path: string } | { animationData: object }) &
+    Partial<{
+      container: Element;
 
-        map: any;
-    }
+      autoPlay: boolean;
 
-    type sortFn = (a: number | object, b: number | object) => number | boolean
+      loop: boolean | number;
 
-    interface List<T> extends Iterable<T> {
-        [key: number]: T;
+      yoyo: boolean;
 
-        [Symbol.iterator](): Iterator<T>;
+      delay: number;
 
-        duplicates: boolean | object;
+      timeScale: number;
+    }>;
 
-        checkOnDuplicates(): void;
+  interface EvalMap {
+    regex: RegExp;
 
-        sortOn: boolean | string | sortFn
+    map: any;
+  }
 
-        sort(): void;
+  type sortFn = (a: number | object, b: number | object) => number | boolean;
 
-        linkedList: boolean;
+  interface List<T> extends Iterable<T> {
+    [key: number]: T;
 
-        linkItems(): void;
+    [Symbol.iterator](): Iterator<T>;
 
-        list: T[];
+    duplicates: boolean | object;
 
-        length: number;
+    checkOnDuplicates(): void;
 
-        at(index: number): T;
+    sortOn: boolean | string | sortFn;
 
-        add(item: T | object | Array<T | object>): T | T[];
+    sort(): void;
 
-        remove(item: T | T[]): T | T[];
+    linkedList: boolean;
 
-        clear(): void;
+    linkItems(): void;
 
-        each<K>(callback: (item: T) => K): K[];
+    list: T[];
 
-        toArray(): T[];
-    }
+    length: number;
 
-    interface Props extends List<Prop> {
-        mappings: EvalMap[];
+    at(index: number): T;
 
-        get(name: string): Prop;
+    add(item: T | object | Array<T | object>): T | T[];
 
-        haveProp(name: string): boolean;
+    remove(item: T | T[]): T | T[];
 
-        toObject(): object;
+    clear(): void;
 
-        destroy(): void;
-    }
+    each<K>(callback: (item: T) => K): K[];
 
-    interface Prop {
-        keyframes: Keyframes;
+    toArray(): T[];
+  }
 
-        list: Props;
+  interface Props extends List<Prop> {
+    mappings: EvalMap[];
 
-        next(): Prop | null;
+    get(name: string): Prop;
 
-        prev(): Prop | null;
+    haveProp(name: string): boolean;
 
-        setupBubbleEvents(): void;
+    toObject(): object;
 
-        toObject(): object;
+    destroy(): void;
+  }
 
-        isCSSTransform(): boolean;
+  interface Prop {
+    keyframes: Keyframes;
 
-        destroy(): void;
-    }
+    list: Props;
 
-    interface Keyframes extends List<Keyframe> {
-        get(time: string | number): Keyframe;
+    next(): Prop | null;
 
-        mappings(): EvalMap[];
+    prev(): Prop | null;
 
-        toObject(): object;
+    setupBubbleEvents(): void;
 
-        destroy(): void;
-    }
+    toObject(): object;
 
-    interface Keyframe {
-        time: number;
+    isCSSTransform(): boolean;
 
-        ease?: string;
+    destroy(): void;
+  }
 
-        value: any;
+  interface Keyframes extends List<Keyframe> {
+    get(time: string | number): Keyframe;
 
-        list: Keyframes;
+    mappings(): EvalMap[];
 
-        prev(): Keyframe | null;
+    toObject(): object;
 
-        next(): Keyframe | null;
+    destroy(): void;
+  }
 
-        isEval(): boolean;
+  interface Keyframe {
+    time: number;
 
-        toObject(): object;
+    ease?: string;
 
-        destroy(): void;
-    }
+    value: any;
 
-    interface Timelines extends List<Timeline> {
-        get(transformObject: Element | object): Timeline;
-    }
+    list: Keyframes;
 
-    interface Timeline {
-        type: 'dom' | 'object';
+    prev(): Keyframe | null;
 
-        transferObject: Element | object | null;
+    next(): Keyframe | null;
 
-        label?: string;
+    isEval(): boolean;
 
-        path: string;
+    toObject(): object;
 
-        id?: string;
+    destroy(): void;
+  }
 
-        props: Props;
+  interface Timelines extends List<Timeline> {
+    get(transformObject: Element | object): Timeline;
+  }
 
-        toObject(): object;
+  interface Timeline {
+    type: 'dom' | 'object';
 
-        destroy(): void;
-    }
+    transferObject: Element | object | null;
 
-    interface Config {
-        gsap: {
-            tween: gsapTween;
+    label?: string;
 
-            timeline: gsapTimeline;
+    path: string;
 
-            autoInject: boolean;
+    id?: string;
 
-            autoInjectUrl: string;
-        }
-    }
+    props: Props;
 
-    interface Groups extends List<Group> {
-        get(name: string): Group;
+    toObject(): object;
 
-        groupNames(): string[];
-    }
+    destroy(): void;
+  }
 
-    interface Group {
-        timeline: gsapTimeline;
+  interface Config {
+    debug: boolean;
 
-        timelines: Timelines;
+    overwriteAnimations: boolean;
 
-        timeScale: number;
+    gsap: {
+      instance: GSAP | null;
 
-        duration: number;
+      autoInject: boolean;
 
-        list: Groups;
+      autoInjectUrl: string;
+    };
+  }
 
-        name: string;
+  interface Groups extends List<Group> {
+    get(name: string): Group;
 
-        toObject(): object;
+    groupNames(): string[];
+  }
 
-        construct(): gsapTimeline;
-    }
+  interface Group {
+    timeline: gsap.core.Timeline;
 
-    interface DataTimeline {
-        type: 'dom' | 'object';
+    timelines: Timelines;
 
-        id?: string;
+    timeScale: number;
 
-        label?: string;
+    duration: number;
 
-        path?: string;
+    list: Groups;
 
-        props?: object;
-    }
+    name: string;
 
-    interface DataGroup {
-        name: string;
+    toObject(): object;
 
-        timeScale?: number;
+    construct(): gsap.core.Timeline;
+  }
 
-        timelines?: DataTimeline[];
-    }
+  interface DataTimeline {
+    type: 'dom' | 'object';
+
+    id?: string;
+
+    label?: string;
+
+    path?: string;
+
+    props?: object;
+  }
+
+  interface DataGroup {
+    name: string;
+
+    timeScale?: number;
+
+    timelines?: DataTimeline[];
+  }
 }
