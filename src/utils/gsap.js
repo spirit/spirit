@@ -4,7 +4,6 @@ import Timeline from '../group/timeline';
 import debug from './debug';
 import { isFunction, isObject } from './is';
 import { isBrowser } from './context';
-import { gsap } from './index';
 
 /**
  * Check on GSAP presence
@@ -58,10 +57,7 @@ export function ensure() {
       GSAP is being fetched from CDN: ${config.gsap.autoInjectUrl}.
       If you already have GSAP installed, please provide it to Spirit:
 
-        spirit.setup({
-          tween: TweenMax,
-          timeline: TimelineMax
-        })
+        spirit.setup(gsap)
 
       You want to use another cdn? Change it here:
 
