@@ -1,8 +1,0 @@
---require @babel/register
---require @babel/polyfill
---require test/bootstrap.js
---colors
---timeout 5000
---bail
---exit
-test/*-spec.js
