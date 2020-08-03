@@ -44,36 +44,36 @@
   },
   "typings": "./spiritjs.d.ts",
   "devDependencies": {
-    "@babel/cli": "7.8.4",
-    "@babel/core": "7.9.0",
-    "@babel/plugin-proposal-class-properties": "7.8.3",
-    "@babel/plugin-proposal-decorators": "7.8.3",
-    "@babel/plugin-proposal-object-rest-spread": "7.9.0",
-    "@babel/polyfill": "7.8.7",
-    "@babel/preset-env": "7.9.0",
-    "@babel/register": "7.9.0",
-    "@types/chai": "4.2.11",
-    "@types/mocha": "7.0.2",
+    "@babel/cli": "7.10.5",
+    "@babel/core": "7.11.0",
+    "@babel/plugin-proposal-class-properties": "7.10.4",
+    "@babel/plugin-proposal-decorators": "7.10.5",
+    "@babel/plugin-proposal-object-rest-spread": "7.11.0",
+    "@babel/polyfill": "7.10.4",
+    "@babel/preset-env": "^7.11.0",
+    "@babel/register": "7.10.5",
+    "@types/chai": "4.2.12",
+    "@types/mocha": "8.0.1",
     "babel-eslint": "10.1.0",
     "babel-loader": "8.1.0",
     "babel-plugin-inline-package-json": "2.0.0",
     "chai": "4.2.0",
-    "core-js": "3.6.4",
-    "eslint": "6.8.0",
-    "eslint-config-prettier": "6.10.1",
+    "core-js": "3.6.5",
+    "eslint": "7.6.0",
+    "eslint-config-prettier": "6.11.0",
     "eslint-config-standard": "14.1.1",
     "eslint-plugin-promise": "4.2.1",
     "eslint-plugin-standard": "4.0.1",
-    "jsdom": "16.2.2",
-    "mocha": "7.1.1",
-    "prettier": "2.0.3",
-    "sinon": "9.0.1",
-    "webpack": "4.42.1",
+    "jsdom": "16.3.0",
+    "mocha": "8.1.0",
+    "prettier": "2.0.5",
+    "sinon": "9.0.2",
+    "webpack": "4.44.1",
     "webpack-bundle-size-analyzer": "3.1.0",
-    "webpack-cli": "3.3.11"
+    "webpack-cli": "3.3.12"
   },
   "dependencies": {
-    "mitt": "^1.2.0"
+    "mitt": "2.1.0"
   },
   "resolutions": {
     "@babel/preset-env": "^7.8.7"
@@ -90,6 +90,8 @@
       "@babel/polyfill",
       "test/bootstrap.js"
     ],
-    "watch-files": ["test/*-spec.js"]
+    "watch-files": [
+      "test/*-spec.js"
+    ]
   }
 }
