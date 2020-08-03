@@ -13,7 +13,7 @@ export function bubbleEvent(evt, scope) {
     throw new Error('Scope needs to be an emitter.');
   }
 
-  return function() {
+  return function () {
     this.emit(evt, ...arguments);
 
     if (this._list instanceof List) {
@@ -58,12 +58,7 @@ export function createEventObjectForModel(model, obj, prop, prevVal, nextVal) {
  * Minimal event emitter
  */
 export class Emitter {
-  _events = {};
-  _emitter = mitt(this._events);
-
-  eventNames() {
-    return Object.keys(this._events);
-  }
+  _emitter = mitt();
 
   emit(eventName, ...args) {
     this._emitter.emit(eventName, ...args);
@@ -78,9 +73,6 @@ export class Emitter {
   }
 
   removeAllListeners() {
-    Object.keys(this._events).forEach(evt => {
-      const listeners = this._events[evt];
-      listeners.forEach(listener => this._emitter.off(evt, listener));
-    });
+    this._emitter.all.clear();
   }
 }
