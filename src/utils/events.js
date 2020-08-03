@@ -13,7 +13,7 @@ export function bubbleEvent(evt, scope) {
     throw new Error('Scope needs to be an emitter.');
   }
 
-  return function () {
+  return function() {
     this.emit(evt, ...arguments);
 
     if (this._list instanceof List) {
