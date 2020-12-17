@@ -1,5 +1,6 @@
 const webpack = require('webpack')
 const path = require('path')
+const TerserPlugin = require("terser-webpack-plugin");
 
 const isProd = process.env.NODE_ENV === 'production'
 
@@ -23,11 +24,19 @@ const config = {
     ]
   },
   plugins: [
-    new webpack.BannerPlugin(banner),
+    new webpack.BannerPlugin({
+      banner,
+    }),
     new webpack.DefinePlugin({
       'process.env.NODE_ENV': JSON.stringify(isProd ? 'production' : 'development')
-    })
-  ]
+    }),
+  ],
+  ...(isProd && {
+    optimization: {
+      minimize: true,
+      minimizer: [new TerserPlugin({ extractComments: false })]
+    }
+  })
 }
 
 module.exports = config
