@@ -1,5 +1,5 @@
 /*!
- * Spirit.js v3.1.1
+ * Spirit.js v3.1.2
  *
  * (c) 2021 Patrick Brouwer
  * Released under the MIT License.
@@ -2891,7 +2891,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "isBrowser": () => (/* binding */ isBrowser)
 /* harmony export */ });
 function isBrowser() {
-  return 'window' in __webpack_require__.g && 'document' in __webpack_require__.g;
+  return typeof window === 'object' && typeof document === 'object';
 }
 
 /***/ }),
@@ -4069,18 +4069,6 @@ __webpack_require__.r(__webpack_exports__);
 /******/ 		};
 /******/ 	})();
 /******/ 	
-/******/ 	/* webpack/runtime/global */
-/******/ 	(() => {
-/******/ 		__webpack_require__.g = (function() {
-/******/ 			if (typeof globalThis === 'object') return globalThis;
-/******/ 			try {
-/******/ 				return this || new Function('return this')();
-/******/ 			} catch (e) {
-/******/ 				if (typeof window === 'object') return window;
-/******/ 			}
-/******/ 		})();
-/******/ 	})();
-/******/ 	
 /******/ 	/* webpack/runtime/hasOwnProperty shorthand */
 /******/ 	(() => {
 /******/ 		__webpack_require__.o = (obj, prop) => (Object.prototype.hasOwnProperty.call(obj, prop))
@@ -4123,7 +4111,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _loadAnimation__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./loadAnimation */ "./src/loadAnimation.js");
 /* harmony import */ var _utils_debug__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./utils/debug */ "./src/utils/debug.js");
 
-var version = "3.1.1";
+var version = "3.1.2";
 
 
 
