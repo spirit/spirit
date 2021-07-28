@@ -1,3 +1,3 @@
 export function isBrowser() {
-  return 'window' in global && 'document' in global;
+  return typeof window === 'object' && typeof document === 'object';
 }
