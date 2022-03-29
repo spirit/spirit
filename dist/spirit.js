@@ -1,5 +1,5 @@
 /*!
- * Spirit.js v3.1.5
+ * Spirit.js v3.1.6
  *
  * (c) 2022 Patrick Brouwer
  * Released under the MIT License.
@@ -2904,8 +2904,8 @@ function isBrowser() {
 
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "objectToArray": () => (/* binding */ objectToArray),
-/* harmony export */   "arrayToObject": () => (/* binding */ arrayToObject)
+/* harmony export */   "arrayToObject": () => (/* binding */ arrayToObject),
+/* harmony export */   "objectToArray": () => (/* binding */ objectToArray)
 /* harmony export */ });
 function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); enumerableOnly && (symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; })), keys.push.apply(keys, symbols); } return keys; }
 
@@ -3255,9 +3255,9 @@ var TimelineError = /*#__PURE__*/function (_Error) {
 
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "Emitter": () => (/* binding */ Emitter),
 /* harmony export */   "bubbleEvent": () => (/* binding */ bubbleEvent),
-/* harmony export */   "createEventObjectForModel": () => (/* binding */ createEventObjectForModel),
-/* harmony export */   "Emitter": () => (/* binding */ Emitter)
+/* harmony export */   "createEventObjectForModel": () => (/* binding */ createEventObjectForModel)
 /* harmony export */ });
 /* harmony import */ var _list_list__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../list/list */ "./src/list/list.js");
 /* harmony import */ var mitt__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! mitt */ "./node_modules/mitt/dist/mitt.mjs");
@@ -3371,14 +3371,14 @@ var Emitter = /*#__PURE__*/function () {
 
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "has": () => (/* binding */ has),
 /* harmony export */   "ensure": () => (/* binding */ ensure),
-/* harmony export */   "loadFromCDN": () => (/* binding */ loadFromCDN),
-/* harmony export */   "transformOrigins": () => (/* binding */ transformOrigins),
 /* harmony export */   "generateTimeline": () => (/* binding */ generateTimeline),
-/* harmony export */   "killTimeline": () => (/* binding */ killTimeline),
+/* harmony export */   "has": () => (/* binding */ has),
+/* harmony export */   "isGSAPInstance": () => (/* binding */ isGSAPInstance),
 /* harmony export */   "isGSAPTimeline": () => (/* binding */ isGSAPTimeline),
-/* harmony export */   "isGSAPInstance": () => (/* binding */ isGSAPInstance)
+/* harmony export */   "killTimeline": () => (/* binding */ killTimeline),
+/* harmony export */   "loadFromCDN": () => (/* binding */ loadFromCDN),
+/* harmony export */   "transformOrigins": () => (/* binding */ transformOrigins)
 /* harmony export */ });
 /* harmony import */ var _config_config__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../config/config */ "./src/config/config.js");
 /* harmony import */ var _loadscript__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./loadscript */ "./src/utils/loadscript.js");
@@ -3647,18 +3647,18 @@ function isGSAPInstance(n) {
 
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "context": () => (/* reexport module object */ _context__WEBPACK_IMPORTED_MODULE_0__),
-/* harmony export */   "gsap": () => (/* reexport module object */ _gsap__WEBPACK_IMPORTED_MODULE_1__),
-/* harmony export */   "events": () => (/* reexport module object */ _events__WEBPACK_IMPORTED_MODULE_2__),
-/* harmony export */   "convert": () => (/* reexport module object */ _convert__WEBPACK_IMPORTED_MODULE_3__),
-/* harmony export */   "xpath": () => (/* reexport module object */ _xpath__WEBPACK_IMPORTED_MODULE_4__),
-/* harmony export */   "is": () => (/* reexport module object */ _is__WEBPACK_IMPORTED_MODULE_5__),
-/* harmony export */   "emitter": () => (/* reexport module object */ _emitter__WEBPACK_IMPORTED_MODULE_6__),
-/* harmony export */   "loadscript": () => (/* reexport safe */ _loadscript__WEBPACK_IMPORTED_MODULE_8__["default"]),
-/* harmony export */   "jsonloader": () => (/* reexport safe */ _jsonloader__WEBPACK_IMPORTED_MODULE_9__["default"]),
 /* harmony export */   "autobind": () => (/* reexport safe */ _autobind__WEBPACK_IMPORTED_MODULE_10__["default"]),
+/* harmony export */   "context": () => (/* reexport module object */ _context__WEBPACK_IMPORTED_MODULE_0__),
+/* harmony export */   "convert": () => (/* reexport module object */ _convert__WEBPACK_IMPORTED_MODULE_3__),
 /* harmony export */   "debug": () => (/* reexport safe */ _debug__WEBPACK_IMPORTED_MODULE_11__["default"]),
-/* harmony export */   "resolver": () => (/* reexport module object */ _resolver__WEBPACK_IMPORTED_MODULE_7__)
+/* harmony export */   "emitter": () => (/* reexport module object */ _emitter__WEBPACK_IMPORTED_MODULE_6__),
+/* harmony export */   "events": () => (/* reexport module object */ _events__WEBPACK_IMPORTED_MODULE_2__),
+/* harmony export */   "gsap": () => (/* reexport module object */ _gsap__WEBPACK_IMPORTED_MODULE_1__),
+/* harmony export */   "is": () => (/* reexport module object */ _is__WEBPACK_IMPORTED_MODULE_5__),
+/* harmony export */   "jsonloader": () => (/* reexport safe */ _jsonloader__WEBPACK_IMPORTED_MODULE_9__["default"]),
+/* harmony export */   "loadscript": () => (/* reexport safe */ _loadscript__WEBPACK_IMPORTED_MODULE_8__["default"]),
+/* harmony export */   "resolver": () => (/* reexport module object */ _resolver__WEBPACK_IMPORTED_MODULE_7__),
+/* harmony export */   "xpath": () => (/* reexport module object */ _xpath__WEBPACK_IMPORTED_MODULE_4__)
 /* harmony export */ });
 /* harmony import */ var _context__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./context */ "./src/utils/context.js");
 /* harmony import */ var _gsap__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./gsap */ "./src/utils/gsap.js");
@@ -3696,10 +3696,10 @@ __webpack_require__.r(__webpack_exports__);
 
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "isObject": () => (/* binding */ isObject),
-/* harmony export */   "isSVG": () => (/* binding */ isSVG),
 /* harmony export */   "isFunction": () => (/* binding */ isFunction),
-/* harmony export */   "isNumeric": () => (/* binding */ isNumeric)
+/* harmony export */   "isNumeric": () => (/* binding */ isNumeric),
+/* harmony export */   "isObject": () => (/* binding */ isObject),
+/* harmony export */   "isSVG": () => (/* binding */ isSVG)
 /* harmony export */ });
 function isObject(obj) {
   return Object.prototype.toString.call(obj) === '[object Object]';
@@ -3724,9 +3724,9 @@ function isNumeric(n) {
 
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "req": () => (/* binding */ req),
 /* harmony export */   "cache": () => (/* binding */ cache),
-/* harmony export */   "default": () => (/* export default binding */ __WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */   "default": () => (/* export default binding */ __WEBPACK_DEFAULT_EXPORT__),
+/* harmony export */   "req": () => (/* binding */ req)
 /* harmony export */ });
 /* harmony import */ var _context__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./context */ "./src/utils/context.js");
 
@@ -3922,8 +3922,8 @@ function resolveElement(root, data, throwException) {
 
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "getExpression": () => (/* binding */ getExpression),
-/* harmony export */   "getElement": () => (/* binding */ getElement)
+/* harmony export */   "getElement": () => (/* binding */ getElement),
+/* harmony export */   "getExpression": () => (/* binding */ getExpression)
 /* harmony export */ });
 /* harmony import */ var _is__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./is */ "./src/utils/is.js");
 /* harmony import */ var _debug__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./debug */ "./src/utils/debug.js");
@@ -4095,13 +4095,13 @@ var __webpack_exports__ = {};
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "config": () => (/* reexport safe */ _config_config__WEBPACK_IMPORTED_MODULE_1__["default"]),
-/* harmony export */   "version": () => (/* binding */ version),
-/* harmony export */   "setup": () => (/* reexport safe */ _config_setup__WEBPACK_IMPORTED_MODULE_2__["default"]),
-/* harmony export */   "groups": () => (/* reexport safe */ _registry_registry__WEBPACK_IMPORTED_MODULE_3__["default"]),
 /* harmony export */   "create": () => (/* reexport safe */ _data_parser__WEBPACK_IMPORTED_MODULE_4__.create),
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__),
+/* harmony export */   "groups": () => (/* reexport safe */ _registry_registry__WEBPACK_IMPORTED_MODULE_3__["default"]),
 /* harmony export */   "load": () => (/* reexport safe */ _data_parser__WEBPACK_IMPORTED_MODULE_4__.load),
 /* harmony export */   "loadAnimation": () => (/* reexport safe */ _loadAnimation__WEBPACK_IMPORTED_MODULE_5__["default"]),
-/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */   "setup": () => (/* reexport safe */ _config_setup__WEBPACK_IMPORTED_MODULE_2__["default"]),
+/* harmony export */   "version": () => (/* binding */ version)
 /* harmony export */ });
 /* harmony import */ var _utils__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./utils */ "./src/utils/index.js");
 /* harmony import */ var _config_config__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./config/config */ "./src/config/config.js");
@@ -4111,7 +4111,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _loadAnimation__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./loadAnimation */ "./src/loadAnimation.js");
 /* harmony import */ var _utils_debug__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./utils/debug */ "./src/utils/debug.js");
 
-var version = "3.1.5";
+var version = "3.1.6";
 
 
 
