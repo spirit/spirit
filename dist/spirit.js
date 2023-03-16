@@ -1,5 +1,5 @@
 /*!
- * Spirit.js v3.1.9
+ * Spirit.js v3.1.10
  *
  * (c) 2023 Patrick Brouwer
  * Released under the MIT License.
@@ -3651,7 +3651,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _loadAnimation__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./loadAnimation */ "./src/loadAnimation.js");
 /* harmony import */ var _utils_debug__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./utils/debug */ "./src/utils/debug.js");
 
-var version = "3.1.9";
+var version = "3.1.10";
 
 
 
