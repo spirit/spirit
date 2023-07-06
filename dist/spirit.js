@@ -78,8 +78,8 @@ function setup(gsapInstance) {
 
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "create": () => (/* binding */ create),
-/* harmony export */   "load": () => (/* binding */ load)
+/* harmony export */   create: () => (/* binding */ create),
+/* harmony export */   load: () => (/* binding */ load)
 /* harmony export */ });
 /* harmony import */ var _utils__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../utils */ "./src/utils/index.js");
 /* harmony import */ var _group__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../group */ "./src/group/index.js");
@@ -678,15 +678,15 @@ var Groups = /*#__PURE__*/function (_List) {
 
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "EvalMap": () => (/* reexport safe */ _evalmap__WEBPACK_IMPORTED_MODULE_0__["default"]),
-/* harmony export */   "Group": () => (/* reexport safe */ _group__WEBPACK_IMPORTED_MODULE_1__["default"]),
-/* harmony export */   "Groups": () => (/* reexport safe */ _groups__WEBPACK_IMPORTED_MODULE_2__["default"]),
-/* harmony export */   "Keyframe": () => (/* reexport safe */ _keyframe__WEBPACK_IMPORTED_MODULE_3__["default"]),
-/* harmony export */   "Keyframes": () => (/* reexport safe */ _keyframes__WEBPACK_IMPORTED_MODULE_4__["default"]),
-/* harmony export */   "Prop": () => (/* reexport safe */ _prop__WEBPACK_IMPORTED_MODULE_5__["default"]),
-/* harmony export */   "Props": () => (/* reexport safe */ _props__WEBPACK_IMPORTED_MODULE_6__["default"]),
-/* harmony export */   "Timeline": () => (/* reexport safe */ _timeline__WEBPACK_IMPORTED_MODULE_7__["default"]),
-/* harmony export */   "Timelines": () => (/* reexport safe */ _timelines__WEBPACK_IMPORTED_MODULE_8__["default"])
+/* harmony export */   EvalMap: () => (/* reexport safe */ _evalmap__WEBPACK_IMPORTED_MODULE_0__["default"]),
+/* harmony export */   Group: () => (/* reexport safe */ _group__WEBPACK_IMPORTED_MODULE_1__["default"]),
+/* harmony export */   Groups: () => (/* reexport safe */ _groups__WEBPACK_IMPORTED_MODULE_2__["default"]),
+/* harmony export */   Keyframe: () => (/* reexport safe */ _keyframe__WEBPACK_IMPORTED_MODULE_3__["default"]),
+/* harmony export */   Keyframes: () => (/* reexport safe */ _keyframes__WEBPACK_IMPORTED_MODULE_4__["default"]),
+/* harmony export */   Prop: () => (/* reexport safe */ _prop__WEBPACK_IMPORTED_MODULE_5__["default"]),
+/* harmony export */   Props: () => (/* reexport safe */ _props__WEBPACK_IMPORTED_MODULE_6__["default"]),
+/* harmony export */   Timeline: () => (/* reexport safe */ _timeline__WEBPACK_IMPORTED_MODULE_7__["default"]),
+/* harmony export */   Timelines: () => (/* reexport safe */ _timelines__WEBPACK_IMPORTED_MODULE_8__["default"])
 /* harmony export */ });
 /* harmony import */ var _evalmap__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./evalmap */ "./src/group/evalmap.js");
 /* harmony import */ var _group__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./group */ "./src/group/group.js");
@@ -1547,46 +1547,6 @@ function _applyDecoratedDescriptor(target, property, decorators, descriptor, con
 var Timeline = (_dec = (0,_utils_emitter__WEBPACK_IMPORTED_MODULE_2__.emitChange)(), (_class = /*#__PURE__*/function (_Emitter) {
   _inheritsLoose(Timeline, _Emitter);
   /**
-   * Timeline type.
-   * Can be "dom" or "object"
-   *
-   * @type {string}
-   */
-
-  /**
-   * Object to apply transforms on.
-   * If type is "dom" it refers to a HTMLElement else a plain javascript object
-   *
-   * @type {HTMLElement|Object}
-   */
-
-  /**
-   * Defined label representing this timeline node.
-   *
-   * @type {string|null}
-   */
-
-  /**
-   * XPath of element, normalized by group element.
-   * Only relevant if type is "dom"
-   *
-   * @type {string|null}
-   */
-
-  /**
-   * Identifier to select element. Override the path for resolving transformObject.
-   * By default the id is set on element attribute [data-spirit-id].
-   *
-   * @type {string|null}
-   */
-
-  /**
-   * Properties for this timeline.
-   *
-   * @type {Props}
-   */
-
-  /**
    * Create new Timeline instance
    *
    * @param {string}              type default = dom
@@ -1617,11 +1577,45 @@ var Timeline = (_dec = (0,_utils_emitter__WEBPACK_IMPORTED_MODULE_2__.emitChange
       label = null;
     }
     _this = _Emitter.call(this) || this;
+    /**
+     * Timeline type.
+     * Can be "dom" or "object"
+     *
+     * @type {string}
+     */
     _this.type = 'dom';
+    /**
+     * Object to apply transforms on.
+     * If type is "dom" it refers to a HTMLElement else a plain javascript object
+     *
+     * @type {HTMLElement|Object}
+     */
     _this._transformObject = null;
+    /**
+     * Defined label representing this timeline node.
+     *
+     * @type {string|null}
+     */
     _this.label = null;
+    /**
+     * XPath of element, normalized by group element.
+     * Only relevant if type is "dom"
+     *
+     * @type {string|null}
+     */
     _this.path = null;
+    /**
+     * Identifier to select element. Override the path for resolving transformObject.
+     * By default the id is set on element attribute [data-spirit-id].
+     *
+     * @type {string|null}
+     */
     _this.id = null;
+    /**
+     * Properties for this timeline.
+     *
+     * @type {Props}
+     */
     _this.props = null;
     Object.assign(_assertThisInitialized(_this), {
       type: type,
@@ -2532,7 +2526,7 @@ function boundMethod(target, key, descriptor) {
 
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "isBrowser": () => (/* binding */ isBrowser)
+/* harmony export */   isBrowser: () => (/* binding */ isBrowser)
 /* harmony export */ });
 function isBrowser() {
   return typeof window === 'object' && typeof document === 'object';
@@ -2548,8 +2542,8 @@ function isBrowser() {
 
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "arrayToObject": () => (/* binding */ arrayToObject),
-/* harmony export */   "objectToArray": () => (/* binding */ objectToArray)
+/* harmony export */   arrayToObject: () => (/* binding */ arrayToObject),
+/* harmony export */   objectToArray: () => (/* binding */ objectToArray)
 /* harmony export */ });
 function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); enumerableOnly && (symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; })), keys.push.apply(keys, symbols); } return keys; }
 function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = null != arguments[i] ? arguments[i] : {}; i % 2 ? ownKeys(Object(source), !0).forEach(function (key) { _defineProperty(target, key, source[key]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)) : ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } return target; }
@@ -2614,7 +2608,7 @@ var debug = function debug() {
 
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "emitChange": () => (/* binding */ emitChange)
+/* harmony export */   emitChange: () => (/* binding */ emitChange)
 /* harmony export */ });
 /* harmony import */ var _events__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./events */ "./src/utils/events.js");
 /* harmony import */ var _list_list__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../list/list */ "./src/list/list.js");
@@ -2819,7 +2813,7 @@ function emitChange(prop, defaultValue, validators) {
 
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "TimelineError": () => (/* binding */ TimelineError)
+/* harmony export */   TimelineError: () => (/* binding */ TimelineError)
 /* harmony export */ });
 function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
 function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.create(superClass.prototype); subClass.prototype.constructor = subClass; _setPrototypeOf(subClass, superClass); }
@@ -2861,9 +2855,9 @@ var TimelineError = /*#__PURE__*/function (_Error) {
 
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "Emitter": () => (/* binding */ Emitter),
-/* harmony export */   "bubbleEvent": () => (/* binding */ bubbleEvent),
-/* harmony export */   "createEventObjectForModel": () => (/* binding */ createEventObjectForModel)
+/* harmony export */   Emitter: () => (/* binding */ Emitter),
+/* harmony export */   bubbleEvent: () => (/* binding */ bubbleEvent),
+/* harmony export */   createEventObjectForModel: () => (/* binding */ createEventObjectForModel)
 /* harmony export */ });
 /* harmony import */ var _list_list__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../list/list */ "./src/list/list.js");
 /* harmony import */ var mitt__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! mitt */ "./node_modules/mitt/dist/mitt.mjs");
@@ -2964,14 +2958,14 @@ var Emitter = /*#__PURE__*/function () {
 
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "ensure": () => (/* binding */ ensure),
-/* harmony export */   "generateTimeline": () => (/* binding */ generateTimeline),
-/* harmony export */   "has": () => (/* binding */ has),
-/* harmony export */   "isGSAPInstance": () => (/* binding */ isGSAPInstance),
-/* harmony export */   "isGSAPTimeline": () => (/* binding */ isGSAPTimeline),
-/* harmony export */   "killTimeline": () => (/* binding */ killTimeline),
-/* harmony export */   "loadFromCDN": () => (/* binding */ loadFromCDN),
-/* harmony export */   "transformOrigins": () => (/* binding */ transformOrigins)
+/* harmony export */   ensure: () => (/* binding */ ensure),
+/* harmony export */   generateTimeline: () => (/* binding */ generateTimeline),
+/* harmony export */   has: () => (/* binding */ has),
+/* harmony export */   isGSAPInstance: () => (/* binding */ isGSAPInstance),
+/* harmony export */   isGSAPTimeline: () => (/* binding */ isGSAPTimeline),
+/* harmony export */   killTimeline: () => (/* binding */ killTimeline),
+/* harmony export */   loadFromCDN: () => (/* binding */ loadFromCDN),
+/* harmony export */   transformOrigins: () => (/* binding */ transformOrigins)
 /* harmony export */ });
 /* harmony import */ var _config_config__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../config/config */ "./src/config/config.js");
 /* harmony import */ var _loadscript__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./loadscript */ "./src/utils/loadscript.js");
@@ -2981,7 +2975,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _context__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./context */ "./src/utils/context.js");
 function _createForOfIteratorHelperLoose(o, allowArrayLike) { var it = typeof Symbol !== "undefined" && o[Symbol.iterator] || o["@@iterator"]; if (it) return (it = it.call(o)).next.bind(it); if (Array.isArray(o) || (it = _unsupportedIterableToArray(o)) || allowArrayLike && o && typeof o.length === "number") { if (it) o = it; var i = 0; return function () { if (i >= o.length) return { done: true }; return { done: false, value: o[i++] }; }; } throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
 function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }
-function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
+function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) arr2[i] = arr[i]; return arr2; }
 function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); enumerableOnly && (symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; })), keys.push.apply(keys, symbols); } return keys; }
 function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = null != arguments[i] ? arguments[i] : {}; i % 2 ? ownKeys(Object(source), !0).forEach(function (key) { _defineProperty(target, key, source[key]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)) : ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } return target; }
 function _defineProperty(obj, key, value) { key = _toPropertyKey(key); if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
@@ -3213,18 +3207,18 @@ function isGSAPInstance(n) {
 
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "autobind": () => (/* reexport safe */ _autobind__WEBPACK_IMPORTED_MODULE_10__["default"]),
-/* harmony export */   "context": () => (/* reexport module object */ _context__WEBPACK_IMPORTED_MODULE_0__),
-/* harmony export */   "convert": () => (/* reexport module object */ _convert__WEBPACK_IMPORTED_MODULE_3__),
-/* harmony export */   "debug": () => (/* reexport safe */ _debug__WEBPACK_IMPORTED_MODULE_11__["default"]),
-/* harmony export */   "emitter": () => (/* reexport module object */ _emitter__WEBPACK_IMPORTED_MODULE_6__),
-/* harmony export */   "events": () => (/* reexport module object */ _events__WEBPACK_IMPORTED_MODULE_2__),
-/* harmony export */   "gsap": () => (/* reexport module object */ _gsap__WEBPACK_IMPORTED_MODULE_1__),
-/* harmony export */   "is": () => (/* reexport module object */ _is__WEBPACK_IMPORTED_MODULE_5__),
-/* harmony export */   "jsonloader": () => (/* reexport safe */ _jsonloader__WEBPACK_IMPORTED_MODULE_9__["default"]),
-/* harmony export */   "loadscript": () => (/* reexport safe */ _loadscript__WEBPACK_IMPORTED_MODULE_8__["default"]),
-/* harmony export */   "resolver": () => (/* reexport module object */ _resolver__WEBPACK_IMPORTED_MODULE_7__),
-/* harmony export */   "xpath": () => (/* reexport module object */ _xpath__WEBPACK_IMPORTED_MODULE_4__)
+/* harmony export */   autobind: () => (/* reexport safe */ _autobind__WEBPACK_IMPORTED_MODULE_10__["default"]),
+/* harmony export */   context: () => (/* reexport module object */ _context__WEBPACK_IMPORTED_MODULE_0__),
+/* harmony export */   convert: () => (/* reexport module object */ _convert__WEBPACK_IMPORTED_MODULE_3__),
+/* harmony export */   debug: () => (/* reexport safe */ _debug__WEBPACK_IMPORTED_MODULE_11__["default"]),
+/* harmony export */   emitter: () => (/* reexport module object */ _emitter__WEBPACK_IMPORTED_MODULE_6__),
+/* harmony export */   events: () => (/* reexport module object */ _events__WEBPACK_IMPORTED_MODULE_2__),
+/* harmony export */   gsap: () => (/* reexport module object */ _gsap__WEBPACK_IMPORTED_MODULE_1__),
+/* harmony export */   is: () => (/* reexport module object */ _is__WEBPACK_IMPORTED_MODULE_5__),
+/* harmony export */   jsonloader: () => (/* reexport safe */ _jsonloader__WEBPACK_IMPORTED_MODULE_9__["default"]),
+/* harmony export */   loadscript: () => (/* reexport safe */ _loadscript__WEBPACK_IMPORTED_MODULE_8__["default"]),
+/* harmony export */   resolver: () => (/* reexport module object */ _resolver__WEBPACK_IMPORTED_MODULE_7__),
+/* harmony export */   xpath: () => (/* reexport module object */ _xpath__WEBPACK_IMPORTED_MODULE_4__)
 /* harmony export */ });
 /* harmony import */ var _context__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./context */ "./src/utils/context.js");
 /* harmony import */ var _gsap__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./gsap */ "./src/utils/gsap.js");
@@ -3262,10 +3256,10 @@ __webpack_require__.r(__webpack_exports__);
 
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "isFunction": () => (/* binding */ isFunction),
-/* harmony export */   "isNumeric": () => (/* binding */ isNumeric),
-/* harmony export */   "isObject": () => (/* binding */ isObject),
-/* harmony export */   "isSVG": () => (/* binding */ isSVG)
+/* harmony export */   isFunction: () => (/* binding */ isFunction),
+/* harmony export */   isNumeric: () => (/* binding */ isNumeric),
+/* harmony export */   isObject: () => (/* binding */ isObject),
+/* harmony export */   isSVG: () => (/* binding */ isSVG)
 /* harmony export */ });
 function isObject(obj) {
   return Object.prototype.toString.call(obj) === '[object Object]';
@@ -3290,9 +3284,9 @@ function isNumeric(n) {
 
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "cache": () => (/* binding */ cache),
+/* harmony export */   cache: () => (/* binding */ cache),
 /* harmony export */   "default": () => (/* export default binding */ __WEBPACK_DEFAULT_EXPORT__),
-/* harmony export */   "req": () => (/* binding */ req)
+/* harmony export */   req: () => (/* binding */ req)
 /* harmony export */ });
 /* harmony import */ var _context__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./context */ "./src/utils/context.js");
 
@@ -3405,7 +3399,7 @@ function loadScript(src) {
 
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "includes": () => (/* binding */ includes)
+/* harmony export */   includes: () => (/* binding */ includes)
 /* harmony export */ });
 function includes(arr, item) {
   for (var i = 0; i < arr.length; i++) {
@@ -3426,7 +3420,7 @@ function includes(arr, item) {
 
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "resolveElement": () => (/* binding */ resolveElement)
+/* harmony export */   resolveElement: () => (/* binding */ resolveElement)
 /* harmony export */ });
 /* harmony import */ var _debug__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./debug */ "./src/utils/debug.js");
 /* harmony import */ var _xpath__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./xpath */ "./src/utils/xpath.js");
@@ -3476,8 +3470,8 @@ function resolveElement(root, data, throwException) {
 
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "getElement": () => (/* binding */ getElement),
-/* harmony export */   "getExpression": () => (/* binding */ getExpression)
+/* harmony export */   getElement: () => (/* binding */ getElement),
+/* harmony export */   getExpression: () => (/* binding */ getExpression)
 /* harmony export */ });
 /* harmony import */ var _is__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./is */ "./src/utils/is.js");
 /* harmony import */ var _debug__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./debug */ "./src/utils/debug.js");
@@ -3634,14 +3628,14 @@ var __webpack_exports__ = {};
   \**********************/
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "config": () => (/* reexport safe */ _config_config__WEBPACK_IMPORTED_MODULE_1__["default"]),
-/* harmony export */   "create": () => (/* reexport safe */ _data_parser__WEBPACK_IMPORTED_MODULE_4__.create),
+/* harmony export */   config: () => (/* reexport safe */ _config_config__WEBPACK_IMPORTED_MODULE_1__["default"]),
+/* harmony export */   create: () => (/* reexport safe */ _data_parser__WEBPACK_IMPORTED_MODULE_4__.create),
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__),
-/* harmony export */   "groups": () => (/* reexport safe */ _registry_registry__WEBPACK_IMPORTED_MODULE_3__["default"]),
-/* harmony export */   "load": () => (/* reexport safe */ _data_parser__WEBPACK_IMPORTED_MODULE_4__.load),
-/* harmony export */   "loadAnimation": () => (/* reexport safe */ _loadAnimation__WEBPACK_IMPORTED_MODULE_5__["default"]),
-/* harmony export */   "setup": () => (/* reexport safe */ _config_setup__WEBPACK_IMPORTED_MODULE_2__["default"]),
-/* harmony export */   "version": () => (/* binding */ version)
+/* harmony export */   groups: () => (/* reexport safe */ _registry_registry__WEBPACK_IMPORTED_MODULE_3__["default"]),
+/* harmony export */   load: () => (/* reexport safe */ _data_parser__WEBPACK_IMPORTED_MODULE_4__.load),
+/* harmony export */   loadAnimation: () => (/* reexport safe */ _loadAnimation__WEBPACK_IMPORTED_MODULE_5__["default"]),
+/* harmony export */   setup: () => (/* reexport safe */ _config_setup__WEBPACK_IMPORTED_MODULE_2__["default"]),
+/* harmony export */   version: () => (/* binding */ version)
 /* harmony export */ });
 /* harmony import */ var _utils__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./utils */ "./src/utils/index.js");
 /* harmony import */ var _config_config__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./config/config */ "./src/config/config.js");
