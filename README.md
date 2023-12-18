@@ -50,7 +50,7 @@
   spirit
     .loadAnimation({
       path: './animation.json',
-      container: dcument.getElementById('container'),
+      container: document.getElementById('container'),
     })
     .then(timeline => timeline.play());
 </script>
