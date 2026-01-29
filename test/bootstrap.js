@@ -1,6 +1,6 @@
-import jsdom from 'jsdom';
-import chai from 'chai';
-import sinon from 'sinon';
+const jsdom = require('jsdom');
+const chai = require('chai');
+const sinon = require('sinon');
 
 const dom = new jsdom.JSDOM('<!DOCTYPE html><html><body></body></html>', {
   url: 'file://' + process.cwd() + '/',
@@ -13,7 +13,11 @@ const dom = new jsdom.JSDOM('<!DOCTYPE html><html><body></body></html>', {
 
 global.window = dom.window;
 global.document = global.window.document;
-global.navigator = { userAgent: 'node.js' };
+Object.defineProperty(global, 'navigator', {
+  value: { userAgent: 'node.js' },
+  writable: true,
+  configurable: true,
+});
 
 global.expect = chai.expect;
 global.sinon = sinon;
